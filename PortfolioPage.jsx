@@ -1866,7 +1866,7 @@ const sectionContent = {
         <span style={{ color: "#3B82F6" }}>intention</span>.
       </>
     ),
-    body: "I solve user problems through thoughtful design, bridging design and development to create practical, buildable experiences.",
+    body: "I solve users problems through thoughtful design, bridging design and development to create practical, buildable experiences.",
   },
   projects: {
     heading: "Projects",
