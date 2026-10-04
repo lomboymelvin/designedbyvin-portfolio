@@ -1270,11 +1270,38 @@ body {
     margin-left: 0;
     width: 100%;
   }
+
+  /* Tablet typography/spacing tier — previously nothing between 1024px
+     and 720px shrank text or tightened spacing, so an iPad-width screen
+     still rendered full desktop font sizes and padding. */
+  .pf-hero h1 { font-size: 30px; }
+  .pf-hero p { font-size: 13px; }
+  .pf-widget-header h2 { font-size: 17px; }
+  .pf-widget-desc { font-size: 11.5px; }
+  .pf-card { padding: 18px; }
+  .pf-content-grid { padding: 16px; }
+  .pf-grid-inner { gap: 16px; }
+  .pf-tools-heading h2 { font-size: 17px; }
 }
 
 /* ---------- Mobile: hamburger sits above the profile, nav collapses behind it ---------- */
 @media (max-width: 720px) {
   .pf-hero h1 { font-size: 28px; }
+  .pf-hero p { font-size: 13px; }
+  .pf-widget-header h2 { font-size: 16px; }
+  .pf-widget-desc { font-size: 11px; }
+  .pf-card { padding: 16px; }
+  .pf-grid-inner { gap: 14px; }
+  /* ABOUT was pinned to the same fixed 380px as CONTACT so they'd line up
+     side-by-side on desktop/tablet — once they stack into one column here,
+     there's no row to match anymore, so let ABOUT size to its own content
+     instead of carrying a tall, mostly-empty box. */
+  .pf-widget-about { height: auto; min-height: 220px; }
+  /* ImagePlaceholder sets its own height inline (220px), so it needs
+     !important here to override that on mobile. */
+  .pf-placeholder { height: 160px !important; }
+  .pf-tools-heading h2 { font-size: 16px; }
+  .pf-subtitle { white-space: normal; max-width: 260px; }
   .pf-tools-bar { flex-direction: column; align-items: flex-start; gap: 14px; }
   .pf-tools-divider { display: none; }
   .pf-marquee-wrap { width: 100%; }
@@ -1311,6 +1338,14 @@ body {
 
 @media (max-width: 480px) {
   .pf-hero h1 { font-size: 24px; }
+  .pf-hero p { font-size: 12.5px; }
+  .pf-widget-header h2 { font-size: 15px; }
+  .pf-widget-desc { font-size: 10.5px; }
+  .pf-grid-inner { gap: 12px; }
+  .pf-widget-about { min-height: 200px; }
+  .pf-placeholder { height: 140px !important; }
+  .pf-tools-heading h2 { font-size: 15px; }
+  .pf-subtitle { max-width: 220px; }
   .pf-name { font-size: 15px; }
   .pf-subtitle { font-size: 10.5px; }
   .pf-photo-ring { width: 64px; height: 64px; }
