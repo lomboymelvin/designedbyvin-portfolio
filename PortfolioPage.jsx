@@ -43,41 +43,6 @@ const PROFILE_IMAGE =
 const GLOBAL_CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
-/* ---------- Theme tokens (light default, dark override below) ---------- */
-:root {
-  --pf-bg: #ECF1F4;
-  --pf-surface: #ffffff;
-  --pf-surface-alt: #DADFE3;
-  --pf-surface-alt-hover: #CDD5DB;
-  --pf-text: #111318;
-  --pf-text-secondary: #6B7280;
-  --pf-text-tertiary: #4B5563;
-  --pf-text-muted: #8A8F98;
-  --pf-border: #C7C7C7;
-  --pf-border-rgb: 199,199,199;
-  --pf-accent: #3B82F6;
-  --pf-accent-hover: #2f6fe0;
-  --pf-accent-deep: #1d4ed8;
-  --pf-favorite: #F5B301;
-}
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --pf-bg: #0E1116;
-  --pf-surface: #171B22;
-  --pf-surface-alt: #232833;
-  --pf-surface-alt-hover: #2B313D;
-  --pf-text: #EDEFF2;
-  --pf-text-secondary: #A6ADB8;
-  --pf-text-tertiary: #C2C8D0;
-  --pf-text-muted: #889099;
-  --pf-border: #3A414D;
-  --pf-border-rgb: 150,158,170;
-  --pf-accent: #5B96F5;
-  --pf-accent-hover: #3B82F6;
-  --pf-accent-deep: #2f6fe0;
-  --pf-favorite: #F5B301;
-}
-
 /* ---------- Defensive reset ----------
    Neutralizes common Vite/CRA boilerplate (dark :root color-scheme, a
    centered #root with a max-width, body margin) that otherwise fights with
@@ -90,16 +55,16 @@ body,
   width: 100%;
   min-width: 100%;
   min-height: 100%;
-  background: var(--pf-bg);
+  background: #ECF1F4;
 }
 
 html {
-  background: var(--pf-bg);
+  background: #ECF1F4;
   overscroll-behavior-y: none;
 }
 
 body {
-  background: var(--pf-bg);
+  background: #ECF1F4;
   background-attachment: fixed;
   overflow-x: hidden;
   overflow-y: auto;
@@ -118,11 +83,11 @@ body {
   width: 100%;
   max-width: none;
   color-scheme: light;
-  background: var(--pf-bg);
+  background: #ECF1F4;
   background-attachment: fixed;
   min-height: 100vh;
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  color: var(--pf-text);
+  color: #111318;
   text-align: left;
 }
 .pf-root h1, .pf-root h2, .pf-root h3, .pf-root h4, .pf-root p { color: inherit; margin: 0; }
@@ -153,7 +118,7 @@ body {
   width: 112px;
   height: 112px;
   border-radius: 50%;
-  border: 3px solid var(--pf-accent);
+  border: 3px solid #3B82F6;
   padding: 3px;
   flex-shrink: 0;
   transition: transform .35s cubic-bezier(.34,1.56,.64,1);
@@ -165,47 +130,47 @@ body {
 .pf-name-row { display: flex; align-items: center; gap: 6px; margin-top: 18px; }
 .pf-name { font-size: 16px; font-weight: 700; margin: 0; }
 .pf-name-row svg { width: 16px; height: 16px; flex-shrink: 0; }
-.pf-subtitle { font-size: 12px; color: var(--pf-text-secondary); text-align: center; margin: 6px 0 0; line-height: 1.6; max-width: 210px; }
+.pf-subtitle { font-size: 12px; color: #6B7280; text-align: center; margin: 6px 0 0; line-height: 1.6; max-width: 210px; }
 
 .pf-socials { display: flex; gap: 12px; margin-top: 18px; }
 .pf-social {
   width: 34px; height: 34px; border-radius: 50%;
-  border: 1px solid rgba(var(--pf-border-rgb),.45);
-  background: var(--pf-surface);
+  border: 1px solid rgba(199,199,199,.45);
+  background: #fff;
   display: flex; align-items: center; justify-content: center;
-  color: var(--pf-text); text-decoration: none;
+  color: #111318; text-decoration: none;
   transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease, background .3s ease, color .3s ease;
 }
 .pf-social svg { width: 16px; height: 16px; }
-.pf-social:hover { transform: translateY(-4px) scale(1.08); box-shadow: 0 8px 16px rgba(122,122,122,.2); background: var(--pf-accent); color: #fff; }
+.pf-social:hover { transform: translateY(-4px) scale(1.08); box-shadow: 0 8px 16px rgba(122,122,122,.2); background: #3B82F6; color: #fff; }
 .pf-social:active { transform: translateY(-1px) scale(1.02); }
 
-.pf-divider { width: 100%; height: 1px; background: rgba(var(--pf-border-rgb),.5); margin: 22px 0 18px; flex-shrink: 0; }
+.pf-divider { width: 100%; height: 1px; background: rgba(199,199,199,.5); margin: 22px 0 18px; flex-shrink: 0; }
 
 .pf-nav { width: 100%; display: flex; flex-direction: column; gap: 10px; }
 .pf-nav-item {
   display: flex; align-items: center; gap: 12px; width: 100%;
-  padding: 10px 12px; border-radius: 7px;
+  padding: 10px 12px; border-radius: 10px;
   border: 1px solid transparent; background: transparent;
-  color: var(--pf-text-muted); cursor: pointer; text-align: left;
+  color: #8A8F98; cursor: pointer; text-align: left;
   font-family: inherit; font-size: 14px; font-weight: 500;
   transition: background .25s ease, color .25s ease, transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
 .pf-nav-item svg { width: 20px; height: 20px; flex-shrink: 0; }
-.pf-nav-item:hover { background: var(--pf-surface); color: var(--pf-text); transform: translateX(4px); box-shadow: 0 6px 13px rgba(122,122,122,.10); }
-.pf-nav-item.active { background: var(--pf-surface); border-color: rgba(var(--pf-border-rgb),.45); box-shadow: 0 6px 13px rgba(122,122,122,.10); color: var(--pf-text); font-weight: 700; }
+.pf-nav-item:hover { background: #fff; color: #111318; transform: translateX(4px); box-shadow: 0 6px 13px rgba(122,122,122,.10); }
+.pf-nav-item.active { background: #fff; border-color: rgba(199,199,199,.45); box-shadow: 0 6px 13px rgba(122,122,122,.10); color: #111318; font-weight: 700; }
 .pf-nav-item:active { transform: translateX(2px) scale(.98); }
 
 /* Mobile-only nav toggle — hidden on desktop/tablet by default */
 .pf-hamburger {
   display: none;
-  width: 40px; height: 40px; border-radius: 8px; flex-shrink: 0;
-  border: 1px solid rgba(var(--pf-border-rgb),.45); background: var(--pf-surface); color: var(--pf-text);
+  width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+  border: 1px solid rgba(199,199,199,.45); background: #fff; color: #111318;
   align-items: center; justify-content: center; cursor: pointer;
   transition: background .25s ease, color .25s ease, transform .2s ease;
 }
 .pf-hamburger svg { width: 20px; height: 20px; }
-.pf-hamburger:hover { background: var(--pf-accent); color: #fff; }
+.pf-hamburger:hover { background: #3B82F6; color: #fff; }
 .pf-hamburger:active { transform: scale(.92); }
 
 .pf-spacer { flex: 1 1 auto; min-height: 12px; }
@@ -218,22 +183,22 @@ body {
 .pf-cv-wrap-inline { display: none; }
 .pf-nav-cv-divider { display: none; }
 .pf-cv-btn {
-  width: 100%; background: var(--pf-accent); color: #fff; border: none; border-radius: 999px;
+  width: 100%; background: #3B82F6; color: #fff; border: none; border-radius: 999px;
   padding: 13px 16px; display: flex; align-items: center; justify-content: center; gap: 10px;
   cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 600;
   transition: transform .25s ease, box-shadow .25s ease, background .25s ease;
 }
 .pf-cv-btn svg { width: 18px; height: 18px; }
-.pf-cv-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 22px rgba(59,130,246,.35); background: var(--pf-accent-hover); }
+.pf-cv-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 22px rgba(59,130,246,.35); background: #2f6fe0; }
 .pf-cv-btn:active { transform: translateY(-1px) scale(.98); }
 
-.pf-footer { font-size: 11px; color: var(--pf-text-secondary); margin: 10px 0 0; text-align: center; line-height: 1.45; flex-shrink: 0; }
+.pf-footer { font-size: 11px; color: #6B7280; margin: 10px 0 0; text-align: center; line-height: 1.45; flex-shrink: 0; }
 /* Tablet/mobile only: once the sidebar becomes a top header, its own
    .pf-footer is hidden and this copy — rendered at the very end of <main>,
    after all page content — takes over, so the copyright always sits at the
    true bottom of whichever page is showing. Hidden on desktop, where the
    sidebar's own footer (pinned via .pf-spacer) already does the job. */
-.pf-footer-mobile { display: none; font-size: 11px; color: var(--pf-text-secondary); text-align: center; line-height: 1.45; margin: 32px 0 0; }
+.pf-footer-mobile { display: none; font-size: 11px; color: #6B7280; text-align: center; line-height: 1.45; margin: 32px 0 0; }
 
 /* ---------- Main ---------- */
 .pf-main {
@@ -276,11 +241,11 @@ body {
 }
 
 .pf-hero h1 { font-size: 36px; font-weight: 800; line-height: 1.25; margin: 0; }
-.pf-hero p { font-size: 14px; color: var(--pf-text-tertiary); margin-top: 14px; line-height: 1.7; max-width: 640px; }
-.pf-hero-divider { height: 1px; background: rgba(var(--pf-border-rgb),.5); margin-top: 22px; }
+.pf-hero p { font-size: 14px; color: #4B5563; margin-top: 14px; line-height: 1.7; max-width: 640px; }
+.pf-hero-divider { height: 1px; background: rgba(199,199,199,.5); margin-top: 22px; }
 
 .pf-card {
-  background: var(--pf-surface); border: 1px solid rgba(var(--pf-border-rgb),.45); border-radius: 12px;
+  background: #fff; border: 1px solid rgba(199,199,199,.45); border-radius: 20px;
   box-shadow: 0 6px 13px rgba(122,122,122,.10); padding: 20px;
   transition: transform .3s ease, box-shadow .3s ease;
 }
@@ -288,9 +253,9 @@ body {
 
 .pf-tools-bar { display: flex; align-items: center; gap: 28px; margin-top: 20px; }
 .pf-tools-heading { min-width: 180px; flex-shrink: 0; }
-.pf-tools-heading h2 { font-size: 20px; font-weight: 700; color: var(--pf-accent); margin: 0; }
-.pf-tools-heading p { font-size: 12px; color: var(--pf-text-secondary); margin: 6px 0 0; }
-.pf-tools-divider { width: 1px; align-self: stretch; background: rgba(var(--pf-border-rgb),.5); flex-shrink: 0; }
+.pf-tools-heading h2 { font-size: 20px; font-weight: 700; color: #3B82F6; margin: 0; }
+.pf-tools-heading p { font-size: 12px; color: #6B7280; margin: 6px 0 0; }
+.pf-tools-divider { width: 1px; align-self: stretch; background: rgba(199,199,199,.5); flex-shrink: 0; }
 
 .pf-marquee-wrap {
   flex: 1; min-width: 0; overflow: hidden;
@@ -303,13 +268,13 @@ body {
 
 .pf-tool-chip {
   display: flex; align-items: center; gap: 10px; flex: 0 0 auto;
-  padding: 10px 16px; border-radius: 9px;
-  border: 1px solid rgba(var(--pf-border-rgb),.45); background: var(--pf-surface);
+  padding: 10px 16px; border-radius: 14px;
+  border: 1px solid rgba(199,199,199,.45); background: #fff;
   transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
-.pf-tool-chip svg { width: 28px; height: 28px; flex-shrink: 0; border-radius: 5px; }
+.pf-tool-chip svg { width: 28px; height: 28px; flex-shrink: 0; border-radius: 7px; }
 .pf-tool-chip span { font-size: 14px; font-weight: 600; white-space: nowrap; }
-.pf-tool-chip:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 10px 18px rgba(122,122,122,.18); border-color: var(--pf-accent); }
+.pf-tool-chip:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 10px 18px rgba(122,122,122,.18); border-color: #3B82F6; }
 
 .pf-content-grid { margin-top: 20px; padding: 20px; }
 .pf-blank-section { margin-top: 20px; min-height: 320px; }
@@ -331,11 +296,11 @@ body {
   animation: pf-fade-up .4s ease both;
 }
 .stage-closed .pf-envelope-body { cursor: pointer; }
-.stage-closed .pf-envelope-body:focus-visible .pf-envelope-shell { outline: 2px solid var(--pf-accent); outline-offset: 4px; }
+.stage-closed .pf-envelope-body:focus-visible .pf-envelope-shell { outline: 2px solid #3B82F6; outline-offset: 4px; }
 
 .pf-envelope-shell {
-  position: relative; height: 630px; border-radius: 14px; overflow: hidden;
-  background: linear-gradient(170deg, var(--pf-accent) 0%, var(--pf-accent-hover) 100%);
+  position: relative; height: 630px; border-radius: 22px; overflow: hidden;
+  background: linear-gradient(170deg, #3B82F6 0%, #2f6fe0 100%);
   box-shadow: 0 14px 30px rgba(59,130,246,.14), 0 4px 10px rgba(122,122,122,.08);
   transition: transform .3s ease, box-shadow .3s ease;
 }
@@ -432,7 +397,7 @@ body {
 
 .pf-letter-paper {
   position: absolute; inset: 0; z-index: 1; overflow-y: auto;
-  background: var(--pf-surface); padding: 22px 32px 26px;
+  background: #fff; padding: 22px 32px 26px;
   opacity: 0; transform: translateY(-14px);
   transition: opacity .4s ease, transform .4s ease;
   pointer-events: none;
@@ -444,26 +409,26 @@ body {
 
 .pf-letter-form { display: flex; flex-direction: column; gap: 11px; }
 .pf-letter-field { display: flex; flex-direction: column; gap: 5px; }
-.pf-letter-field span { font-size: 13px; font-weight: 700; color: var(--pf-text-secondary); }
+.pf-letter-field span { font-size: 13px; font-weight: 700; color: #6B7280; }
 .pf-letter-field input, .pf-letter-field textarea {
-  font-family: inherit; font-size: 15px; color: var(--pf-text);
-  border: 1px solid rgba(var(--pf-border-rgb),.5); border-radius: 8px;
-  padding: 11px 14px; background: var(--pf-surface); resize: vertical;
+  font-family: inherit; font-size: 15px; color: #111318;
+  border: 1px solid rgba(199,199,199,.5); border-radius: 12px;
+  padding: 11px 14px; background: #fff; resize: vertical;
   transition: border-color .2s ease, box-shadow .2s ease;
 }
 .pf-letter-field input:focus, .pf-letter-field textarea:focus {
-  outline: none; border-color: var(--pf-accent); box-shadow: 0 0 0 3px rgba(59,130,246,.15);
+  outline: none; border-color: #3B82F6; box-shadow: 0 0 0 3px rgba(59,130,246,.15);
 }
 .pf-letter-field input:disabled, .pf-letter-field textarea:disabled { opacity: .6; }
 .pf-contact-error { font-size: 13px; color: #DC2626; margin: -4px 0 0; }
 
 .pf-letter-actions { display: flex; align-items: center; justify-content: flex-end; gap: 14px; margin-top: 12px; }
 .pf-letter-cancel {
-  font-family: inherit; font-size: 14px; font-weight: 600; color: var(--pf-text-secondary);
+  font-family: inherit; font-size: 14px; font-weight: 600; color: #6B7280;
   background: none; border: none; cursor: pointer; padding: 8px 4px;
   transition: color .2s ease;
 }
-.pf-letter-cancel:hover { color: var(--pf-text); }
+.pf-letter-cancel:hover { color: #111318; }
 .pf-letter-cancel:disabled { opacity: .5; cursor: default; }
 .pf-send-btn { width: auto; padding: 14px 28px; font-size: 15px; }
 .pf-send-btn:disabled { opacity: .75; cursor: default; transform: none; box-shadow: none; }
@@ -473,7 +438,7 @@ body {
 .pf-envelope-paper-plane {
   position: absolute; left: 50%; bottom: 30%; z-index: 5;
   width: 52px; height: 52px; border-radius: 50%;
-  background: var(--pf-accent); color: #fff;
+  background: #3B82F6; color: #fff;
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 10px 22px rgba(59,130,246,.4);
   animation: pf-plane-fly 1.1s ease forwards;
@@ -488,13 +453,13 @@ body {
 .pf-contact-confirm {
   width: 100%; max-width: 640px; margin: 0 auto; display: flex; flex-direction: column;
   align-items: center; text-align: center; gap: 12px; padding: 52px 32px;
-  background: var(--pf-surface); border: 1px solid rgba(var(--pf-border-rgb),.45); border-radius: 12px;
+  background: #fff; border: 1px solid rgba(199,199,199,.45); border-radius: 20px;
   box-shadow: 0 6px 13px rgba(122,122,122,.10);
   animation: pf-fade-up .45s ease both;
 }
 .pf-confirm-check {
   width: 68px; height: 68px; border-radius: 50%; flex-shrink: 0;
-  background: rgba(59,130,246,.08); color: var(--pf-accent);
+  background: rgba(59,130,246,.08); color: #3B82F6;
   display: flex; align-items: center; justify-content: center;
 }
 .pf-confirm-check svg { width: 36px; height: 36px; }
@@ -503,8 +468,8 @@ body {
   animation: pf-check-draw .4s .15s ease forwards;
 }
 @keyframes pf-check-draw { to { stroke-dashoffset: 0; } }
-.pf-contact-confirm h3 { font-size: 20px; font-weight: 800; margin: 6px 0 0; color: var(--pf-text); }
-.pf-contact-confirm p { font-size: 14px; color: var(--pf-text-secondary); line-height: 1.7; margin: 0; max-width: 360px; }
+.pf-contact-confirm h3 { font-size: 20px; font-weight: 800; margin: 6px 0 0; color: #111318; }
+.pf-contact-confirm p { font-size: 14px; color: #6B7280; line-height: 1.7; margin: 0; max-width: 360px; }
 .pf-contact-again {
   width: auto; margin-top: 10px; padding: 13px 26px;
 }
@@ -541,13 +506,13 @@ body {
 .pf-contact-modal-close {
   position: absolute; top: -14px; right: -14px; z-index: 5;
   width: 40px; height: 40px; border-radius: 50%; border: none;
-  background: var(--pf-surface); color: var(--pf-text); cursor: pointer;
+  background: #fff; color: #111318; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 8px 20px rgba(17,19,24,.25);
   transition: transform .2s ease, background .2s ease;
 }
 .pf-contact-modal-close:hover { transform: scale(1.08); background: #f3f4f6; }
-.pf-contact-modal-close:focus-visible { outline: 2px solid var(--pf-accent); outline-offset: 2px; }
+.pf-contact-modal-close:focus-visible { outline: 2px solid #3B82F6; outline-offset: 2px; }
 .pf-contact-modal-close svg { width: 18px; height: 18px; }
 
 /* ---------- Tools section (interactive filter + flip cards) ---------- */
@@ -555,12 +520,12 @@ body {
 
 .pf-filter-row { display: flex; flex-wrap: wrap; gap: 10px; }
 .pf-filter-chip {
-  padding: 9px 18px; border-radius: 999px; border: 1px solid rgba(var(--pf-border-rgb),.45);
-  background: var(--pf-surface); color: var(--pf-text-secondary); font-family: inherit; font-size: 14px; font-weight: 600;
+  padding: 9px 18px; border-radius: 999px; border: 1px solid rgba(199,199,199,.45);
+  background: #fff; color: #6B7280; font-family: inherit; font-size: 14px; font-weight: 600;
   cursor: pointer; transition: transform .25s ease, box-shadow .25s ease, background .25s ease, color .25s ease, border-color .25s ease;
 }
-.pf-filter-chip:hover { border-color: var(--pf-accent); color: var(--pf-text); transform: translateY(-2px); }
-.pf-filter-chip.active { background: var(--pf-accent); border-color: var(--pf-accent); color: #fff; box-shadow: 0 8px 16px rgba(59,130,246,.3); }
+.pf-filter-chip:hover { border-color: #3B82F6; color: #111318; transform: translateY(-2px); }
+.pf-filter-chip.active { background: #3B82F6; border-color: #3B82F6; color: #fff; box-shadow: 0 8px 16px rgba(59,130,246,.3); }
 .pf-filter-chip:active { transform: translateY(0) scale(.97); }
 
 .pf-tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 18px; }
@@ -570,7 +535,7 @@ body {
   background: none; border: none; padding: 0; cursor: pointer; font-family: inherit;
   opacity: 0; animation: pf-fade-up .5s ease forwards;
 }
-.pf-tool-card:focus-visible { outline: 2px solid var(--pf-accent); outline-offset: 4px; border-radius: 10px; }
+.pf-tool-card:focus-visible { outline: 2px solid #3B82F6; outline-offset: 4px; border-radius: 16px; }
 
 @keyframes pf-fade-up {
   from { opacity: 0; transform: translateY(14px); }
@@ -585,8 +550,8 @@ body {
 .pf-tool-card.flipped .pf-tool-card-inner { transform: rotateY(180deg); }
 
 .pf-tool-card-face {
-  position: absolute; inset: 0; backface-visibility: hidden; border-radius: 10px;
-  border: 1px solid rgba(var(--pf-border-rgb),.45); background: var(--pf-surface);
+  position: absolute; inset: 0; backface-visibility: hidden; border-radius: 16px;
+  border: 1px solid rgba(199,199,199,.45); background: #fff;
   box-shadow: 0 6px 13px rgba(122,122,122,.10);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 10px; padding: 18px; text-align: center;
@@ -595,26 +560,26 @@ body {
 .pf-tool-card:hover:not(.flipped) .pf-tool-card-front { transform: translateY(-4px); box-shadow: 0 14px 26px rgba(122,122,122,.18); }
 
 .pf-tool-card-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; transition: transform .3s ease; }
-.pf-tool-card-icon svg, .pf-tool-card-icon img { width: 100%; height: 100%; object-fit: contain; border-radius: 6px; }
+.pf-tool-card-icon svg, .pf-tool-card-icon img { width: 100%; height: 100%; object-fit: contain; border-radius: 9px; }
 .pf-tool-card:hover:not(.flipped) .pf-tool-card-icon { transform: scale(1.12) rotate(-6deg); }
 
 .pf-tool-card-front h3 { font-size: 15px; font-weight: 700; margin: 0; }
 .pf-tool-card-tag {
-  font-size: 11px; font-weight: 700; color: var(--pf-accent); background: rgba(59,130,246,.1);
+  font-size: 11px; font-weight: 700; color: #3B82F6; background: rgba(59,130,246,.1);
   padding: 4px 10px; border-radius: 999px; letter-spacing: .03em; text-transform: uppercase;
 }
 
-.pf-tool-card-back { background: var(--pf-accent); border-color: var(--pf-accent); transform: rotateY(180deg); }
+.pf-tool-card-back { background: #3B82F6; border-color: #3B82F6; transform: rotateY(180deg); }
 .pf-tool-card-back p { color: #fff; font-size: 12.5px; line-height: 1.6; margin: 0; }
 
 .pf-fav-btn {
   position: absolute; top: 10px; right: 10px; z-index: 2; width: 28px; height: 28px; border-radius: 50%;
   border: none; background: rgba(255,255,255,.9); display: flex; align-items: center; justify-content: center;
-  color: var(--pf-border); cursor: pointer; transition: transform .2s ease, color .2s ease;
+  color: #C7C7C7; cursor: pointer; transition: transform .2s ease, color .2s ease;
 }
 .pf-fav-btn svg { width: 15px; height: 15px; }
-.pf-fav-btn:hover { transform: scale(1.18); color: var(--pf-favorite); }
-.pf-fav-btn.active { color: var(--pf-favorite); }
+.pf-fav-btn:hover { transform: scale(1.18); color: #F5B301; }
+.pf-fav-btn.active { color: #F5B301; }
 .pf-tool-card.flipped .pf-fav-btn { display: none; }
 /* Row 1's height is pinned to match ABOUT/CONTACT's own fixed height
    (see .pf-widget-about / .pf-widget-contact below — keep these in sync).
@@ -647,7 +612,7 @@ body {
 .pf-widget { display: flex; flex-direction: column; gap: 14px; }
 .pf-widget-header { display: flex; align-items: center; gap: 10px; }
 .pf-widget-badge {
-  width: 32px; height: 32px; border-radius: 6px; background: var(--pf-accent);
+  width: 32px; height: 32px; border-radius: 9px; background: #3B82F6;
   display: flex; align-items: center; justify-content: center; color: #fff;
   flex-shrink: 0; transition: transform .3s ease;
 }
@@ -659,22 +624,22 @@ body {
    any one of them was hovered. */
 .pf-widget:hover .pf-widget-badge { transform: rotate(-8deg) scale(1.08); }
 .pf-widget-header h2 { font-size: 20px; font-weight: 700; letter-spacing: .02em; margin: 0; }
-.pf-widget-desc { font-size: 12px; color: var(--pf-text-secondary); line-height: 1.6; margin: 0; }
+.pf-widget-desc { font-size: 12px; color: #6B7280; line-height: 1.6; margin: 0; }
 
 .pf-placeholder {
-  height: 100%; width: 100%; background: var(--pf-surface-alt); border-radius: 8px;
+  height: 100%; width: 100%; background: #DADFE3; border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
   transition: background .3s ease;
 }
-.pf-placeholder span { font-size: 14px; font-weight: 600; color: var(--pf-text); letter-spacing: .02em; text-align: center; padding: 0 12px; }
-.pf-widget:hover .pf-placeholder { background: var(--pf-surface-alt-hover); }
+.pf-placeholder span { font-size: 14px; font-weight: 600; color: #111318; letter-spacing: .02em; text-align: center; padding: 0 12px; }
+.pf-widget:hover .pf-placeholder { background: #CDD5DB; }
 
 /* Widgets that link out to a full page (About, Certifications) wrap their
    preview media in this, so hovering the whole card reveals a single CTA
    over the media instead of a second, competing block of text. */
 .pf-widget-media { position: relative; display: flex; flex-direction: column; gap: 14px; flex: 1; }
 .pf-widget-media-overlay {
-  position: absolute; inset: 0; z-index: 3; border-radius: 8px;
+  position: absolute; inset: 0; z-index: 3; border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
   background: rgba(17,19,24,0); opacity: 0; pointer-events: none;
   transition: opacity .25s ease, background-color .25s ease;
@@ -684,7 +649,7 @@ body {
 }
 .pf-widget-media-btn {
   display: inline-flex; align-items: center; gap: 8px;
-  background: var(--pf-surface); color: var(--pf-text); border: none; border-radius: 999px;
+  background: #fff; color: #111318; border: none; border-radius: 999px;
   padding: 10px 18px; font-family: inherit; font-size: 13px; font-weight: 700;
   cursor: pointer; transform: translateY(8px); opacity: 0;
   transition: transform .25s ease, opacity .25s ease, box-shadow .2s ease;
@@ -702,11 +667,11 @@ body {
    piece, with a hairline gap between tiles standing in for a seam. */
 .pf-widget-cert-strip {
   height: 130px; display: flex; gap: 3px;
-  border-radius: 9px; overflow: hidden;
+  border-radius: 14px; overflow: hidden;
   box-shadow: 0 10px 22px rgba(17,19,24,.16);
 }
 .pf-widget-cert-thumb {
-  position: relative; flex: 1; min-width: 0; overflow: hidden; background: var(--pf-surface-alt);
+  position: relative; flex: 1; min-width: 0; overflow: hidden; background: #DADFE3;
 }
 .pf-widget-cert-thumb img {
   width: 100%; height: 100%; object-fit: cover; display: block;
@@ -724,7 +689,7 @@ body {
 }
 .pf-widget-cert-more {
   position: absolute; top: 8px; right: 8px; z-index: 2;
-  background: var(--pf-accent); color: #fff; font-size: 10.5px; font-weight: 800;
+  background: #3B82F6; color: #fff; font-size: 10.5px; font-weight: 800;
   padding: 4px 8px; border-radius: 999px;
   box-shadow: 0 4px 10px rgba(59,130,246,.35);
 }
@@ -740,14 +705,14 @@ body {
    on top of it rather than above a separate strip of thumbnails. */
 .pf-about-mini {
   position: relative; width: 100%; height: 100%;
-  border-radius: 12px; overflow: hidden;
+  border-radius: 20px; overflow: hidden;
   border: none; padding: 0; cursor: pointer; font-family: inherit; text-align: left;
   background: #111318;
   box-shadow: 0 6px 13px rgba(122,122,122,.10);
   transition: transform .25s ease, box-shadow .25s ease;
 }
 .pf-about-mini:hover { transform: translateY(-4px); box-shadow: 0 16px 30px rgba(122,122,122,.16); }
-.pf-about-mini:focus-visible { outline: 2px solid var(--pf-accent); outline-offset: 3px; }
+.pf-about-mini:focus-visible { outline: 2px solid #3B82F6; outline-offset: 3px; }
 .pf-about-mini-media { position: absolute; inset: 0; z-index: 0; display: block; }
 .pf-about-mini-img {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
@@ -762,7 +727,7 @@ body {
 }
 .pf-about-mini-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
 .pf-about-mini-icon {
-  width: 28px; height: 28px; border-radius: 6px; background: rgba(255,255,255,.2);
+  width: 28px; height: 28px; border-radius: 8px; background: rgba(255,255,255,.2);
   display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0;
 }
 .pf-about-mini-icon svg { width: 16px; height: 16px; }
@@ -773,7 +738,7 @@ body {
 }
 .pf-about-mini-btn {
   display: inline-flex; align-items: center; gap: 8px; align-self: flex-start;
-  background: var(--pf-surface); color: var(--pf-text); border-radius: 999px;
+  background: #fff; color: #111318; border-radius: 999px;
   padding: 10px 18px; font-size: 13px; font-weight: 700;
 }
 .pf-about-mini-btn svg { width: 14px; height: 14px; }
@@ -794,14 +759,14 @@ body {
    the width keeps the envelope's height predictable everywhere. */
 .pf-contact-mini {
   position: relative; width: min(100%, 300px); aspect-ratio: 8 / 5; flex-shrink: 0;
-  border-radius: 12px; overflow: hidden;
+  border-radius: 20px; overflow: hidden;
   border: none; padding: 0; cursor: pointer; font-family: inherit;
-  background: linear-gradient(170deg, var(--pf-accent) 0%, var(--pf-accent-hover) 100%);
+  background: linear-gradient(170deg, #3B82F6 0%, #2f6fe0 100%);
   box-shadow: 0 6px 13px rgba(59,130,246,.18);
   transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s ease;
 }
 .pf-contact-mini:hover { transform: translateY(-4px); box-shadow: 0 16px 30px rgba(59,130,246,.3); }
-.pf-contact-mini:focus-visible { outline: 2px solid var(--pf-accent); outline-offset: 3px; }
+.pf-contact-mini:focus-visible { outline: 2px solid #3B82F6; outline-offset: 3px; }
 .pf-contact-mini.is-growing { transform: scale(1.05); box-shadow: 0 20px 36px rgba(59,130,246,.34); }
 .pf-contact-mini-flap {
   position: absolute; top: 0; left: 0; right: 0; height: 62%;
@@ -833,7 +798,7 @@ body {
 .pf-contact-mini-tooltip {
   position: absolute; top: 11px; right: 34px; z-index: 2;
   background: #111318; color: #fff; font-size: 12px; font-weight: 700;
-  padding: 7px 14px; border-radius: 6px; white-space: nowrap;
+  padding: 7px 14px; border-radius: 8px; white-space: nowrap;
   box-shadow: 0 8px 16px rgba(17,19,24,.25);
   opacity: 0; transform: translateX(8px); pointer-events: none;
   transition: opacity .25s ease, transform .25s ease;
@@ -870,28 +835,28 @@ body {
   /* Plain white card — the same background/border/shadow every other card
      on this page uses (.pf-card, .pf-widget-cert-strip's own tiles, etc.),
      not a one-off gradient treatment. */
-  background: var(--pf-surface); border: 1px solid rgba(var(--pf-border-rgb),.45); border-radius: 10px;
+  background: #fff; border: 1px solid rgba(199,199,199,.45); border-radius: 16px;
   padding: 16px 18px; box-shadow: 0 6px 13px rgba(122,122,122,.10);
 }
 /* Same solid-blue icon-badge already used for every widget's own header
    icon (.pf-widget-badge — PROJECTS, CERTIFICATIONS, etc.), reused here
    rather than inventing a different treatment for this one icon. */
 .pf-contact-quick-icon {
-  width: 32px; height: 32px; border-radius: 6px; flex-shrink: 0;
-  background: var(--pf-accent); color: #fff;
+  width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
+  background: #3B82F6; color: #fff;
   display: flex; align-items: center; justify-content: center;
 }
 .pf-contact-quick-icon svg { width: 18px; height: 18px; }
 .pf-contact-quick-text { display: flex; flex-direction: column; align-items: center; gap: 5px; max-width: 100%; }
-.pf-contact-quick-text strong { font-size: 13.5px; font-weight: 800; color: var(--pf-text); }
+.pf-contact-quick-text strong { font-size: 13.5px; font-weight: 800; color: #111318; }
 .pf-contact-quick-email {
-  display: inline-flex; align-items: center; font-size: 10.5px; font-weight: 700; color: var(--pf-accent);
+  display: inline-flex; align-items: center; font-size: 10.5px; font-weight: 700; color: #3B82F6;
   background: rgba(59,130,246,.1); border-radius: 999px; padding: 5px 12px;
   max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .pf-contact-quick-copy {
   display: inline-flex; align-items: center; gap: 7px; margin-top: 2px;
-  background: var(--pf-accent); color: #fff; border: none; border-radius: 999px;
+  background: #3B82F6; color: #fff; border: none; border-radius: 999px;
   padding: 9px 18px; font-family: inherit; font-size: 12px; font-weight: 700;
   cursor: pointer; box-shadow: 0 8px 16px rgba(59,130,246,.25);
   transition: transform .2s ease, box-shadow .2s ease;
@@ -910,7 +875,7 @@ body {
 }
 .pf-contact-quick-success-icon {
   width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
-  background: rgba(59,130,246,.1); color: var(--pf-accent);
+  background: rgba(59,130,246,.1); color: #3B82F6;
   display: flex; align-items: center; justify-content: center;
 }
 .pf-contact-quick-success-icon svg { width: 21px; height: 21px; }
@@ -919,7 +884,7 @@ body {
   animation: pf-check-draw .4s .1s ease forwards;
 }
 .pf-contact-quick-success p {
-  font-size: 12.5px; line-height: 1.6; color: var(--pf-text-tertiary); margin: 0; max-width: 230px;
+  font-size: 12.5px; line-height: 1.6; color: #4B5563; margin: 0; max-width: 230px;
 }
 @keyframes pf-quick-success-in {
   0% { opacity: 0; transform: scale(.9) translateY(6px); }
@@ -941,7 +906,7 @@ body {
 .pf-about-banner { padding: 0; overflow: hidden; }
 .pf-banner-strip {
   position: relative; height: 120px; overflow: hidden;
-  background: linear-gradient(135deg, var(--pf-accent) 0%, var(--pf-accent-hover) 55%, var(--pf-accent-deep) 100%);
+  background: linear-gradient(135deg, #3B82F6 0%, #2f6fe0 55%, #1d4ed8 100%);
   background-size: 220% 220%; background-position: 0% 50%;
   transition: background-position .6s ease;
 }
@@ -956,35 +921,35 @@ body {
 .pf-banner-blob-a { width: 160px; height: 160px; right: -40px; top: -70px; }
 .pf-banner-blob-b { width: 110px; height: 110px; right: 90px; bottom: -60px; background: rgba(255,255,255,.1); }
 .pf-banner-content { padding: 24px 28px 28px; display: flex; flex-direction: column; gap: 14px; }
-.pf-banner-name { font-size: 20px; font-weight: 800; margin: 0; color: var(--pf-text); }
-.pf-banner-role { font-size: 13px; color: var(--pf-text-secondary); margin: 4px 0 0; }
+.pf-banner-name { font-size: 20px; font-weight: 800; margin: 0; color: #111318; }
+.pf-banner-role { font-size: 13px; color: #6B7280; margin: 4px 0 0; }
 .pf-banner-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
 .pf-banner-badge {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 7px 15px; border-radius: 999px;
-  background: rgba(59,130,246,.1); color: var(--pf-accent); font-size: 12px; font-weight: 700;
+  background: rgba(59,130,246,.1); color: #3B82F6; font-size: 12px; font-weight: 700;
   transition: transform .25s ease, background .25s ease;
 }
 .pf-banner-badge:hover { transform: translateY(-2px) scale(1.03); background: rgba(59,130,246,.18); }
-.pf-banner-badge-ghost { background: var(--pf-surface); border: 1px solid rgba(var(--pf-border-rgb),.45); color: var(--pf-text); }
-.pf-banner-badge-ghost svg { width: 14px; height: 14px; color: var(--pf-accent); }
-.pf-banner-lead { font-size: 14.5px; line-height: 1.75; color: var(--pf-text); margin: 6px 0 0; max-width: 900px; }
+.pf-banner-badge-ghost { background: #fff; border: 1px solid rgba(199,199,199,.45); color: #111318; }
+.pf-banner-badge-ghost svg { width: 14px; height: 14px; color: #3B82F6; }
+.pf-banner-lead { font-size: 14.5px; line-height: 1.75; color: #111318; margin: 6px 0 0; max-width: 900px; }
 
 /* Quick facts — one inline strip inside the banner, not separate stat cards */
 .pf-banner-facts {
   display: flex; flex-wrap: wrap; align-items: center; gap: 20px;
-  margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(var(--pf-border-rgb),.35);
+  margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(199,199,199,.35);
 }
-.pf-banner-fact-divider { width: 1px; height: 28px; background: rgba(var(--pf-border-rgb),.45); }
+.pf-banner-fact-divider { width: 1px; height: 28px; background: rgba(199,199,199,.45); }
 .pf-banner-fact { display: inline-flex; align-items: center; gap: 10px; }
 .pf-banner-fact-icon {
-  width: 32px; height: 32px; border-radius: 7px; background: rgba(59,130,246,.1);
-  color: var(--pf-accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 32px; height: 32px; border-radius: 10px; background: rgba(59,130,246,.1);
+  color: #3B82F6; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 .pf-banner-fact-icon svg { width: 16px; height: 16px; }
 .pf-banner-fact-text { display: flex; flex-direction: column; line-height: 1.3; gap: 1px; }
-.pf-banner-fact-text strong { font-size: 13px; font-weight: 800; color: var(--pf-text); }
-.pf-banner-fact-text em { font-style: normal; font-size: 10.5px; color: var(--pf-text-muted); }
+.pf-banner-fact-text strong { font-size: 13px; font-weight: 800; color: #111318; }
+.pf-banner-fact-text em { font-style: normal; font-size: 10.5px; color: #8A8F98; }
 
 
 /* Career timeline — a taller, richer growth chart paired beside Experience. */
@@ -996,16 +961,16 @@ body {
 .pf-timeline-growth {
   display: inline-flex; align-items: center; gap: 6px; margin-bottom: 14px;
   padding: 6px 12px; border-radius: 999px; background: rgba(59,130,246,.08);
-  font-size: 10.5px; font-weight: 800; color: var(--pf-accent); text-transform: uppercase; letter-spacing: .05em;
+  font-size: 10.5px; font-weight: 800; color: #3B82F6; text-transform: uppercase; letter-spacing: .05em;
 }
 .pf-timeline-growth svg { width: 13px; height: 13px; }
 .pf-timeline-svg { width: 100%; max-width: 100%; height: auto; display: block; aspect-ratio: 460 / 320; overflow: hidden; }
 .pf-timeline-area { fill: rgba(59,130,246,.08); opacity: 0; animation: pf-fade-up .8s .5s ease forwards; }
 .pf-timeline-guide { stroke: rgba(17,19,24,.08); stroke-width: 1; }
-.pf-timeline-baseline { stroke: var(--pf-border); stroke-width: 1; }
+.pf-timeline-baseline { stroke: #C7C7C7; stroke-width: 1; }
 .pf-timeline-hgrid { stroke: rgba(17,19,24,.07); stroke-width: 1; stroke-dasharray: 4 4; }
 .pf-timeline-line {
-  fill: none; stroke: var(--pf-accent); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
+  fill: none; stroke: #3B82F6; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
   animation: pf-timeline-draw 1.2s .35s cubic-bezier(.4,0,.2,1) forwards;
 }
 @keyframes pf-timeline-draw { to { stroke-dashoffset: 0; } }
@@ -1014,19 +979,19 @@ body {
   cursor: pointer; transition: transform .2s ease; outline: none;
 }
 .pf-timeline-point:hover, .pf-timeline-point.is-active { transform: scale(1.14); }
-.pf-timeline-point:focus-visible .pf-timeline-dot { outline: 2px solid var(--pf-accent); outline-offset: 3px; border-radius: 50%; }
-.pf-timeline-dot { fill: var(--pf-accent); stroke: #ECF1F4; stroke-width: 3.5; transition: r .2s ease, filter .2s ease; }
+.pf-timeline-point:focus-visible .pf-timeline-dot { outline: 2px solid #3B82F6; outline-offset: 3px; border-radius: 50%; }
+.pf-timeline-dot { fill: #3B82F6; stroke: #ECF1F4; stroke-width: 3.5; transition: r .2s ease, filter .2s ease; }
 .pf-timeline-point.is-current .pf-timeline-dot { filter: drop-shadow(0 2px 3px rgba(59,130,246,.4)); }
 .pf-timeline-point:hover .pf-timeline-dot, .pf-timeline-point.is-active .pf-timeline-dot { filter: brightness(1.1); }
 .pf-timeline-point.is-current .pf-timeline-ring {
-  fill: none; stroke: var(--pf-accent); stroke-width: 1.5; opacity: .55;
+  fill: none; stroke: #3B82F6; stroke-width: 1.5; opacity: .55;
   animation: pf-timeline-pulse 2.2s ease-out infinite;
   transform-box: fill-box; transform-origin: center;
 }
 @keyframes pf-timeline-pulse { 0% { transform: scale(1); opacity: .5; } 100% { transform: scale(1.9); opacity: 0; } }
 @keyframes pf-pop-in { from { opacity: 0; transform: scale(.5); } to { opacity: 1; transform: scale(1); } }
 .pf-timeline-role { font-size: 12.5px; font-weight: 800; fill: #111318; }
-.pf-timeline-year { font-size: 11px; font-weight: 700; fill: var(--pf-text-muted); letter-spacing: .03em; }
+.pf-timeline-year { font-size: 11px; font-weight: 700; fill: #8A8F98; letter-spacing: .03em; }
 
 /* Pop-up info card for the active timeline point — positioned via % of the
    SVG's own viewBox, so it tracks the point at any responsive width. Clear
@@ -1034,7 +999,7 @@ body {
    (divider-separated) → description. */
 .pf-timeline-tooltip {
   position: absolute; z-index: 5; width: 280px; max-width: calc(100% - 16px);
-  background: var(--pf-surface); border: 1px solid rgba(var(--pf-border-rgb),.5); border-radius: 10px;
+  background: #fff; border: 1px solid rgba(199,199,199,.5); border-radius: 16px;
   box-shadow: 0 20px 40px rgba(122,122,122,.26); padding: 18px 20px;
   pointer-events: none; transform: translate(-50%, calc(-100% - 18px));
   animation: pf-tooltip-in .16s ease both;
@@ -1046,37 +1011,37 @@ body {
 .pf-timeline-tooltip.align-end { transform: translate(-100%, calc(-100% - 18px)); }
 .pf-timeline-tooltip.align-end.is-below { transform: translate(-100%, 18px); }
 .pf-timeline-tooltip-eyebrow {
-  font-size: 10.5px; font-weight: 800; color: var(--pf-accent); letter-spacing: .08em; text-transform: uppercase; margin: 0;
+  font-size: 10.5px; font-weight: 800; color: #3B82F6; letter-spacing: .08em; text-transform: uppercase; margin: 0;
 }
-.pf-timeline-tooltip h4 { font-size: 16.5px; font-weight: 800; margin: 0; color: var(--pf-text); line-height: 1.3; }
+.pf-timeline-tooltip h4 { font-size: 16.5px; font-weight: 800; margin: 0; color: #111318; line-height: 1.3; }
 .pf-timeline-tooltip-meta {
-  font-size: 12px; font-weight: 600; color: var(--pf-text-secondary); margin: 2px 0 10px;
-  padding-bottom: 10px; border-bottom: 1px solid rgba(var(--pf-border-rgb),.35);
+  font-size: 12px; font-weight: 600; color: #6B7280; margin: 2px 0 10px;
+  padding-bottom: 10px; border-bottom: 1px solid rgba(199,199,199,.35);
 }
-.pf-timeline-tooltip-text { font-size: 12.5px; line-height: 1.7; color: var(--pf-text-tertiary); margin: 0; }
+.pf-timeline-tooltip-text { font-size: 12.5px; line-height: 1.7; color: #4B5563; margin: 0; }
 @keyframes pf-tooltip-in { from { opacity: 0; } to { opacity: 1; } }
 
 /* "How I Approach Design" — ONE card: Purpose and Intention sit side by
    side inside it, joined by a single connecting line down the middle. */
 .pf-approach-section { display: flex; flex-direction: column; gap: 20px; }
 .pf-approach-split { display: grid; grid-template-columns: 1fr auto 1fr; gap: 28px; align-items: stretch; margin-top: 2px; }
-.pf-approach-connector { width: 1px; align-self: stretch; background: rgba(var(--pf-border-rgb),.5); }
+.pf-approach-connector { width: 1px; align-self: stretch; background: rgba(199,199,199,.5); }
 .pf-approach-half {
   position: relative; display: flex; flex-direction: column; gap: 16px;
   opacity: 0; animation: pf-fade-up .5s ease forwards;
 }
-.pf-approach-half h3 { font-size: 18px; font-weight: 800; margin: 0; color: var(--pf-text); }
-.pf-approach-desc { font-size: 13px; line-height: 1.75; color: var(--pf-text-tertiary); margin: 0; }
-.pf-approach-items { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; padding-top: 16px; border-top: 1px solid rgba(var(--pf-border-rgb),.35); }
+.pf-approach-half h3 { font-size: 18px; font-weight: 800; margin: 0; color: #111318; }
+.pf-approach-desc { font-size: 13px; line-height: 1.75; color: #4B5563; margin: 0; }
+.pf-approach-items { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; padding-top: 16px; border-top: 1px solid rgba(199,199,199,.35); }
 .pf-approach-item { display: flex; gap: 10px; align-items: baseline; }
-.pf-approach-item-label { flex-shrink: 0; font-size: 12px; font-weight: 800; color: var(--pf-accent); min-width: 78px; }
-.pf-approach-item-text { font-size: 12.5px; line-height: 1.6; color: var(--pf-text-tertiary); }
+.pf-approach-item-label { flex-shrink: 0; font-size: 12px; font-weight: 800; color: #3B82F6; min-width: 78px; }
+.pf-approach-item-text { font-size: 12.5px; line-height: 1.6; color: #4B5563; }
 
 /* Looping animated visual above each half — a pen "writing" a line for
    Purpose, blocks stacking up for Intention. Purely decorative (aria-hidden). */
 .pf-approach-visual {
-  position: relative; width: 100%; height: 104px; border-radius: 10px; overflow: hidden;
-  background: linear-gradient(135deg, var(--pf-accent) 0%, var(--pf-accent-hover) 100%);
+  position: relative; width: 100%; height: 104px; border-radius: 16px; overflow: hidden;
+  background: linear-gradient(135deg, #3B82F6 0%, #2f6fe0 100%);
   display: flex; align-items: center; justify-content: center;
 }
 .pf-approach-pen-svg { width: 80%; height: 62%; overflow: visible; }
@@ -1101,7 +1066,7 @@ body {
    stroke draws, with rotate="auto" so it always points along the direction
    of travel — it traces the exact cursive line instead of a straight sweep. */
 .pf-approach-pen-nib { fill: #fff; opacity: 0; animation: pf-pen-fade 5.5s ease-in-out infinite; }
-.pf-approach-pen-nib-slit { fill: var(--pf-accent); opacity: .9; }
+.pf-approach-pen-nib-slit { fill: #3B82F6; opacity: .9; }
 @keyframes pf-pen-fade {
   0% { opacity: 0; }
   8% { opacity: 1; }
@@ -1115,7 +1080,7 @@ body {
   display: flex; flex-direction: column-reverse; align-items: center; gap: 6px;
 }
 .pf-approach-block {
-  height: 14px; border-radius: 3px; background: rgba(255,255,255,.92);
+  height: 14px; border-radius: 4px; background: rgba(255,255,255,.92);
   opacity: 0; transform: translateY(18px) scale(.85);
   animation: pf-block-rise 3.2s ease-in-out infinite;
 }
@@ -1137,47 +1102,47 @@ body {
 .pf-cert-slider { display: flex; align-items: center; gap: 16px; flex: 1; }
 .pf-cert-arrow {
   flex-shrink: 0; width: 38px; height: 38px; border-radius: 50%;
-  border: 1px solid rgba(var(--pf-border-rgb),.5); background: var(--pf-surface); color: var(--pf-text);
+  border: 1px solid rgba(199,199,199,.5); background: #fff; color: #111318;
   display: flex; align-items: center; justify-content: center; cursor: pointer;
   transition: transform .2s ease, border-color .2s ease, color .2s ease, background .2s ease;
 }
 .pf-cert-arrow svg { width: 16px; height: 16px; }
-.pf-cert-arrow:hover { border-color: var(--pf-accent); color: var(--pf-accent); transform: translateY(-2px); }
+.pf-cert-arrow:hover { border-color: #3B82F6; color: #3B82F6; transform: translateY(-2px); }
 .pf-cert-arrow:active { transform: translateY(0) scale(.95); }
 .pf-cert-slide {
   flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 8px;
-  text-align: center; padding: 22px 20px; border-radius: 9px; border: 1px solid rgba(var(--pf-border-rgb),.4);
+  text-align: center; padding: 22px 20px; border-radius: 14px; border: 1px solid rgba(199,199,199,.4);
   animation: pf-fade-up .35s ease both;
 }
 .pf-cert-slide-image {
-  width: 100%; max-width: 460px; border-radius: 7px; overflow: hidden;
-  border: 1px solid rgba(var(--pf-border-rgb),.4); background: var(--pf-surface); margin-bottom: 4px;
+  width: 100%; max-width: 460px; border-radius: 10px; overflow: hidden;
+  border: 1px solid rgba(199,199,199,.4); background: #fff; margin-bottom: 4px;
 }
 .pf-cert-slide-image img { width: 100%; height: auto; display: block; }
-.pf-cert-slide-title { font-size: 14px; font-weight: 800; color: var(--pf-text); }
-.pf-cert-slide-issuer { font-size: 12px; color: var(--pf-text-secondary); }
-.pf-cert-slide-meta { font-size: 11px; color: var(--pf-text-muted); }
+.pf-cert-slide-title { font-size: 14px; font-weight: 800; color: #111318; }
+.pf-cert-slide-issuer { font-size: 12px; color: #6B7280; }
+.pf-cert-slide-meta { font-size: 11px; color: #8A8F98; }
 .pf-cert-bullets { display: flex; align-items: center; justify-content: center; gap: 9px; }
 .pf-cert-bullet {
   width: 8px; height: 8px; border-radius: 50%; padding: 0; border: none; cursor: pointer;
-  background: rgba(var(--pf-border-rgb),.6); transition: transform .2s ease, background .2s ease, width .2s ease;
+  background: rgba(199,199,199,.6); transition: transform .2s ease, background .2s ease, width .2s ease;
 }
 .pf-cert-bullet:hover { background: rgba(59,130,246,.5); }
-.pf-cert-bullet.active { background: var(--pf-accent); width: 22px; border-radius: 999px; }
+.pf-cert-bullet.active { background: #3B82F6; width: 22px; border-radius: 999px; }
 
 /* Outside the Work — an auto-rotating 3-card carousel. The active card sits
    centered and scaled up; the other two peek from the sides and can be
    clicked to jump straight to them. */
 .pf-outside-section { display: flex; flex-direction: column; gap: 20px; }
 .pf-outside-carousel {
-  position: relative; height: 480px; overflow: hidden; border-radius: 8px;
+  position: relative; height: 480px; overflow: hidden; border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
 }
 .pf-outside-card-item {
   position: absolute; top: 50%; left: 50%; width: 480px; min-height: 420px;
   padding: 20px; display: flex; flex-direction: column; align-items: flex-start; gap: 18px;
   text-align: left; font-family: inherit; cursor: pointer;
-  background: var(--pf-surface); border: 1px solid rgba(var(--pf-border-rgb),.45); border-radius: 12px;
+  background: #fff; border: 1px solid rgba(199,199,199,.45); border-radius: 20px;
   box-shadow: 0 6px 13px rgba(122,122,122,.10);
   transition: transform .6s cubic-bezier(.4,0,.2,1), opacity .6s ease, box-shadow .3s ease;
 }
@@ -1194,23 +1159,23 @@ body {
   opacity: .55; z-index: 1;
 }
 .pf-outside-card-item.is-left:hover, .pf-outside-card-item.is-right:hover { opacity: .85; }
-.pf-outside-card-item:focus-visible { outline: 2px solid var(--pf-accent); outline-offset: 4px; }
+.pf-outside-card-item:focus-visible { outline: 2px solid #3B82F6; outline-offset: 4px; }
 .pf-outside-card-image {
-  width: 100%; height: 250px; border-radius: 10px; overflow: hidden; flex-shrink: 0;
-  background: var(--pf-surface-alt); display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 250px; border-radius: 16px; overflow: hidden; flex-shrink: 0;
+  background: #DADFE3; display: flex; align-items: center; justify-content: center;
   transition: background .3s ease;
 }
 .pf-outside-card-image img, .pf-outside-card-image video { width: 100%; height: 100%; object-fit: cover; display: block; }
-.pf-outside-card-image span { font-size: 11px; font-weight: 700; color: var(--pf-text-secondary); letter-spacing: .02em; }
-.pf-outside-card-item:hover .pf-outside-card-image { background: var(--pf-surface-alt-hover); }
+.pf-outside-card-image span { font-size: 11px; font-weight: 700; color: #6B7280; letter-spacing: .02em; }
+.pf-outside-card-item:hover .pf-outside-card-image { background: #CDD5DB; }
 .pf-outside-card-item-body { display: flex; align-items: center; gap: 8px; }
 .pf-outside-icon {
-  width: 30px; height: 30px; border-radius: 6px; background: rgba(59,130,246,.1);
-  color: var(--pf-accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 30px; height: 30px; border-radius: 9px; background: rgba(59,130,246,.1);
+  color: #3B82F6; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 .pf-outside-icon svg { width: 15px; height: 15px; }
-.pf-outside-card-item h4 { font-size: 14px; font-weight: 800; margin: 0; color: var(--pf-text); }
-.pf-outside-card-item p { font-size: 12px; line-height: 1.55; color: var(--pf-text-secondary); margin: 0; }
+.pf-outside-card-item h4 { font-size: 14px; font-weight: 800; margin: 0; color: #111318; }
+.pf-outside-card-item p { font-size: 12px; line-height: 1.55; color: #6B7280; margin: 0; }
 
 
 /* ---------- Responsive: small desktop / tablet landscape ---------- */
@@ -1269,15 +1234,19 @@ body {
   .pf-spacer { display: none; }
   .pf-cv-wrap-pinned { display: none; }
   .pf-footer { display: none; }
-  /* Dropdown sits in normal document flow (after the photo/socials block,
-     where it appears in the markup) instead of floating absolutely over
-     the page. That way opening it grows the sidebar's own height, which
-     pushes the hero/main content below down instead of the dropdown
-     overlapping it with no breathing room. */
+  /* Floating dropdown: positioned absolutely against the sidebar's own
+     box, so opening it never pushes the page content below — it just
+     overlays on top of whatever is already there. Anchored right under
+     the hamburger button itself (padding-top + button height + a small
+     gap) rather than the bottom of the whole header, so it doesn't drop
+     all the way past the photo/name/socials block. */
   .pf-nav {
-    position: static;
+    position: absolute;
+    top: 68px;
+    left: 0;
+    right: 0;
     display: none;
-    width: 100%;
+    width: auto;
     flex-direction: column;
     z-index: 40;
   }
@@ -1285,15 +1254,15 @@ body {
     display: flex;
     margin-top: 8px;
     padding: 10px;
-    background: var(--pf-surface);
-    border: 1px solid rgba(var(--pf-border-rgb),.45);
-    border-radius: 10px;
+    background: #fff;
+    border: 1px solid rgba(199,199,199,.45);
+    border-radius: 16px;
     box-shadow: 0 16px 34px rgba(17,19,24,.2);
     animation: pf-nav-in .22s ease;
   }
   .pf-nav.open .pf-nav-item { width: 100%; }
   .pf-nav-cv-divider {
-    display: block; height: 1px; background: rgba(var(--pf-border-rgb),.5); margin: 10px 4px;
+    display: block; height: 1px; background: rgba(199,199,199,.5); margin: 10px 4px;
   }
   .pf-cv-wrap-inline { display: block; width: 100%; }
   .pf-footer-mobile { display: block; }
@@ -1353,7 +1322,7 @@ body {
   .pf-outside-card-item.is-left { transform: translate(-50%, -50%) translateX(-320px) scale(.78); }
   .pf-outside-card-item.is-right { transform: translate(-50%, -50%) translateX(320px) scale(.78); }
   .pf-sidebar { padding: 14px 16px; row-gap: 12px; }
-  .pf-theme-toggle { top: 14px; right: 16px; }
+  .pf-nav { top: 62px; }
   .pf-envelope-shell { height: 585px; }
   .pf-envelope-frame { height: 170px; }
   .pf-envelope-content { top: 170px; }
@@ -1546,17 +1515,6 @@ const Icon = {
   Close: (p) => (
     <svg viewBox="0 0 24 24" fill="none" {...p}>
       <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  ),
-  Sun: (p) => (
-    <svg viewBox="0 0 24 24" fill="none" {...p}>
-      <circle cx="12" cy="12" r="4.2" stroke="currentColor" strokeWidth="1.7" />
-      <path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-    </svg>
-  ),
-  Moon: (p) => (
-    <svg viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="M20 13.8A8.3 8.3 0 1 1 10.2 4a6.6 6.6 0 0 0 9.8 9.8Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
     </svg>
   ),
   Star: ({ filled, ...p }) => (
@@ -1943,7 +1901,7 @@ const sectionContent = {
         <span style={{ color: "#3B82F6" }}>intention</span>.
       </>
     ),
-    body: "I solve user problems through thoughtful design, bridging design and development to create practical, buildable experiences.",
+    body: "I solve usert  problems through thoughtful design, bridging design and development to create practical, buildable experiences.",
   },
   projects: {
     heading: "Projects",
@@ -2197,31 +2155,6 @@ function Sidebar({ activeKey = "home", onNavigate, onOpenContact, contactOpen = 
   // or hide the nav dropdown, keeping the mobile header clean by default.
   const [navOpen, setNavOpen] = React.useState(false);
 
-  // Dark mode: read any saved choice (falling back to the OS preference) on
-  // first mount, then keep <html data-theme> and localStorage in sync with
-  // it. The CSS variables that actually repaint the page live on :root, see
-  // the ":root[data-theme=\"dark\"]" block in GLOBAL_CSS.
-  const [theme, setTheme] = React.useState(() => {
-    if (typeof window === "undefined") return "light";
-    const saved = window.localStorage.getItem("pf-theme");
-    if (saved === "light" || saved === "dark") return saved;
-    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
-  });
-
-  React.useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    try {
-      window.localStorage.setItem("pf-theme", theme);
-    } catch (e) {
-      // Private browsing / storage disabled — theme still applies for this
-      // visit, it just won't be remembered next time.
-    }
-  }, [theme]);
-
-  const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
-
   // Every nav item navigates to its own page except Contact, which instead
   // opens the envelope as a modal over whatever page is already showing.
   const handleNav = (key) => {
@@ -2245,14 +2178,6 @@ function Sidebar({ activeKey = "home", onNavigate, onOpenContact, contactOpen = 
         onClick={() => setNavOpen((o) => !o)}
       >
         {navOpen ? <Icon.Close /> : <Icon.Menu />}
-      </button>
-
-      <button
-        className="pf-theme-toggle"
-        aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-        onClick={toggleTheme}
-      >
-        {theme === "dark" ? <Icon.Sun /> : <Icon.Moon />}
       </button>
 
       <div className="pf-photo-block">
