@@ -150,7 +150,7 @@ body {
 .pf-nav { width: 100%; display: flex; flex-direction: column; gap: 10px; }
 .pf-nav-item {
   display: flex; align-items: center; gap: 12px; width: 100%;
-  padding: 10px 12px; border-radius: 10px;
+  padding: 10px 12px; border-radius: 7px;
   border: 1px solid transparent; background: transparent;
   color: #8A8F98; cursor: pointer; text-align: left;
   font-family: inherit; font-size: 14px; font-weight: 500;
@@ -164,7 +164,7 @@ body {
 /* Mobile-only nav toggle — hidden on desktop/tablet by default */
 .pf-hamburger {
   display: none;
-  width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+  width: 40px; height: 40px; border-radius: 8px; flex-shrink: 0;
   border: 1px solid rgba(199,199,199,.45); background: #fff; color: #111318;
   align-items: center; justify-content: center; cursor: pointer;
   transition: background .25s ease, color .25s ease, transform .2s ease;
@@ -245,7 +245,7 @@ body {
 .pf-hero-divider { height: 1px; background: rgba(199,199,199,.5); margin-top: 22px; }
 
 .pf-card {
-  background: #fff; border: 1px solid rgba(199,199,199,.45); border-radius: 20px;
+  background: #fff; border: 1px solid rgba(199,199,199,.45); border-radius: 12px;
   box-shadow: 0 6px 13px rgba(122,122,122,.10); padding: 20px;
   transition: transform .3s ease, box-shadow .3s ease;
 }
@@ -268,11 +268,11 @@ body {
 
 .pf-tool-chip {
   display: flex; align-items: center; gap: 10px; flex: 0 0 auto;
-  padding: 10px 16px; border-radius: 14px;
+  padding: 10px 16px; border-radius: 9px;
   border: 1px solid rgba(199,199,199,.45); background: #fff;
   transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
-.pf-tool-chip svg { width: 28px; height: 28px; flex-shrink: 0; border-radius: 7px; }
+.pf-tool-chip svg { width: 28px; height: 28px; flex-shrink: 0; border-radius: 5px; }
 .pf-tool-chip span { font-size: 14px; font-weight: 600; white-space: nowrap; }
 .pf-tool-chip:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 10px 18px rgba(122,122,122,.18); border-color: #3B82F6; }
 
@@ -299,7 +299,7 @@ body {
 .stage-closed .pf-envelope-body:focus-visible .pf-envelope-shell { outline: 2px solid #3B82F6; outline-offset: 4px; }
 
 .pf-envelope-shell {
-  position: relative; height: 630px; border-radius: 22px; overflow: hidden;
+  position: relative; height: 630px; border-radius: 14px; overflow: hidden;
   background: linear-gradient(170deg, #3B82F6 0%, #2f6fe0 100%);
   box-shadow: 0 14px 30px rgba(59,130,246,.14), 0 4px 10px rgba(122,122,122,.08);
   transition: transform .3s ease, box-shadow .3s ease;
@@ -412,7 +412,7 @@ body {
 .pf-letter-field span { font-size: 13px; font-weight: 700; color: #6B7280; }
 .pf-letter-field input, .pf-letter-field textarea {
   font-family: inherit; font-size: 15px; color: #111318;
-  border: 1px solid rgba(199,199,199,.5); border-radius: 12px;
+  border: 1px solid rgba(199,199,199,.5); border-radius: 8px;
   padding: 11px 14px; background: #fff; resize: vertical;
   transition: border-color .2s ease, box-shadow .2s ease;
 }
@@ -453,7 +453,7 @@ body {
 .pf-contact-confirm {
   width: 100%; max-width: 640px; margin: 0 auto; display: flex; flex-direction: column;
   align-items: center; text-align: center; gap: 12px; padding: 52px 32px;
-  background: #fff; border: 1px solid rgba(199,199,199,.45); border-radius: 20px;
+  background: #fff; border: 1px solid rgba(199,199,199,.45); border-radius: 12px;
   box-shadow: 0 6px 13px rgba(122,122,122,.10);
   animation: pf-fade-up .45s ease both;
 }
@@ -535,7 +535,7 @@ body {
   background: none; border: none; padding: 0; cursor: pointer; font-family: inherit;
   opacity: 0; animation: pf-fade-up .5s ease forwards;
 }
-.pf-tool-card:focus-visible { outline: 2px solid #3B82F6; outline-offset: 4px; border-radius: 16px; }
+.pf-tool-card:focus-visible { outline: 2px solid #3B82F6; outline-offset: 4px; border-radius: 10px; }
 
 @keyframes pf-fade-up {
   from { opacity: 0; transform: translateY(14px); }
@@ -550,7 +550,7 @@ body {
 .pf-tool-card.flipped .pf-tool-card-inner { transform: rotateY(180deg); }
 
 .pf-tool-card-face {
-  position: absolute; inset: 0; backface-visibility: hidden; border-radius: 16px;
+  position: absolute; inset: 0; backface-visibility: hidden; border-radius: 10px;
   border: 1px solid rgba(199,199,199,.45); background: #fff;
   box-shadow: 0 6px 13px rgba(122,122,122,.10);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -560,7 +560,7 @@ body {
 .pf-tool-card:hover:not(.flipped) .pf-tool-card-front { transform: translateY(-4px); box-shadow: 0 14px 26px rgba(122,122,122,.18); }
 
 .pf-tool-card-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; transition: transform .3s ease; }
-.pf-tool-card-icon svg, .pf-tool-card-icon img { width: 100%; height: 100%; object-fit: contain; border-radius: 9px; }
+.pf-tool-card-icon svg, .pf-tool-card-icon img { width: 100%; height: 100%; object-fit: contain; border-radius: 6px; }
 .pf-tool-card:hover:not(.flipped) .pf-tool-card-icon { transform: scale(1.12) rotate(-6deg); }
 
 .pf-tool-card-front h3 { font-size: 15px; font-weight: 700; margin: 0; }
@@ -612,7 +612,7 @@ body {
 .pf-widget { display: flex; flex-direction: column; gap: 14px; }
 .pf-widget-header { display: flex; align-items: center; gap: 10px; }
 .pf-widget-badge {
-  width: 32px; height: 32px; border-radius: 9px; background: #3B82F6;
+  width: 32px; height: 32px; border-radius: 6px; background: #3B82F6;
   display: flex; align-items: center; justify-content: center; color: #fff;
   flex-shrink: 0; transition: transform .3s ease;
 }
@@ -627,7 +627,7 @@ body {
 .pf-widget-desc { font-size: 12px; color: #6B7280; line-height: 1.6; margin: 0; }
 
 .pf-placeholder {
-  height: 100%; width: 100%; background: #DADFE3; border-radius: 12px;
+  height: 100%; width: 100%; background: #DADFE3; border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
   transition: background .3s ease;
 }
@@ -639,7 +639,7 @@ body {
    over the media instead of a second, competing block of text. */
 .pf-widget-media { position: relative; display: flex; flex-direction: column; gap: 14px; flex: 1; }
 .pf-widget-media-overlay {
-  position: absolute; inset: 0; z-index: 3; border-radius: 12px;
+  position: absolute; inset: 0; z-index: 3; border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
   background: rgba(17,19,24,0); opacity: 0; pointer-events: none;
   transition: opacity .25s ease, background-color .25s ease;
@@ -667,7 +667,7 @@ body {
    piece, with a hairline gap between tiles standing in for a seam. */
 .pf-widget-cert-strip {
   height: 130px; display: flex; gap: 3px;
-  border-radius: 14px; overflow: hidden;
+  border-radius: 9px; overflow: hidden;
   box-shadow: 0 10px 22px rgba(17,19,24,.16);
 }
 .pf-widget-cert-thumb {
@@ -705,7 +705,7 @@ body {
    on top of it rather than above a separate strip of thumbnails. */
 .pf-about-mini {
   position: relative; width: 100%; height: 100%;
-  border-radius: 20px; overflow: hidden;
+  border-radius: 12px; overflow: hidden;
   border: none; padding: 0; cursor: pointer; font-family: inherit; text-align: left;
   background: #111318;
   box-shadow: 0 6px 13px rgba(122,122,122,.10);
@@ -727,7 +727,7 @@ body {
 }
 .pf-about-mini-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
 .pf-about-mini-icon {
-  width: 28px; height: 28px; border-radius: 8px; background: rgba(255,255,255,.2);
+  width: 28px; height: 28px; border-radius: 6px; background: rgba(255,255,255,.2);
   display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0;
 }
 .pf-about-mini-icon svg { width: 16px; height: 16px; }
@@ -759,7 +759,7 @@ body {
    the width keeps the envelope's height predictable everywhere. */
 .pf-contact-mini {
   position: relative; width: min(100%, 300px); aspect-ratio: 8 / 5; flex-shrink: 0;
-  border-radius: 20px; overflow: hidden;
+  border-radius: 12px; overflow: hidden;
   border: none; padding: 0; cursor: pointer; font-family: inherit;
   background: linear-gradient(170deg, #3B82F6 0%, #2f6fe0 100%);
   box-shadow: 0 6px 13px rgba(59,130,246,.18);
@@ -798,7 +798,7 @@ body {
 .pf-contact-mini-tooltip {
   position: absolute; top: 11px; right: 34px; z-index: 2;
   background: #111318; color: #fff; font-size: 12px; font-weight: 700;
-  padding: 7px 14px; border-radius: 8px; white-space: nowrap;
+  padding: 7px 14px; border-radius: 6px; white-space: nowrap;
   box-shadow: 0 8px 16px rgba(17,19,24,.25);
   opacity: 0; transform: translateX(8px); pointer-events: none;
   transition: opacity .25s ease, transform .25s ease;
@@ -835,14 +835,14 @@ body {
   /* Plain white card — the same background/border/shadow every other card
      on this page uses (.pf-card, .pf-widget-cert-strip's own tiles, etc.),
      not a one-off gradient treatment. */
-  background: #fff; border: 1px solid rgba(199,199,199,.45); border-radius: 16px;
+  background: #fff; border: 1px solid rgba(199,199,199,.45); border-radius: 10px;
   padding: 16px 18px; box-shadow: 0 6px 13px rgba(122,122,122,.10);
 }
 /* Same solid-blue icon-badge already used for every widget's own header
    icon (.pf-widget-badge — PROJECTS, CERTIFICATIONS, etc.), reused here
    rather than inventing a different treatment for this one icon. */
 .pf-contact-quick-icon {
-  width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
+  width: 32px; height: 32px; border-radius: 6px; flex-shrink: 0;
   background: #3B82F6; color: #fff;
   display: flex; align-items: center; justify-content: center;
 }
@@ -943,7 +943,7 @@ body {
 .pf-banner-fact-divider { width: 1px; height: 28px; background: rgba(199,199,199,.45); }
 .pf-banner-fact { display: inline-flex; align-items: center; gap: 10px; }
 .pf-banner-fact-icon {
-  width: 32px; height: 32px; border-radius: 10px; background: rgba(59,130,246,.1);
+  width: 32px; height: 32px; border-radius: 7px; background: rgba(59,130,246,.1);
   color: #3B82F6; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 .pf-banner-fact-icon svg { width: 16px; height: 16px; }
@@ -999,7 +999,7 @@ body {
    (divider-separated) → description. */
 .pf-timeline-tooltip {
   position: absolute; z-index: 5; width: 280px; max-width: calc(100% - 16px);
-  background: #fff; border: 1px solid rgba(199,199,199,.5); border-radius: 16px;
+  background: #fff; border: 1px solid rgba(199,199,199,.5); border-radius: 10px;
   box-shadow: 0 20px 40px rgba(122,122,122,.26); padding: 18px 20px;
   pointer-events: none; transform: translate(-50%, calc(-100% - 18px));
   animation: pf-tooltip-in .16s ease both;
@@ -1040,7 +1040,7 @@ body {
 /* Looping animated visual above each half — a pen "writing" a line for
    Purpose, blocks stacking up for Intention. Purely decorative (aria-hidden). */
 .pf-approach-visual {
-  position: relative; width: 100%; height: 104px; border-radius: 16px; overflow: hidden;
+  position: relative; width: 100%; height: 104px; border-radius: 10px; overflow: hidden;
   background: linear-gradient(135deg, #3B82F6 0%, #2f6fe0 100%);
   display: flex; align-items: center; justify-content: center;
 }
@@ -1080,7 +1080,7 @@ body {
   display: flex; flex-direction: column-reverse; align-items: center; gap: 6px;
 }
 .pf-approach-block {
-  height: 14px; border-radius: 4px; background: rgba(255,255,255,.92);
+  height: 14px; border-radius: 3px; background: rgba(255,255,255,.92);
   opacity: 0; transform: translateY(18px) scale(.85);
   animation: pf-block-rise 3.2s ease-in-out infinite;
 }
@@ -1111,11 +1111,11 @@ body {
 .pf-cert-arrow:active { transform: translateY(0) scale(.95); }
 .pf-cert-slide {
   flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 8px;
-  text-align: center; padding: 22px 20px; border-radius: 14px; border: 1px solid rgba(199,199,199,.4);
+  text-align: center; padding: 22px 20px; border-radius: 9px; border: 1px solid rgba(199,199,199,.4);
   animation: pf-fade-up .35s ease both;
 }
 .pf-cert-slide-image {
-  width: 100%; max-width: 460px; border-radius: 10px; overflow: hidden;
+  width: 100%; max-width: 460px; border-radius: 7px; overflow: hidden;
   border: 1px solid rgba(199,199,199,.4); background: #fff; margin-bottom: 4px;
 }
 .pf-cert-slide-image img { width: 100%; height: auto; display: block; }
@@ -1135,14 +1135,14 @@ body {
    clicked to jump straight to them. */
 .pf-outside-section { display: flex; flex-direction: column; gap: 20px; }
 .pf-outside-carousel {
-  position: relative; height: 480px; overflow: hidden; border-radius: 12px;
+  position: relative; height: 480px; overflow: hidden; border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
 }
 .pf-outside-card-item {
   position: absolute; top: 50%; left: 50%; width: 480px; min-height: 420px;
   padding: 20px; display: flex; flex-direction: column; align-items: flex-start; gap: 18px;
   text-align: left; font-family: inherit; cursor: pointer;
-  background: #fff; border: 1px solid rgba(199,199,199,.45); border-radius: 20px;
+  background: #fff; border: 1px solid rgba(199,199,199,.45); border-radius: 12px;
   box-shadow: 0 6px 13px rgba(122,122,122,.10);
   transition: transform .6s cubic-bezier(.4,0,.2,1), opacity .6s ease, box-shadow .3s ease;
 }
@@ -1161,7 +1161,7 @@ body {
 .pf-outside-card-item.is-left:hover, .pf-outside-card-item.is-right:hover { opacity: .85; }
 .pf-outside-card-item:focus-visible { outline: 2px solid #3B82F6; outline-offset: 4px; }
 .pf-outside-card-image {
-  width: 100%; height: 250px; border-radius: 16px; overflow: hidden; flex-shrink: 0;
+  width: 100%; height: 250px; border-radius: 10px; overflow: hidden; flex-shrink: 0;
   background: #DADFE3; display: flex; align-items: center; justify-content: center;
   transition: background .3s ease;
 }
@@ -1170,7 +1170,7 @@ body {
 .pf-outside-card-item:hover .pf-outside-card-image { background: #CDD5DB; }
 .pf-outside-card-item-body { display: flex; align-items: center; gap: 8px; }
 .pf-outside-icon {
-  width: 30px; height: 30px; border-radius: 9px; background: rgba(59,130,246,.1);
+  width: 30px; height: 30px; border-radius: 6px; background: rgba(59,130,246,.1);
   color: #3B82F6; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 .pf-outside-icon svg { width: 15px; height: 15px; }
@@ -1234,19 +1234,15 @@ body {
   .pf-spacer { display: none; }
   .pf-cv-wrap-pinned { display: none; }
   .pf-footer { display: none; }
-  /* Floating dropdown: positioned absolutely against the sidebar's own
-     box, so opening it never pushes the page content below — it just
-     overlays on top of whatever is already there. Anchored right under
-     the hamburger button itself (padding-top + button height + a small
-     gap) rather than the bottom of the whole header, so it doesn't drop
-     all the way past the photo/name/socials block. */
+  /* Dropdown sits in normal document flow (after the photo/socials block,
+     where it appears in the markup) instead of floating absolutely over
+     the page. That way opening it grows the sidebar's own height, which
+     pushes the hero/main content below down instead of the dropdown
+     overlapping it with no breathing room. */
   .pf-nav {
-    position: absolute;
-    top: 68px;
-    left: 0;
-    right: 0;
+    position: static;
     display: none;
-    width: auto;
+    width: 100%;
     flex-direction: column;
     z-index: 40;
   }
@@ -1256,7 +1252,7 @@ body {
     padding: 10px;
     background: #fff;
     border: 1px solid rgba(199,199,199,.45);
-    border-radius: 16px;
+    border-radius: 10px;
     box-shadow: 0 16px 34px rgba(17,19,24,.2);
     animation: pf-nav-in .22s ease;
   }
@@ -1322,7 +1318,6 @@ body {
   .pf-outside-card-item.is-left { transform: translate(-50%, -50%) translateX(-320px) scale(.78); }
   .pf-outside-card-item.is-right { transform: translate(-50%, -50%) translateX(320px) scale(.78); }
   .pf-sidebar { padding: 14px 16px; row-gap: 12px; }
-  .pf-nav { top: 62px; }
   .pf-envelope-shell { height: 585px; }
   .pf-envelope-frame { height: 170px; }
   .pf-envelope-content { top: 170px; }
