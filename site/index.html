@@ -65,7 +65,7 @@ body{background:#14120F;color:var(--ink);font-family:var(--body);overflow:hidden
 .chrome > *{pointer-events:auto}
 .focused .chrome,.focused .hint{opacity:0;pointer-events:none}
 .focused .chrome > *{pointer-events:none}
-.name{background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:12px;padding:12px 16px;max-width:300px}
+.name{background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:12px;padding:12px 16px;max-width:380px}
 .name h1{margin:0;font:700 22px/1.1 var(--display);letter-spacing:-.01em}
 .name p{margin:4px 0 0;font-size:13px;color:var(--muted)}
 .idx{position:relative}
@@ -246,6 +246,10 @@ body{background:#14120F;color:var(--ink);font-family:var(--body);overflow:hidden
 .tracks button{width:100%;display:flex;align-items:center;gap:12px;text-align:left;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--ink);cursor:pointer;font:500 15px/1.25 var(--body)}
 .tracks button:hover,.tracks button[aria-current="true"]{background:rgba(255,255,255,.1)}
 .tracks button .no{font:400 11px/1 var(--mono);color:var(--muted);width:18px}
+.tracks .cv{flex:none;width:40px;height:40px;border-radius:6px;overflow:hidden;background:rgba(255,255,255,.06)}
+.tracks .cv img{display:block;width:100%;height:100%;object-fit:cover}
+.np-cv{flex:none;width:22px;height:22px;border-radius:4px;object-fit:cover}
+.np-cv[hidden]{display:none}
 .tracks button small{display:block;font:400 12px/1.3 var(--body);color:var(--muted);margin-top:3px}
 .tracks-note{font-size:12px;color:var(--muted);margin:14px 0 0}
 @media (max-width:720px){.snd{left:14px;bottom:12px}.player{left:14px;bottom:56px;width:calc(100vw - 28px)}.hint{display:none}}
@@ -297,7 +301,7 @@ body{background:#14120F;color:var(--ink);font-family:var(--body);overflow:hidden
   <div class="loader" id="loader" role="status" aria-live="polite">
     <div class="loader-in">
       <p class="loader-name">Melvin Lomboy</p>
-      <p class="loader-role">Product designer &amp; design engineer · Manila</p>
+      <p class="loader-role">UI/UX Designer / Product Designer / Design Engineer</p>
       <div class="loader-track" aria-hidden="true"><div class="loader-bar" id="loader-bar"></div></div>
       <p class="loader-stage" id="loader-stage">Loading · 0%</p>
     </div>
@@ -307,7 +311,7 @@ body{background:#14120F;color:var(--ink);font-family:var(--body);overflow:hidden
   <div class="chrome">
     <div class="name">
       <h1>Melvin Lomboy</h1>
-      <p>Product designer &amp; design engineer · Manila</p>
+      <p>UI/UX Designer / Product Designer / Design Engineer</p>
     </div>
     <div class="idx">
       <button type="button" id="idx-btn" aria-expanded="false" aria-controls="idx-list">Index</button>
@@ -318,7 +322,7 @@ body{background:#14120F;color:var(--ink);font-family:var(--body);overflow:hidden
   <div class="tip" id="tip" hidden></div>
   <div class="rotate" role="alert" aria-live="polite"><div class="rotate-in"><div class="rotate-phone" aria-hidden="true"></div><small>Melvin Lomboy · portfolio</small><h2>Turn your phone sideways</h2><p>This room is built for a wide view. Rotate to landscape to step inside.</p></div></div>
   <button class="snd" id="snd" type="button" aria-pressed="false" aria-label="Rain sound"><span class="bars" aria-hidden="true"><i></i><i></i><i></i></span><span id="snd-t">Rain off</span></button>
-  <button class="np" id="np" type="button" hidden aria-live="polite" aria-label="Pause or play the record"><span class="np-eq" aria-hidden="true"><i></i><i></i><i></i></span><span class="np-txt"><strong id="np-t"></strong><span id="np-a"></span></span></button>
+  <button class="np" id="np" type="button" hidden aria-live="polite" aria-label="Pause or play the record"><img class="np-cv" id="np-cv" alt="" hidden onerror="this.hidden=true"><span class="np-eq" aria-hidden="true"><i></i><i></i><i></i></span><span class="np-txt"><strong id="np-t"></strong><span id="np-a"></span></span></button>
 
   <div class="mon" id="mon" hidden aria-label="Monitor: work">
     <div class="mon-app" id="mon-app">
@@ -432,12 +436,13 @@ const IMG={}; // preview images, drawn by the 3D build
 const caseLink=id=>`<button class="act" type="button" data-case="${id}">View case study →</button>`;
 const TRACKS = [
   // audio files live next to index.html, in a folder called music/
-  { title:'stupid song', artist:'Olivia Rodrigo', src:'music/stupid-song.mp3' },
-  { title:'THE SHADE', artist:'Rex Orange County', src:'music/the-shade.mp3' }
+  { title:'Pluto Projector', artist:'Rex Orange County', src:'music/pluto-projector.mp3', cover:'music/pluto-projector.jpg' },
+  { title:'Do I Wanna Know?', artist:'Hozier', src:'music/do-i-wanna-know.mp3', cover:'music/do-i-wanna-know.jpg' },
+  { title:'Vienna', artist:'Billy Joel', src:'music/vienna.mp3', cover:'music/vienna.jpg' }
 ];
 let nowTrack=-1;
 const PANELS = {
-  vinyl:{ eyebrow:'Record player', title:'Put a record on', render:()=>`<ul class="tracks">${TRACKS.map((t,i)=>`<li><button type="button" data-track="${i}" aria-current="${i===nowTrack}"><span class="no">${String(i+1).padStart(2,'0')}</span><span>${t.title}<small>${t.artist}</small></span></button></li>`).join('')}</ul>${nowTrack>=0?'<button class="act" type="button" data-stop>Stop the record</button>':''}` },
+  vinyl:{ eyebrow:'Record player', title:'Put a record on', render:()=>`<ul class="tracks">${TRACKS.map((t,i)=>`<li><button type="button" data-track="${i}" aria-current="${i===nowTrack}"><span class="no">${String(i+1).padStart(2,'0')}</span><span class="cv"><img src="${t.cover}" alt="" loading="lazy" onerror="this.remove()"></span><span>${t.title}<small>${t.artist}</small></span></button></li>`).join('')}</ul>${nowTrack>=0?'<button class="act" type="button" data-stop>Stop the record</button>':''}` },
   projects:{ eyebrow:'Work', title:'Projects', render:()=>PROJECTS.map(p=>`<article class="item"><p class="sub">${p.sub}</p><h3>${p.name}</h3><p>${p.summary}</p>${p.status?`<p class="sub">${p.status}</p>`:''}<div class="acts">${p.open?`<a class="act" href="${p.open[1]}" target="_blank" rel="noopener">${p.open[0]} ↗</a>`:''}${caseLink(p.id)}</div></article>`).join('') },
   caseStudies:{ eyebrow:'Case studies', title:'Selected work', render:()=>PROJECTS.map(p=>`<article class="item thumb"><img src="${IMG['case-'+p.id]||''}" alt="" width="96" height="72"><h3>${p.name}</h3><p class="sub">${p.sub}</p><p>${p.summary}</p><div class="acts">${caseLink(p.id)}</div></article>`).join('') },
   about:{ eyebrow:'About & contact', title:ABOUT.name, render:()=>`<div class="vmini" aria-hidden="true"><div><div class="n">${ABOUT.name}</div><div class="r">${ABOUT.role}</div></div><div class="l">${ABOUT.place}<br>${ABOUT.site}</div></div><p>${ABOUT.body}</p>
@@ -473,7 +478,7 @@ function openContextPanel(type,side){
 }
 /* ---------- record player: plays the site's own audio files; only a small floating title shows above the turntable ---------- */
 const recAudio=new Audio(); recAudio.preload='none'; recAudio.volume=0.7;
-function setNP(sub){ $('np-t').textContent=TRACKS[nowTrack].title; $('np-a').textContent=sub||TRACKS[nowTrack].artist; $('np').hidden=false; }
+function setNP(sub){ const cv=$('np-cv'); if(TRACKS[nowTrack].cover){ cv.hidden=false; cv.src=TRACKS[nowTrack].cover; } else cv.hidden=true; $('np-t').textContent=TRACKS[nowTrack].title; $('np-a').textContent=sub||TRACKS[nowTrack].artist; $('np').hidden=false; }
 function playTrack(i){ const t=TRACKS[i]; if(!t) return; nowTrack=i; recAudio.src=t.src; recAudio.currentTime=0; setNP();
   $('np').classList.remove('paused'); const pr=recAudio.play(); if(pr&&pr.catch) pr.catch(()=>{}); }
 function stopTrack(){ nowTrack=-1; recAudio.pause(); recAudio.removeAttribute('src'); recAudio.load(); $('np').hidden=true; }
