@@ -573,11 +573,11 @@ if(!renderer){ hideLoader(); return; } // Index still opens every panel
 // if the browser drops the 3D context (sleep, GPU switch, memory pressure), textures come back corrupted: start fresh instead
 renderer.domElement.addEventListener('webglcontextlost',e=>{ e.preventDefault(); },false);
 renderer.domElement.addEventListener('webglcontextrestored',()=>{ location.reload(); },false);
-const PR=Math.min(window.devicePixelRatio||1,window.matchMedia('(pointer: coarse)').matches?1.5:1.75); renderer.setPixelRatio(PR);
+const PR=Math.min(window.devicePixelRatio||1,window.matchMedia('(pointer: coarse)').matches?1.35:1.5); renderer.setPixelRatio(PR);
 renderer.outputEncoding=THREE.sRGBEncoding;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure=1.06;
-renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap; renderer.shadowMap.autoUpdate=false; // shadows are redrawn only while something moves
 const hasArea=!!(THREE.RectAreaLight && THREE.RectAreaLightUniformsLib);
 if(hasArea){ try{ THREE.RectAreaLightUniformsLib.init(); }catch(e){} }
 
@@ -2499,8 +2499,15 @@ function resize(){ const w=canvas.clientWidth||1, h=canvas.clientHeight||1; rend
 window.addEventListener('resize',resize);
 const tmp=new THREE.Vector3(), tmpL=new THREE.Vector3(), clock=new THREE.Clock(); const npEl=document.getElementById('np'), np3=new THREE.Vector3();
 const portraitPhone=window.matchMedia('(orientation:portrait) and (max-width:599px) and (pointer:coarse)');
+// power: at most 60 fps (120 Hz screens would otherwise double the work), 30 fps once the room is left alone
+let lastInput=performance.now(), lastFrameAt=0, lastBusyAt=0, warmFrames=0;
+['pointermove','pointerdown','wheel','keydown','touchstart'].forEach(ev=>window.addEventListener(ev,()=>{ lastInput=performance.now(); },{passive:true}));
 function loop(){
   if(portraitPhone.matches){ clock.getDelta(); requestAnimationFrame(loop); return; } // paused behind the turn-your-phone prompt
+  const nowMs=performance.now(), busy=!revealed || !!goal || !!active || nowMs-lastInput<3000;
+  if(nowMs-lastFrameAt < (busy?1000/62:1000/31)){ requestAnimationFrame(loop); return; }
+  lastFrameAt=nowMs; if(active) lastBusyAt=nowMs;
+  renderer.shadowMap.needsUpdate = warmFrames++<8 || !!active || nowMs-lastBusyAt<2500;
   const dt=Math.min(clock.getDelta(),0.05), t=clock.elapsedTime, k=reduce?1:1-Math.exp(-dt*(goal?4.6:3.4));
   if(goal){ tmp.copy(goal.pos); tmpL.copy(goal.look); }
   else {
