@@ -445,6 +445,7 @@ const TRACKS = [
 ];
 let nowTrack=-1;
 const PANELS = {
+  career:{ eyebrow:'Career path', title:'Where I started, where I\u2019m heading', render:()=>`<article class="item"><p class="sub">01</p><h3>UI/UX Design Intern</h3></article><article class="item"><p class="sub">02</p><h3>UI/UX Designer</h3></article><article class="item"><p class="sub">03</p><h3>UI/UX Design Team Lead</h3></article><article class="item"><p class="sub">04 \u00b7 Next target</p><h3>Product Designer / Design Engineer</h3></article>` },
   vinyl:{ eyebrow:'Record player', title:'Put a record on', render:()=>`<ul class="tracks">${TRACKS.map((t,i)=>`<li><button type="button" data-track="${i}" aria-current="${i===nowTrack}"><span class="no">${String(i+1).padStart(2,'0')}</span><span class="cv"><img src="${t.cover}" alt="" loading="lazy" onerror="this.remove()"></span><span>${t.title}<small>${t.artist}</small></span></button></li>`).join('')}</ul>${nowTrack>=0?'<button class="act" type="button" data-stop>Stop the record</button>':''}` },
   projects:{ eyebrow:'Work', title:'Projects', render:()=>PROJECTS.map(p=>`<article class="item"><p class="sub">${p.sub}</p><h3>${p.name}</h3><p>${p.summary}</p>${p.status?`<p class="sub">${p.status}</p>`:''}<div class="acts">${p.open?`<a class="act" href="${p.open[1]}" target="_blank" rel="noopener">${p.open[0]} ↗</a>`:''}${caseLink(p.id)}</div></article>`).join('') },
   caseStudies:{ eyebrow:'Case studies', title:'Selected work', render:()=>PROJECTS.map(p=>`<article class="item thumb"><img src="${IMG['case-'+p.id]||''}" alt="" width="96" height="72"><h3>${p.name}</h3><p class="sub">${p.sub}</p><p>${p.summary}</p><div class="acts">${caseLink(p.id)}</div></article>`).join('') },
@@ -536,8 +537,8 @@ window.addEventListener('keydown',e=>{
 
 /* ---------- index: accessible list of everything in the room ---------- */
 let focusObject=(key)=>{ const o=FALLBACK_PANELS[key]; if(o) openContextPanel(o,'right'); }; // replaced by the room
-const FALLBACK_PANELS={vinyl:'vinyl',monitor:'projects',folder:'caseStudies',notebook:'caseStudies',callingCard:'about',hobbyFrames:'hobbies',certWall:'achievements',window:'personal'};
-const INDEX=[['monitor','Work','Monitor'],['folder','Case studies','Folder'],['notebook','Sketchbook','Notebook'],['callingCard','About & contact','Calling card'],['hobbyFrames','Hobbies','Picture frames'],['certWall','Achievements','Certificates'],['window','Personal','Window'],['lamp','Switch the lamp','Lamp'],['moodLamp','Switch the orange lamp','Cabinet lamp'],['wallLamp','Switch the wall lamp','Wall lamp'],['vinyl','Music','Record player']];
+const FALLBACK_PANELS={career:'career',vinyl:'vinyl',monitor:'projects',folder:'caseStudies',notebook:'caseStudies',callingCard:'about',hobbyFrames:'hobbies',certWall:'achievements',window:'personal'};
+const INDEX=[['monitor','Work','Monitor'],['folder','Case studies','Folder'],['notebook','Sketchbook','Notebook'],['callingCard','About & contact','Calling card'],['hobbyFrames','Hobbies','Picture frames'],['certWall','Achievements','Certificates'],['career','Career path','Frame'],['window','Personal','Window'],['lamp','Switch the lamp','Lamp'],['moodLamp','Switch the orange lamp','Cabinet lamp'],['wallLamp','Switch the wall lamp','Wall lamp'],['vinyl','Music','Record player']];
 const idxBtn=$('idx-btn'), idxList=$('idx-list');
 INDEX.forEach(([k,t,o])=>{ const li=document.createElement('li'); li.innerHTML=`<button type="button">${t}<span>${o}</span></button>`; li.firstChild.onclick=()=>{ closeIdx(); focusObject(k); }; idxList.appendChild(li); });
 
@@ -581,7 +582,7 @@ if(!renderer){ hideLoader(); return; } // Index still opens every panel
 // if the browser drops the 3D context (sleep, GPU switch, memory pressure), textures come back corrupted: start fresh instead
 renderer.domElement.addEventListener('webglcontextlost',e=>{ e.preventDefault(); },false);
 renderer.domElement.addEventListener('webglcontextrestored',()=>{ location.reload(); },false);
-const PR=Math.min(window.devicePixelRatio||1,window.matchMedia('(pointer: coarse)').matches?1.35:1.5); renderer.setPixelRatio(PR);
+const PR_BASE=Math.min(window.devicePixelRatio||1,window.matchMedia('(pointer: coarse)').matches?1.35:1.5), PR_READ=Math.min(window.devicePixelRatio||1,2.5); let PR=PR_BASE; renderer.setPixelRatio(PR);
 renderer.outputEncoding=THREE.sRGBEncoding;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure=1.06;
@@ -619,6 +620,9 @@ function fbm(x,y,oct,px,py){ let s=0,a=.5,f=1,n=0; for(let o=0;o<oct;o++){ s+=a*
 
 /* ============ texture generation ============ */
 function mkCanvas(w,h){ const c=document.createElement('canvas'); c.width=w; c.height=h; return c; }
+// pages you read up close are drawn with extra pixels on laptops and desktops (same layout, finer letters)
+const PAGE_SS=window.matchMedia('(pointer: coarse)').matches?1:1.35;
+function canvasOfSS(w,h,draw,ss){ const c=mkCanvas(Math.round(w*ss),Math.round(h*ss)), g=c.getContext('2d'); g.scale(ss,ss); draw(g,w,h); return c; }
 function toTex(c,rep,srgb){
   const t=new THREE.CanvasTexture(c); if(srgb!==false) t.encoding=THREE.sRGBEncoding; t.anisotropy=aniso;
   if(rep){ t.wrapS=t.wrapT=THREE.RepeatWrapping; t.repeat.set(rep[0],rep[1]); }
@@ -627,8 +631,10 @@ function toTex(c,rep,srgb){
 // fn(x,y,o) fills o=[r,g,b,height,rough]; optional post(colorCtx,roughCtx,w,h) adds wear by hand.
 // The pixel work is split into row bands across worker threads; results are identical to a single-thread run.
 const tick=()=>new Promise(r=>setTimeout(r,0));
-let POOL=null, JOB=0, PX_DONE=0; const PX_TOTAL=2048*1024+1024*1024*3+512*512*6+256*256*3;
-function texProgress(n){ PX_DONE+=n; setLoad(0.06+0.68*Math.min(1,PX_DONE/PX_TOTAL),'Preparing materials'); }
+// fast first view: materials are generated at half resolution first, then quietly regenerated at full resolution after the room appears
+const TEXQ=0.5, MAT_SPECS=[];
+let POOL=null, JOB=0, PX_DONE=0, texSilent=false; const PX_TOTAL=(2048*1024+1024*1024*3+512*512*6+256*256*3)*TEXQ*TEXQ;
+function texProgress(n){ if(texSilent) return; PX_DONE+=n; setLoad(0.06+0.68*Math.min(1,PX_DONE/PX_TOTAL),'Preparing materials'); }
 function makePool(){
   try{
     if(typeof Worker==='undefined' || typeof Blob==='undefined') return null;
@@ -636,10 +642,10 @@ function makePool(){
 `const fns={};
 onmessage=function(e){ const d=e.data; if(d.perm){ PERM=d.perm; return; }
   let fn=fns[d.job]; if(!fn){ fn=(new Function('__S','with(__S){ return ('+d.src+'); }'))(d.scope||{}); fns[d.job]=fn; }
-  const w=d.w,h=d.h,y0=d.y0,y1=d.y1,s=d.strength,rows=y1-y0,Hn=rows+2;
+  const w=d.w,h=d.h,y0=d.y0,y1=d.y1,s=d.strength,rows=y1-y0,Hn=rows+2,q=d.q||1;
   const col=new Uint8ClampedArray(w*rows*4), rou=new Uint8ClampedArray(w*rows*4), nor=new Uint8ClampedArray(w*rows*4), H=new Float32Array(w*Hn), o=[0,0,0,0,0];
   for(let r=0;r<Hn;r++){ const y=((y0-1+r)%h+h)%h, inside=r>=1&&r<=rows;
-    for(let x=0;x<w;x++){ fn(x,y,o); H[r*w+x]=o[3];
+    for(let x=0;x<w;x++){ if(q===1) fn(x,y,o); else fn(Math.floor(x/q),Math.floor(y/q),o); H[r*w+x]=o[3];
       if(inside){ const i=((r-1)*w+x)*4; col[i]=o[0]; col[i+1]=o[1]; col[i+2]=o[2]; col[i+3]=255; const v=clamp01(o[4])*255; rou[i]=rou[i+1]=rou[i+2]=v; rou[i+3]=255; } } }
   for(let r=1;r<=rows;r++) for(let x=0;x<w;x++){ const xl=(x-1+w)%w, xr=(x+1)%w;
     const dx=(H[r*w+xr]-H[r*w+xl])*s, dy=(H[(r+1)*w+x]-H[(r-1)*w+x])*s, len=Math.hypot(dx,dy,1), i=((r-1)*w+x)*4;
@@ -657,23 +663,24 @@ onmessage=function(e){ const d=e.data; if(d.perm){ PERM=d.perm; return; }
       close(){ workers.forEach(wk=>wk.terminate()); URL.revokeObjectURL(url); } };
   }catch(e){ return null; }
 }
-async function material(w,h,fn,rep,strength,post,scope){
+async function renderMat(sp,q){
+  const w=Math.max(1,Math.round(sp.w*q)), h=Math.max(1,Math.round(sp.h*q)), fn=sp.fn, scope=sp.scope;
   const col=mkCanvas(w,h), rou=mkCanvas(w,h), nor=mkCanvas(w,h);
   const cg=col.getContext('2d'), rg=rou.getContext('2d'), ng=nor.getContext('2d');
   const cd=cg.createImageData(w,h), rd=rg.createImageData(w,h), nd=ng.createImageData(w,h);
-  const s=strength||2;
+  const s=sp.strength*q;
   let done=false;
   if(POOL){
     try{ const job=++JOB, src=fn.toString(), step=Math.max(16,Math.ceil(h/(POOL.n*3))), tasks=[];
       for(let y0=0;y0<h;y0+=step){ const y1=Math.min(h,y0+step);
-        tasks.push(POOL.run({job,src,scope:scope||{},w,h,y0,y1,strength:s}).then(r=>{ cd.data.set(r.col,r.y0*w*4); rd.data.set(r.rou,r.y0*w*4); nd.data.set(r.nor,r.y0*w*4); texProgress(w*(y1-y0)); })); }
+        tasks.push(POOL.run({job,src,scope:scope||{},w,h,y0,y1,strength:s,q}).then(r=>{ cd.data.set(r.col,r.y0*w*4); rd.data.set(r.rou,r.y0*w*4); nd.data.set(r.nor,r.y0*w*4); texProgress(w*(y1-y0)); })); }
       await Promise.all(tasks); done=true;
     }catch(e){ POOL=null; } // fall back to the main thread below
   }
   if(!done){
     const H=new Float32Array(w*h), o=[0,0,0,0,0];
     for(let y=0;y<h;y++) for(let x=0;x<w;x++){
-      fn(x,y,o); const k=y*w+x, i=k*4;
+      if(q===1) fn(x,y,o); else fn(Math.floor(x/q),Math.floor(y/q),o); const k=y*w+x, i=k*4;
       cd.data[i]=o[0]; cd.data[i+1]=o[1]; cd.data[i+2]=o[2]; cd.data[i+3]=255;
       const r=clamp01(o[4])*255; rd.data[i]=rd.data[i+1]=rd.data[i+2]=r; rd.data[i+3]=255; H[k]=o[3];
     }
@@ -685,8 +692,29 @@ async function material(w,h,fn,rep,strength,post,scope){
     texProgress(w*h); await tick();
   }
   cg.putImageData(cd,0,0); rg.putImageData(rd,0,0); ng.putImageData(nd,0,0);
-  if(post) post(cg,rg,w,h);
-  return {map:toTex(col,rep), normal:toTex(nor,rep,false), rough:toTex(rou,rep,false)};
+  if(sp.post){ // the wear marks use the shared random stream: the full-resolution pass replays the same marks without disturbing it
+    if(sp.postSeed===undefined){ sp.postSeed=SEED; sp.post(cg,rg,w,h); }
+    else { const keep=SEED; SEED=sp.postSeed; sp.post(cg,rg,w,h); SEED=keep; } }
+  return {col,rou,nor};
+}
+async function material(w,h,fn,rep,strength,post,scope){
+  const sp={w,h,fn,strength:strength||2,post,scope};
+  const out=await renderMat(sp,TEXQ);
+  sp.out=out; sp.res={map:toTex(out.col,rep), normal:toTex(out.nor,rep,false), rough:toTex(out.rou,rep,false)};
+  MAT_SPECS.push(sp); return sp.res;
+}
+// after the room is on screen: regenerate each material at full resolution in the background and swap it in
+async function upgradeMaterials(){
+  if(TEXQ>=1 || !MAT_SPECS.length) return;
+  texSilent=true; POOL=makePool();
+  const users=new Map(); scene.traverse(o=>{ if(!o.material) return; (Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{ for(const k in m){ const v=m[k]; if(v && v.isTexture && v.image){ if(!users.has(v.image)) users.set(v.image,new Set()); users.get(v.image).add(v); } } }); });
+  for(const sp of MAT_SPECS){
+    const out=await renderMat(sp,1);
+    ['col','rou','nor'].forEach(k=>{ const dst=sp.out[k], src=out[k]; dst.width=src.width; dst.height=src.height; dst.getContext('2d').drawImage(src,0,0);
+      (users.get(dst)||[]).forEach(tx=>{ tx.needsUpdate=true; }); });
+    sp.res.map.needsUpdate=sp.res.normal.needsUpdate=sp.res.rough.needsUpdate=true;
+    await new Promise(r=>setTimeout(r,60)); }
+  if(POOL){ POOL.close(); POOL=null; }
 }
 function lerp3(o,a,b,t){ o[0]=a[0]+(b[0]-a[0])*t; o[1]=a[1]+(b[1]-a[1])*t; o[2]=a[2]+(b[2]-a[2])*t; }
 function wood(u,v,seed,o,early,late){
@@ -1287,9 +1315,9 @@ const nbShadow=contact(0.18,0.25,-0.16,DY,-0.41,.42,false,0.18);
 
 // pages: cream dot-grid paper, pencil sketches and handwritten notes
 const NPW=900, NPH=1304, INK='#34323A', BLUE='#2B4A8A', ORANGE='#E07A2F';
-function sketchPage(draw,dots){ return canvasOf(NPW,NPH,(g,w,h)=>{ paperFill(g,w,h,'#F3EEE2');
+function sketchPage(draw,dots){ return canvasOfSS(NPW,NPH,(g,w,h)=>{ paperFill(g,w,h,'#F3EEE2');
   if(dots!==false){ g.fillStyle='rgba(90,80,70,.17)'; for(let y=60;y<h;y+=44) for(let x=50;x<w;x+=44){ g.beginPath(); g.arc(x,y,1.6,0,Math.PI*2); g.fill(); } }
-  draw(g,w,h); }); }
+  draw(g,w,h); },PAGE_SS); }
 function pencil(g,pts,a){ for(let pass=0;pass<2;pass++){ g.strokeStyle=`rgba(52,50,56,${(a||0.85)*(pass?0.4:0.9)})`; g.lineWidth=pass?1.2:2.4; g.lineCap='round'; g.lineJoin='round';
   g.beginPath(); pts.forEach(([x,y],i)=>{ const jx=x+rnd(-1.3,1.3), jy=y+rnd(-1.3,1.3); i?g.lineTo(jx,jy):g.moveTo(jx,jy); }); g.stroke(); } }
 function prect(g,x,y,w,h,a){ pencil(g,[[x,y],[x+w,y+rnd(-2,2)],[x+w,y+h],[x,y+h+rnd(-2,2)],[x+rnd(-2,2),y]],a); }
@@ -1300,8 +1328,8 @@ function dot(g,x,y,r,c){ g.fillStyle=c||ORANGE; g.beginPath(); g.arc(x,y,r,0,Mat
 function scribble(g,x,y,w){ pencil(g,[[x,y],[x+w,y+rnd(-2,2)]],0.55); }
 function notebookPages(){
   const P={};
-  P.inside=canvasOf(NPW,NPH,(g,w,h)=>{ paperFill(g,w,h,'#E6DDCB');
-    hand(g,'If found, please return to',110,300,54,INK,-0.02); hand(g,ABOUT.name,110,390,78,INK,-0.02); hand(g,ABOUT.site,110,470,54,BLUE,-0.02); dot(g,640,452,9); });
+  P.inside=canvasOfSS(NPW,NPH,(g,w,h)=>{ paperFill(g,w,h,'#E6DDCB');
+    hand(g,'If found, please return to',110,300,54,INK,-0.02); hand(g,ABOUT.name,110,390,78,INK,-0.02); hand(g,ABOUT.site,110,470,54,BLUE,-0.02); dot(g,640,452,9); },PAGE_SS);
   P.title=sketchPage((g,w,h)=>{ hand(g,'Sketchbook',110,330,128,INK,-0.03); hand(g,'notes & sketches · 2026',120,430,56,INK,-0.02); hand(g,'Dō, Sō, and things in between',120,510,50,BLUE,-0.02);
     pencil(g,[[140,760],[260,700],[380,790],[520,720],[640,760]]); dot(g,652,762,13); });
   P.do1=sketchPage((g,w,h)=>{ hand(g,'Dō — capture',80,140,80,INK,-0.02);
@@ -1532,9 +1560,9 @@ function block(g,b,X,y,MW,s){
   return y;
 }
 function page(blocks,foot,bg){
-  const c=mkCanvas(PW,PHT), g=c.getContext('2d');
+  const c=mkCanvas(Math.round(PW*PAGE_SS),Math.round(PHT*PAGE_SS)), g=c.getContext('2d');
   for(const s of [1,.93,.86,.8,.74,.68,.62]){ // shrink the type until the page fits
-    g.setTransform(1,0,0,1,0,0); paperFill(g,PW,PHT,bg||'#F8F4EC');
+    g.setTransform(PAGE_SS,0,0,PAGE_SS,0,0); paperFill(g,PW,PHT,bg||'#F8F4EC');
     let y=PMG+16; blocks.forEach(b=>{ y=block(g,b,PMG,y,PW-PMG*2,s); });
     g.fillStyle='rgba(60,50,40,.16)'; g.fillRect(PMG,PHT-88,PW-PMG*2,1.5);
     g.font='500 17px "JetBrains Mono", monospace'; g.fillStyle='#9A9288'; g.fillText('VIN / CASE STUDIES',PMG,PHT-56);
@@ -1553,7 +1581,7 @@ function htmlBlocks(html){
 const CASE_IDS=['do','so','hris'], PREVIEW={};
 function folderPages(){
   const P={}; let n=1;
-  P.inside=(()=>{ const c=mkCanvas(PW,PHT), g=c.getContext('2d'); paperFill(g,PW,PHT,'#DCD5C8');
+  P.inside=(()=>{ const c=mkCanvas(Math.round(PW*PAGE_SS),Math.round(PHT*PAGE_SS)), g=c.getContext('2d'); g.scale(PAGE_SS,PAGE_SS); paperFill(g,PW,PHT,'#DCD5C8');
     g.fillStyle='rgba(0,0,0,.07)'; g.beginPath(); g.moveTo(0,PHT*.62); g.lineTo(PW,PHT*.7); g.lineTo(PW,PHT); g.lineTo(0,PHT); g.fill(); // pocket
     g.fillStyle='rgba(255,255,255,.18)'; g.fillRect(0,PHT*.62,PW,3);
     g.fillStyle='#F6F1E7'; g.fillRect(PMG,PMG+40,PW-PMG*2,250); g.strokeStyle='rgba(60,50,40,.15)'; g.strokeRect(PMG,PMG+40,PW-PMG*2,250);
@@ -1618,7 +1646,7 @@ wallFrame(hobbyGrp,0.885,1.395,0.13,0.13, 0.085,0.085, photoTex('hike'), oakFram
 wallFrame(hobbyGrp,1.12,1.49, 0.17,0.13,  0.112,0.08,  photoTex('gym'),  blackFrame, -0.003).userData.hob='gym'; // gym
 
 /* certificates: a row of three above the photos, in view from the room */
-function certCanvas(kind,title){ return canvasOf(620,450,(g,w,h)=>{
+function certCanvas(kind,title){ return canvasOf(1240,900,(g,W2,H2)=>{ g.scale(2,2); const w=620, h=450;
   g.fillStyle='#F5EFE2'; g.fillRect(0,0,w,h); grainOver(g,w,h,8000,.04);
   g.strokeStyle='#8D7C5E'; g.lineWidth=3; g.strokeRect(22,22,w-44,h-44); g.lineWidth=1; g.strokeRect(32,32,w-64,h-64);
   g.strokeStyle='rgba(141,124,94,.5)'; for(let c=0;c<4;c++){ const cx=c%2?w-32:32, cy=c<2?32:h-32; g.beginPath(); for(let a=0;a<Math.PI*2;a+=.02){ const r=18+Math.sin(a*6)*6; g.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r);} g.closePath(); g.stroke(); }
@@ -1928,6 +1956,43 @@ function sideFrame(grp,z,y,ow,oh,iw,ih,cv,fmat,tilt){
   aoStrip(ow+0.02,0.04,new THREE.Vector3(SWX+0.001,y-oh/2-0.02,z-0.004),[0,Math.PI/2,Math.PI],.22);
   return g; }
 // (the framed certificates on this wall were removed; they now live in the organizer on the cabinet)
+// career path: a framed print on the wall above the cabinet (its own random stream, so nothing else in the room shifts)
+const CAREER_SEED=SEED;
+function careerCanvas(){ return canvasOf(1400,960,(g,w,h)=>{
+  paperFill(g,w,h,'#E8E2D5');
+  const vg=g.createRadialGradient(w/2,h/2,h*0.3,w/2,h/2,w*0.75); vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(60,45,30,.16)'); g.fillStyle=vg; g.fillRect(0,0,w,h);
+  g.strokeStyle='rgba(60,50,40,.05)'; g.lineWidth=1; for(let x=70;x<w;x+=70){ g.beginPath(); g.moveTo(x,0); g.lineTo(x,h); g.stroke(); } for(let y=70;y<h;y+=70){ g.beginPath(); g.moveTo(0,y); g.lineTo(w,y); g.stroke(); }
+  const spaced=(t,x,y,sp)=>{ for(const ch of t){ g.fillText(ch,x,y); x+=g.measureText(ch).width+sp; } };
+  g.fillStyle='#2A2622'; g.font='600 34px "JetBrains Mono", monospace'; g.textAlign='left'; spaced('CAREER PATH',110,150,7);
+  g.fillRect(110,176,250,3);
+  const P=[[215,700],[525,600],[835,490],[1150,345]];
+  g.lineCap='round'; g.lineJoin='round';
+  g.strokeStyle='rgba(42,38,34,.85)'; g.lineWidth=3.5; g.beginPath(); g.moveTo(P[0][0],P[0][1]); g.lineTo(P[1][0],P[1][1]); g.lineTo(P[2][0],P[2][1]); g.stroke();
+  g.setLineDash([12,12]); g.strokeStyle='rgba(42,38,34,.55)'; g.beginPath(); g.moveTo(P[2][0],P[2][1]); g.lineTo(P[3][0],P[3][1]); g.stroke(); g.setLineDash([]);
+  const RED='#A8352B';
+  P.forEach(([x,y],i)=>{
+    g.fillStyle='rgba(40,25,15,.22)'; g.beginPath(); g.ellipse(x+5,y+7,17,15,0,0,Math.PI*2); g.fill();
+    if(i<3){ const gr=g.createRadialGradient(x-5,y-6,2,x,y,17); gr.addColorStop(0,'#D2584A'); gr.addColorStop(1,RED); g.fillStyle=gr; g.beginPath(); g.arc(x,y,16,0,Math.PI*2); g.fill();
+      g.fillStyle='rgba(255,235,225,.55)'; g.beginPath(); g.arc(x-5,y-6,4,0,Math.PI*2); g.fill(); }
+    else { g.fillStyle='#E8E2D5'; g.beginPath(); g.arc(x,y,16,0,Math.PI*2); g.fill(); g.strokeStyle=RED; g.lineWidth=4.5; g.beginPath(); g.arc(x,y,14,0,Math.PI*2); g.stroke(); } });
+  const L=[['UI/UX DESIGN','INTERN'],['UI/UX','DESIGNER'],['UI/UX DESIGN','TEAM LEAD'],['PRODUCT DESIGNER /','DESIGN ENGINEER']];
+  g.textAlign='center';
+  P.forEach(([x,y],i)=>{ g.fillStyle='rgba(42,38,34,.5)'; g.font='400 19px "JetBrains Mono", monospace'; g.fillText('0'+(i+1),x,y+58);
+    g.fillStyle=i<3?'#2A2622':'rgba(42,38,34,.78)'; g.font='600 25px "Instrument Sans", sans-serif'; L[i].forEach((t,k)=>g.fillText(t,x,y+94+k*31)); });
+  g.fillStyle=RED; g.font='500 19px "JetBrains Mono", monospace'; const nt='NEXT TARGET', ntw=g.measureText(nt).width+(nt.length-1)*5;
+  g.textAlign='left'; spaced('NEXT TARGET',P[3][0]-ntw/2,P[3][1]+170,5);
+  g.textAlign='right'; g.fillStyle='rgba(42,38,34,.4)'; g.font='400 18px "JetBrains Mono", monospace'; g.fillText('M. LOMBOY',w-110,h-80);
+  grainOver(g,w,h,9000,.035); }); }
+const CAREER={W:0.68, H:0.48, AW:0.58, AH:0.58*960/1400, y:1.52, z:-0.35, lit:0.12, read:0.5};
+const careerGrp=new THREE.Group(); careerGrp.position.set(SWX,CAREER.y,CAREER.z); careerGrp.rotation.set(0,Math.PI/2,-0.003); scene.add(careerGrp);
+rBox(CAREER.W,CAREER.H,0.026,0.003,walnutDark,0,0,0.013,careerGrp);
+add(new THREE.Mesh(new THREE.PlaneGeometry(CAREER.W-0.03,CAREER.H-0.03),M.paper),careerGrp,false).position.z=0.0262;
+const careerTex=toTex(careerCanvas());
+const careerArtMat=std({map:careerTex,roughness:.75,emissive:0xFFF2E2,emissiveMap:careerTex,emissiveIntensity:CAREER.lit}); careerArtMat.userData.keepEmissive=true;
+const careerArt=add(new THREE.Mesh(new THREE.PlaneGeometry(CAREER.AW,CAREER.AH),careerArtMat),careerGrp,false); careerArt.position.z=0.0266; careerArt.receiveShadow=true;
+const careerGlass=new THREE.Mesh(new THREE.PlaneGeometry(CAREER.W-0.026,CAREER.H-0.026),glassMat); careerGlass.position.z=0.0272; careerGrp.add(careerGlass);
+aoStrip(CAREER.W+0.03,0.05,new THREE.Vector3(SWX+0.001,CAREER.y-CAREER.H/2-0.024,CAREER.z-0.005),[0,Math.PI/2,Math.PI],.24);
+SEED=CAREER_SEED;
 
 /* ============ architect lamp (interactive) ============ */
 const lamp=new THREE.Group(); lamp.position.set(0.97,DY,-0.8); lamp.rotation.y=0.1; scene.add(lamp);
@@ -2267,6 +2332,11 @@ function showCap(g){
 function hideCap(){ if(capFrame) glowFrame(capFrame,false); capFrame=null; capEl.classList.remove('show'); capEl.hidden=true; }
 
 /* ---- the objects ---- */
+let careerFocus=false;
+function careerPose(){ const tf=tfov(), c=V(SWX,CAREER.y,CAREER.z), d=Math.max((CAREER.H/2)/(0.74*tf),(CAREER.W/2)/(0.86*tf*camera.aspect));
+  return {pos:V(SWX+d+0.02,CAREER.y+0.01,CAREER.z), look:c.clone().add(V(0,0.01,0))}; }
+function updateCareer(dt){ const m=careerArt.material, base=(careerFocus?CAREER.read:CAREER.lit)+(m.userData.hoverBoost?HOVER_EI:0);
+  m.emissiveIntensity+=(base-m.emissiveIntensity)*Math.min(1,dt*3); }
 const OBJECTS={
   monitor:     {obj:monitor,  label:'View my work', inspect:true, pose:()=>monitorPose(),
                 enter:()=>{ OS.s=osScale(); OS.hover=null; drawOS(); }, exit:()=>{ OS.s=1.25; OS.hover=null; drawOS(); },
@@ -2313,6 +2383,9 @@ const OBJECTS={
                 bar:()=>{ const a=ACHIEVEMENTS[CERT.want], n=ACHIEVEMENTS.length;
                   return [{label:'‹',aria:'Previous certificate',fn:()=>showCert(CERT.want-1)},{text:`${a.kind} · ${CERT.want+1}/${n}`},{label:'›',aria:'Next certificate',fn:()=>showCert(CERT.want+1)}]; }},
   window:      {obj:win,      label:'Look outside', camera:V(-0.2,1.56,0.64), target:V(WCX,1.62,WZ), panel:'personal'},
+  career:      {obj:careerGrp, label:'Career path', inspect:true, pose:()=>careerPose(),
+                enter:()=>{ careerFocus=true; }, exit:()=>{ careerFocus=false; },
+                bar:()=>[{hint:'Where I started → where I\'m heading'}]},
   lamp:        {obj:lamp,     label:'Switch the lamp', action:cycleLight},
   vinyl:       {obj:RP,       label:'Play a record', camera:V(1.16,1.36,-0.28), target:V(1.43,0.99,-0.83), panel:'vinyl'},
   moodLamp:    {obj:shroom,   label:'Switch the orange lamp', action:()=>toggleAccent(MOOD,'Orange lamp')},
@@ -2389,7 +2462,7 @@ KEYS.forEach((k,i)=>OBJECTS[k].obj.traverse(o=>{ if(o.isMesh){ o.userData.t=i; o
 sky.userData.t=KEYS.indexOf('window');
 scene.updateMatrixWorld(true);
 const proxies=[];
-['folder','notebook','callingCard','hobbyFrames','certWall','lamp','moodLamp','wallLamp','vinyl'].forEach(k=>{
+['folder','notebook','callingCard','hobbyFrames','certWall','lamp','moodLamp','wallLamp','vinyl','career'].forEach(k=>{
   const i=KEYS.indexOf(k), box=new THREE.Box3().setFromObject(OBJECTS[k].obj), size=box.getSize(new THREE.Vector3()), c=box.getCenter(new THREE.Vector3());
   const pad=coarse?1.7:1.15, m=new THREE.Mesh(new THREE.BoxGeometry(Math.max(size.x,.02)*pad,Math.max(size.y,.02)*pad,Math.max(size.z,.02)*pad),new THREE.MeshBasicMaterial());
   m.position.copy(c); m.visible=false; m.userData.t=i; scene.add(m); proxies.push(m); });
@@ -2486,20 +2559,26 @@ const fpTmp=new THREE.Vector3();
 let postCheck=post?2:0, postSum=0;
 function probe(){ try{ const gl=renderer.getContext(), w=gl.drawingBufferWidth, h=gl.drawingBufferHeight, px=new Uint8Array(4); let s=0;
   [[.5,.5],[.35,.6],[.65,.45],[.5,.3],[.25,.25],[.75,.7],[.6,.55],[.4,.4]].forEach(([x,y])=>{ gl.readPixels((x*w)|0,(y*h)|0,1,1,gl.RGBA,gl.UNSIGNED_BYTE,px); s+=px[0]+px[1]+px[2]; }); return s; }catch(e){ return 999; } }
+const READ_KEYS=new Set(['monitor','folder','notebook','callingCard','certWall','career','hobbyFrames']);
+let readRes=false;
+function setReadRes(on){ if(on===readRes) return; readRes=on; const v=on?PR_READ:PR_BASE; if(v===PR) return; PR=v; renderer.setPixelRatio(PR); if(post) post.setPixelRatio(PR); resize(); }
 function updatePost(){
   if(!post) return;
   // depth of field only while examining something up close, and only once the camera has arrived
   const near=!!(active && goal && camPos.distanceTo(goal.pos)<0.06);
-  dofAp+=((near?0.011:0)-dofAp)*0.08;
+  // anything with writing on it is read sharp: no depth blur, no softening, finer grain, and full screen resolution
+  const reading=!!(active && READ_KEYS.has(active) && goal && camPos.distanceTo(goal.pos)<0.25);
+  setReadRes(reading);
+  dofAp+=((near && !READ_KEYS.has(active)?0.011:0)-dofAp)*0.08;
   if(bokeh){ bokeh.enabled=dofAp>0.0004 && !!goal;
     if(bokeh.enabled){ let fp=goal.look;
       if(active==='callingCard') fp=heldCard.getWorldPosition(fpTmp); else if(active==='hobbyFrames'||active==='certificates') fp=goal.look;
       bokeh.uniforms.focus.value=camera.position.distanceTo(fp); bokeh.uniforms.aperture.value=dofAp; bokeh.uniforms.aspect.value=camera.aspect; } }
   // the screen and pages stay crisp: bloom eases off while reading them
-  const reading=(active==='monitor'||active==='folder')&&near;
+  post.passes.forEach(p=>{ if(p.userData&&p.userData.fxaa) p.enabled=!reading; });
   if(bloom) bloom.strength+=((reading?0.05:0.17)-bloom.strength)*0.08;
   if(gradePass){ const u=gradePass.uniforms; u.time.value=(performance.now()/1000)%600; // keep screen text and pages crisp while reading
-    u.soft.value+=((reading?0:0.1)-u.soft.value)*0.08; u.grain.value+=((reading?0.02:0.035)-u.grain.value)*0.08; }
+    u.soft.value+=((reading?0:0.1)-u.soft.value)*0.15; u.grain.value+=((reading?0.008:0.035)-u.grain.value)*0.15; }
 }
 
 function resize(){ const w=canvas.clientWidth||1, h=canvas.clientHeight||1; renderer.setSize(w,h,false);
@@ -2527,7 +2606,7 @@ function loop(){
   if(npEl && !npEl.hidden){ // the song title floats above the record player
     np3.set(0,0.33,0); RP.localToWorld(np3); np3.project(camera);
     if(np3.z>1){ npEl.style.visibility='hidden'; } else { npEl.style.visibility='visible'; npEl.style.left=((np3.x*0.5+0.5)*canvas.clientWidth)+'px'; npEl.style.top=((-np3.y*0.5+0.5)*canvas.clientHeight)+'px'; } }
-  updateCard(dt); updateFolder(dt); updateNote(dt); updateCert(dt);
+  updateCard(dt); updateFolder(dt); updateNote(dt); updateCert(dt); updateCareer(dt);
   if(!reduce){
     for(let i=0;i<DN;i++){ const b=dBase[i], s=dSeed[i]; dPos[i*3]=b.x+Math.sin(t*0.12+s)*0.05; dPos[i*3+1]=b.y+Math.sin(t*0.09+s*1.7)*0.06; dPos[i*3+2]=b.z+Math.cos(t*0.1+s)*0.05; }
     dustGeo.attributes.position.needsUpdate=true;
@@ -2542,7 +2621,7 @@ function loop(){
   if(postCheck===2){ post.render(dt); postSum=probe(); postCheck=1; }
   else if(postCheck===1){ renderer.setRenderTarget(null); renderer.render(scene,camera); const direct=probe(); if(postSum<10 && direct>postSum+30){ post=null; app.classList.add('nopost'); } postCheck=0; } // effects came out black: render without them
   else if(post) post.render(dt); else renderer.render(scene,camera);
-  if(!revealed && ++shownFrames>=3){ revealed=true; setLoad(1,'Ready'); hideLoader(); }
+  if(!revealed && ++shownFrames>=3){ revealed=true; setLoad(1,'Ready'); hideLoader(); setTimeout(()=>{ upgradeMaterials().catch(()=>{}); },900); }
   requestAnimationFrame(loop);
 }
 let revealed=false, shownFrames=0;
@@ -2553,7 +2632,7 @@ loop();
 } // end build
 
 const fonts=document.fonts?Promise.all([document.fonts.load('700 70px "Bricolage Grotesque"'),document.fonts.load('600 22px "Instrument Sans"'),document.fonts.load('500 20px "JetBrains Mono"'),document.fonts.load('400 48px "Caveat"')]):Promise.resolve();
-const fontsReady=Promise.race([fonts.catch(()=>{}),new Promise(r=>setTimeout(r,2500))]);
+const fontsReady=Promise.race([fonts.catch(()=>{}),new Promise(r=>setTimeout(r,1800))]);
 setTimeout(()=>{ build().catch(e=>{ console.error(e); hideLoader(); }); },0); // start at once; materials don't need the fonts
 })();
 </script>
