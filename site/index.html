@@ -425,10 +425,13 @@ const HOBBIES = [ // shown as the caption when a photo on the wall is hovered
   { key:'hike', title:'Hiking', text:'Climbing trails like Mt. Talamitam, where the view at the top is worth every step.' },
   { key:'gym', title:'Going to the gym', text:'Strength training keeps me disciplined, and that consistency carries into my work.' }
 ];
-const ACHIEVEMENTS = [
-  { kind:'Certification', title:'Certification title', text:todo('Name, issuing organisation, year, and a verification link.') },
-  { kind:'Achievement', title:'Achievement', text:todo('What you achieved, where, and when.') },
-  { kind:'Professional development', title:'Course or programme', text:todo('Course name, provider and year.') }
+const ACHIEVEMENTS = [ // shown in this order; images live in certs/
+  { kind:'UX+AI Conference 2026 · Certificate of attendance', short:'UX+AI Conference 2026', title:'UX+AI Conference 2026', img:'certs/cert-6.jpg', text:'<p>SMX Convention Center, Pasay · September 6, 2026</p>' },
+  { kind:'UX+ Conference 2024 · Certificate of attendance', short:'UX+ Conference 2024', title:'UX+ Conference 2024', img:'certs/cert-5.jpg', text:'<p>SMX Convention Center, Pasay · August 18, 2024</p>' },
+  { kind:'freeCodeCamp · Developer certification', short:'Responsive Web Design', title:'Responsive Web Design', img:'certs/cert-4.jpg', text:'<p>freeCodeCamp · issued July 16, 2023 · about 300 hours of coursework</p>' },
+  { kind:'Udemy · Certificate of completion', short:'Design Rules', title:'DESIGN RULES: Principles + Practices for Great UI Design', img:'certs/cert-3.jpg', text:'<p>Udemy · instructor Joe Natoli · May 18, 2024 · 5 hours</p>' },
+  { kind:'Udemy · Certificate of completion', short:'User Experience Design Fundamentals', title:'User Experience Design Fundamentals', img:'certs/cert-2.jpg', text:'<p>Udemy · instructor Joe Natoli · April 28, 2024 · 10 hours</p>' },
+  { kind:'Udemy · Certificate of completion', short:'Figma UI UX Design Essentials', title:'Figma UI UX Design Essentials', img:'certs/cert-1.jpg', text:'<p>Udemy · instructor Daniel Walter Scott · March 31, 2024 · 12 hours</p>' }
 ];
 const PERSONAL = { text:'Open to product design and design engineering roles, in Manila or abroad, and to relocating for the right team.', more:todo('The kind of products and teams you want to work on, and what you want to get better at.') };
 
@@ -1327,45 +1330,64 @@ function arrow(g,x1,y1,x2,y2){ pencil(g,[[x1,y1],[(x1+x2)/2+rnd(-12,12),(y1+y2)/
 function dot(g,x,y,r,c){ g.fillStyle=c||ORANGE; g.beginPath(); g.arc(x,y,r,0,Math.PI*2); g.fill(); }
 function scribble(g,x,y,w){ pencil(g,[[x,y],[x+w,y+rnd(-2,2)]],0.55); }
 function notebookPages(){
-  const P={};
+  const P={}, NB_SEED0=SEED;
   P.inside=canvasOfSS(NPW,NPH,(g,w,h)=>{ paperFill(g,w,h,'#E6DDCB');
     hand(g,'If found, please return to',110,300,54,INK,-0.02); hand(g,ABOUT.name,110,390,78,INK,-0.02); hand(g,ABOUT.site,110,470,54,BLUE,-0.02); dot(g,640,452,9); },PAGE_SS);
   P.title=sketchPage((g,w,h)=>{ hand(g,'Sketchbook',110,330,128,INK,-0.03); hand(g,'notes & sketches · 2026',120,430,56,INK,-0.02); hand(g,'Dō, Sō, and things in between',120,510,50,BLUE,-0.02);
     pencil(g,[[140,760],[260,700],[380,790],[520,720],[640,760]]); dot(g,652,762,13); });
-  P.do1=sketchPage((g,w,h)=>{ hand(g,'Dō — capture',80,140,80,INK,-0.02);
-    prect(g,80,210,740,440); pencil(g,[[80,250],[820,252]]); [100,124,148].forEach(x=>dot(g,x,231,6,'rgba(52,50,56,.6)'));
-    prect(g,100,272,250,360); for(let i=0;i<5;i++){ prect(g,116,292+i*66,218,50,0.6); scribble(g,130,312+i*66,140); }
-    prect(g,118,358,214,54,0.95); prect(g,372,272,430,360); scribble(g,392,312,260); scribble(g,392,350,320); scribble(g,392,380,300); scribble(g,392,410,280);
-    prect(g,560,560,220,52); hand(g,'Save to Dō',584,598,40,INK); dot(g,758,586,7);
-    arrow(g,670,620,520,820); prect(g,140,830,620,300); for(let i=0;i<4;i++){ scribble(g,170,890+i*62,300); dot(g,700,884+i*62,8,i===0?ORANGE:'rgba(52,50,56,.45)'); }
-    hand(g,'one click from the job post',430,700,42,BLUE,-0.04); hand(g,'works on split-view',150,700,40,BLUE,0.02); hand(g,'search pages too',150,742,40,BLUE,0.02);
-    hand(g,'→ lands in the tracker',300,1190,44,INK,-0.02); });
-  P.do2=sketchPage((g,w,h)=>{ hand(g,'Dō — what’s next?',80,140,80,INK,-0.02);
-    ['Saved','Applied','Next'].forEach((c,i)=>{ const x=80+i*250; prect(g,x,200,230,420); hand(g,c,x+20,250,44,INK); for(let k=0;k<3-i%2;k++){ prect(g,x+16,280+k*104,198,84,0.6); scribble(g,x+30,312+k*104,120); } });
-    dot(g,560,330,9);
-    const ideas=['a dashboard','add a job from a screenshot','CV match score per job','soft + technical skill suggestions','Excel export','AI on your own key (Claude / OpenAI)'];
-    ideas.forEach((t,i)=>{ pencil(g,[[100,722+i*78],[118,722+i*78]]); hand(g,t,140,736+i*78,46,i%2?INK:BLUE,rnd(-0.015,0.015)); }); });
-  P.so1=sketchPage((g,w,h)=>{ hand(g,'Sō — structure first',80,140,80,INK,-0.02);
-    prect(g,370,200,160,70); hand(g,'product',392,248,40,INK);
-    [[140,340],[370,340],[600,340]].forEach(([x,y])=>{ pencil(g,[[450,270],[x+80,y]]); prect(g,x,y,160,64,0.8); scribble(g,x+20,y+34,110);
-      [0,1].forEach(k=>{ pencil(g,[[x+80,y+64],[x+30+k*100,y+130]],0.6); prect(g,x+k*100,y+130,70,46,0.6); }); });
-    hand(g,'1. IA',80,620,52,BLUE); arrow(g,450,560,450,650);
-    hand(g,'2. requirements',80,720,52,BLUE); for(let i=0;i<3;i++){ prect(g,140,760+i*64,30,30,0.8); scribble(g,190,778+i*64,320+rnd(-60,40)); }
-    arrow(g,450,960,450,1010); hand(g,'3. low-fi screens',80,1060,52,BLUE);
-    for(let i=0;i<3;i++){ const x=140+i*220; prect(g,x,1090,170,150,0.8); pencil(g,[[x,1090],[x+170,1240]],0.4); pencil(g,[[x+170,1090],[x,1240]],0.4); }
-    hand(g,'before any visual design',470,620,42,INK,-0.05); });
-  P.logo=sketchPage((g,w,h)=>{ hand(g,'Dō logo',80,140,80,INK,-0.02);
-    g.save(); g.globalAlpha=.8; g.font='700 150px "Bricolage Grotesque", sans-serif'; g.fillStyle='#2B59C3'; g.fillText('Dō',110,390); g.restore();
-    pencil(g,[[90,330],[330,300]],0.7); hand(g,'just the word — too plain',380,350,44,INK,-0.03);
-    g.save(); g.font='700 180px "Bricolage Grotesque", sans-serif'; g.fillStyle='#2A2A30'; g.fillText('Do',140,760); g.restore();
-    pencil(g,[[252,570],[290,548],[330,575],[372,552]]); dot(g,384,550,14);
-    pencil(g,[[110,560],[470,560],[470,800],[110,800],[110,570]],0.5);
-    hand(g,'macron = a little route',520,620,46,BLUE,-0.03); hand(g,'ending in an orange dot',520,672,46,BLUE,-0.03); hand(g,'← this one',520,760,50,INK,-0.03);
-    hand(g,'道 — "the way" + do',110,960,58,INK,-0.02); hand(g,'Find your way. Do what’s next.',110,1060,52,BLUE,-0.02); });
+  const KANJI='"Noto Serif JP","Hiragino Mincho ProN","Yu Mincho",serif';
+  const kanji=(g,ch,x,y,size)=>{ g.save(); g.font=`400 ${size}px ${KANJI}`; g.fillStyle='rgba(52,50,56,.88)'; g.textAlign='center'; g.fillText(ch,x,y); g.restore(); };
+  // pages 1–2: where the name Dō comes from
+  P.do1=sketchPage((g,w,h)=>{ hand(g,'Dō — why the name',80,140,76,INK,-0.02);
+    kanji(g,'道',230,470,250); pencil(g,[[110,520],[360,522]],0.5);
+    hand(g,'dō · 道',110,600,58,INK,-0.02); hand(g,'Japanese: "the way",',110,666,46,BLUE,-0.01); hand(g,'"the path"',110,716,46,BLUE,-0.01);
+    g.save(); g.font='700 210px "Bricolage Grotesque", sans-serif'; g.fillStyle='rgba(42,42,48,.85)'; g.fillText('do',500,450); g.restore();
+    pencil(g,[[490,520],[800,522]],0.5);
+    hand(g,'do',530,600,58,INK,-0.02); hand(g,'English: to act,',530,666,46,BLUE,-0.01); hand(g,'to take the next step',530,716,46,BLUE,-0.01);
+    arrow(g,250,790,420,930); arrow(g,640,790,480,930);
+    prect(g,180,960,560,170); hand(g,'find the way  +  act on it',215,1040,50,INK,-0.02); hand(g,'= the whole idea of the app',215,1100,42,BLUE,-0.01);
+    dot(g,742,1046,9); });
+  P.do2=sketchPage((g,w,h)=>{ hand(g,'so the tagline wrote itself:',80,150,52,INK,-0.02);
+    hand(g,'Find your way.',100,300,96,INK,-0.03); pencil(g,[[100,322],[640,316]],0.7);
+    hand(g,'Do what’s next.',100,440,96,INK,-0.03); pencil(g,[[100,462],[680,458]],0.7); dot(g,700,452,12);
+    hand(g,'Dō helps people find their way',100,580,44,INK,-0.01); hand(g,'through a job search — and take',100,632,44,INK,-0.01);
+    hand(g,'the next step toward their',100,684,44,INK,-0.01); hand(g,'next career move.',100,736,44,INK,-0.01);
+    pencil(g,[[120,1080],[230,990],[340,1060],[460,960],[580,1020],[690,900]],0.8); dot(g,702,894,15);
+    [[230,990],[340,1060],[460,960],[580,1020]].forEach(([x,y])=>dot(g,x,y,6,'rgba(52,50,56,.6)'));
+    hand(g,'the way',120,1150,42,BLUE,0.02); hand(g,'→ what’s next',560,880,42,BLUE,-0.04); });
+  // pages 3–4: where the name Sō comes from
+  P.so1=sketchPage((g,w,h)=>{ hand(g,'Sō — why the name',80,140,76,INK,-0.02);
+    kanji(g,'創',230,470,250); pencil(g,[[110,520],[360,522]],0.5);
+    hand(g,'sō · 創',110,600,58,INK,-0.02); hand(g,'Japanese: to create,',110,666,46,BLUE,-0.01); hand(g,'to found, to begin',110,716,46,BLUE,-0.01);
+    g.save(); g.font='700 210px "Bricolage Grotesque", sans-serif'; g.fillStyle='rgba(42,42,48,.85)'; g.fillText('so',500,450); g.restore();
+    pencil(g,[[490,520],[800,522]],0.5);
+    hand(g,'so',530,600,58,INK,-0.02); hand(g,'English: "and so…"',530,666,46,BLUE,-0.01); hand(g,'what follows from it',530,716,46,BLUE,-0.01);
+    arrow(g,250,790,420,930); arrow(g,640,790,480,930);
+    prect(g,160,960,600,170); hand(g,'create the foundation first,',195,1040,48,INK,-0.02); hand(g,'and so the product follows',195,1100,42,BLUE,-0.01); });
+  P.so2=sketchPage((g,w,h)=>{ hand(g,'foundation before UI',80,150,64,INK,-0.02);
+    const layers=['the product','visual UI','low-fi screens','information architecture','requirements'];
+    layers.forEach((t,i)=>{ const y=280+i*150, wd=360+i*70, x=450-wd/2; prect(g,x,y,wd,104,i===0?0.55:0.85); hand(g,t,x+26,y+66,i>=3?40:44,i===0?BLUE:INK,rnd(-0.01,0.01)); });
+    arrow(g,790,1000,790,320); hand(g,'build up',705,1060,38,BLUE,-0.05);
+    hand(g,'Sō lives down here ↓',140,1120,46,INK,-0.02); hand(g,'structure first, pixels later',140,1180,42,BLUE,-0.02); dot(g,640,1166,8); });
+  // pages 5–6: how I work
+  P.proc1=sketchPage((g,w,h)=>{ hand(g,'my design process',80,140,76,INK,-0.02);
+    const steps=[['1  understand','the people, the problem, the goal'],['2  structure','flows, IA, requirements'],['3  sketch','low-fi, cheap to change'],['4  design','visual system & components'],['5  build','ship what was designed'],['6  test & iterate','learn, then loop back']];
+    steps.forEach(([a,b],i)=>{ const y=280+i*160; hand(g,a,100,y,58,INK,rnd(-0.015,0.01)); hand(g,b,150,y+56,40,BLUE,rnd(-0.01,0.01)); });
+    hand(g,'← designer + engineer',330,920,38,ORANGE,-0.03); });
+  P.proc2=sketchPage((g,w,h)=>{ hand(g,'a loop, not a line',80,150,64,INK,-0.02);
+    const cx=450, cy=640, R0=260, names=['understand','structure','sketch','design','build','test'];
+    names.forEach((t,i)=>{ const a=-Math.PI/2+i*Math.PI/3, x=cx+Math.cos(a)*R0, y=cy+Math.sin(a)*R0;
+      const a2=a+Math.PI/3-0.32, x2=cx+Math.cos(a2)*R0, y2=cy+Math.sin(a2)*R0, am=a+Math.PI/6;
+      pencil(g,[[cx+Math.cos(a+0.32)*R0,cy+Math.sin(a+0.32)*R0],[cx+Math.cos(am)*(R0+18),cy+Math.sin(am)*(R0+18)],[x2,y2]],0.7);
+      dot(g,x,y,i===0?13:9,i===0?ORANGE:'rgba(52,50,56,.7)');
+      hand(g,t,x-(t.length*9),y+(Math.sin(a)>0.3?62:-26),40,INK,0); });
+    hand(g,'Dō and Sō both',300,640,42,BLUE,-0.02); hand(g,'started at step 1',300,690,42,BLUE,-0.02);
+    hand(g,'every round = a little clearer',120,1090,44,INK,-0.02); });
   P.last=sketchPage((g,w,h)=>{ // a quiet doodle of the desk at night
     pencil(g,[[220,900],[300,620],[420,520]],0.7); pencil(g,[[420,520],[520,480],[560,540],[460,600],[420,520]],0.7); dot(g,500,560,8,'rgba(224,122,47,.7)');
     pencil(g,[[160,900],[300,900]],0.7); prect(g,600,800,90,100,0.7); pencil(g,[[690,830],[720,840],[720,870],[690,880]],0.6);
     pencil(g,[[100,905],[800,905]],0.5); hand(g,'late night',560,1060,52,INK,-0.04); });
+  SEED=(NB_SEED0+769963887)|0; // later details in the room keep their old random values
   return P;
 }
 // page faces read from the spine outward; backs are mirrored so they read once a sheet is turned
@@ -1408,7 +1430,7 @@ function curlMeshes(s,c,mf,mb,y){
 function buildNotebookPages(){
   const P=notebookPages();
   const ins=add(new THREE.Mesh(nbInsideGeo,pageMat(P.inside)),nbCover,false); ins.position.y=0.0003; nbPageMeshes.push(ins);
-  [[P.title,P.do1],[P.do2,P.so1],[P.logo,P.last]].forEach(([f,b],i)=>{
+  [[P.title,P.do1],[P.do2,P.so1],[P.so2,P.proc1],[P.proc2,P.last]].forEach(([f,b],i)=>{
     const s=new THREE.Group(); s.position.set(-NB_W/2+0.003,NB_PIV,0); s.userData.ang=0; nb.add(s);
     const y=-(i+1)*0.0005;
     const [mf,mb]=curlMeshes(s,curlSheet(NSW,NSH,1),pageMat(f),pageMat(b),y);
@@ -1883,21 +1905,30 @@ const ORG_FOLDERS=[ // slot, cover, lean, x offset, roll, thickness, paper peeki
   [0,0,0.15,0.004,0.006,0.008,true],[0,3,0.16,-0.006,-0.01,0.006,false],[0,1,0.15,0.008,0.012,0.009,true],
   [1,4,0.14,-0.004,-0.008,0.007,false],[1,2,0.15,0.006,0.009,0.008,true],[1,5,0.16,-0.01,0.004,0.006,false],
   [2,6,0.13,0.005,-0.006,0.008,true],[2,7,0.15,-0.006,0.01,0.007,false]];
-const orgFront=[null,null,null], slotFill=[0,0,0];
+const orgFront=[null,null,null], orgAll=[], slotFill=[0,0,0];
 ORG_FOLDERS.forEach(([si,ci,lean,dx,roll,th,paper])=>{ const sl=ORG_SLOTS[si], FW=0.232, FH=0.285;
   const zb=sl.zd+th/2+0.002+(sl.hd-sl.fl)*Math.tan(lean)+slotFill[si]; slotFill[si]+=th+0.003;
   const f=new THREE.Group(); f.position.set(dx,sl.fl,Math.min(zb,sl.zf-th/2)); f.rotation.set(-lean,0,roll); certOrg.add(f);
   rBox(FW,FH,th,0.0015,orgCover(ORG_COLS[ci]),0,FH/2,0,f);
   if(paper) add(new THREE.Mesh(new THREE.BoxGeometry(FW-0.02,0.012,th*0.5),M.paper),f).position.set(0.004,FH+0.004,0);
   add(new THREE.Mesh(new THREE.PlaneGeometry(0.07,0.018),std({color:ci%2?0xD9D2C4:0xBFB3A0,roughness:.9})),f,false).position.set(-0.06,FH-0.04,th/2+0.0005);
-  orgFront[si]=f; });
+  orgFront[si]=f; orgAll.push(f); });
 contact(ORG.W+0.06,ORG.D+0.06,0.3,CB.H,0.0,.42,false,-0.05,cab);
 const bowl=lathe([[0,0.002],[0.04,0.002],[0.06,0.012],[0.068,0.03],[0.064,0.031],[0.056,0.016],[0.036,0.008],[0,0.008]],M.stoneware,40); bowl.position.set(-0.01,CB.H,-0.01); add(bowl,cab);
 contact(0.16,0.16,-0.01,CB.H,-0.01,.4,true,0,cab);
 // the certificate that slides out of a folder and turns to face you when the organizer is opened
 const CERT_W=0.26, CERT_H=CERT_W*450/620;
-const certTex=ACHIEVEMENTS.map(a=>toTex(certCanvas(a.kind,a.title)));
-const certSheet=new THREE.Mesh(new THREE.PlaneGeometry(CERT_W,CERT_H,20,1),new THREE.MeshBasicMaterial({map:certTex[0],color:0xEDE7DC,side:THREE.DoubleSide}));
+// the real certificates load only when the organizer is opened, so they never slow the first view
+const CERT_FOLDER=[2,1,5,4,7,6]; // which folder in the organizer each certificate slides out of
+const certAspect=ACHIEVEMENTS.map(()=>450/620), certLoaded=ACHIEVEMENTS.map(()=>false);
+const certTex=ACHIEVEMENTS.map(()=>{ const t=new THREE.CanvasTexture(mkCanvas(2,2)); t.encoding=THREE.sRGBEncoding; t.anisotropy=aniso; return t; });
+function loadCert(i){ if(certLoaded[i]) return; certLoaded[i]=true; const a=ACHIEVEMENTS[i];
+  const done=img=>{ certTex[i].image=img; certTex[i].needsUpdate=true; certAspect[i]=img.height/img.width; if(i===CERT.idx){ fitCertSheet(); setCertRead(); } };
+  if(!a.img){ done(certCanvas(a.kind,a.title)); return; }
+  const img=new Image(); img.decoding='async'; img.onload=()=>done(img); img.onerror=()=>done(certCanvas(a.kind,a.title)); img.src=a.img; }
+function fitCertSheet(){ certSheet.scale.y=certAspect[CERT.idx]/(CERT_H/CERT_W); }
+SEED=(SEED+Math.imul(144000,0x6D2B79F5))|0; // the three placeholder certificates used to draw paper grain here; keep the rest of the room's random details where they were
+const certSheet=new THREE.Mesh(new THREE.PlaneGeometry(CERT_W,CERT_H,20,1),new THREE.MeshBasicMaterial({map:certTex[0],color:0xF4F1EC,side:THREE.DoubleSide}));
 certSheet.visible=false; scene.add(certSheet);
 // a glossy orange mushroom lamp: domed acrylic shade on a flared stem, glowing softly (click to switch it)
 const SHROOM_PROFILE=[[.006,.25],[.05,.248],[.092,.236],[.122,.214],[.137,.188],[.141,.165],[.14,.152],[.134,.148],[.126,.152],[.124,.168],[.11,.2],[.08,.222],[.04,.232],[.006,.234]];
@@ -2240,7 +2271,7 @@ function updateFolder(dt){
 
 /* ---- sketchbook: same behaviour as the folder (double-click to lift and open, then turn pages) ---- */
 const NOTE={open:false,spread:0,lift:0,lit:false};
-const NOTE_SPREADS=['First page','Dō sketches','Sō · Dō logo','Last page'], NOTE_CASE=[null,'do','so',null];
+const NOTE_SPREADS=['First page','Dō — the name','Sō — the name','Design process','Last page'], NOTE_CASE=[null,'do','so',null,null];
 const noteRest={pos:nb.position.clone(), q:nb.quaternion.clone()}, noteRead={pos:V(0,0,0), q:new THREE.Quaternion()};
 const NREAD_C=V(-0.2,DY+0.3,-0.36);
 const PEN_Y0=DY+0.0209, PEN_Y1=DY+0.0045;
@@ -2278,12 +2309,12 @@ const certRead={pos:new THREE.Vector3(), q:new THREE.Quaternion()}, certDummy=ne
 function certPose(){ const c=certOrg.localToWorld(new THREE.Vector3(0,0.16,0.02));
   return {pos:c.clone().add(new THREE.Vector3(0.62,0.2,0.05)), look:c}; }
 function setCertRead(){ const g=certPose(), fwd=g.look.clone().sub(g.pos).normalize(), tf=tfov();
-  const d=Math.max((CERT_H/2)/(0.66*tf),(CERT_W/2)/(0.86*tf*camera.aspect));
+  const d=Math.max((CERT_W*certAspect[CERT.idx]/2)/(0.66*tf),(CERT_W/2)/(0.86*tf*camera.aspect));
   const right=new THREE.Vector3().crossVectors(fwd,UP).normalize(), up=new THREE.Vector3().crossVectors(right,fwd).normalize();
   certRead.pos.copy(g.pos).addScaledVector(fwd,d).addScaledVector(up,d*tf*0.06);
   certDummy.position.copy(certRead.pos); certDummy.lookAt(g.pos); certRead.q.copy(certDummy.quaternion); }
 function showCert(i){ const n=ACHIEVEMENTS.length; CERT.want=((i%n)+n)%n; CERT.show=true; renderBar(); }
-function certFolderOf(hit){ let o=hit&&hit.object; while(o && o!==certOrg){ const k=orgFront.indexOf(o); if(k>=0) return k; o=o.parent; } return -1; }
+function certFolderOf(hit){ let o=hit&&hit.object; while(o && o!==certOrg){ const k=CERT_FOLDER.indexOf(orgAll.indexOf(o)); if(k>=0 && orgAll.indexOf(o)>=0) return k; o=o.parent; } return -1; }
 const CERT_QZ=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1),Math.PI/2), certRest=certSheet.geometry.attributes.position.array.slice();
 const certPath=new THREE.CatmullRomCurve3([new THREE.Vector3(),new THREE.Vector3(),new THREE.Vector3(),new THREE.Vector3()],false,'centripetal'); certPath.arcLengthDivisions=60;
 const cq0=new THREE.Quaternion();
@@ -2292,9 +2323,9 @@ function bendCert(b){ const p=certSheet.geometry.attributes.position, h=CERT_W/2
 function updateCert(dt){
   const tgt=(CERT.show && CERT.want===CERT.idx)?1:0;
   CERT.t=approach(CERT.t,tgt,dt*(tgt?0.95:1.5));
-  if(CERT.t===0 && CERT.want!==CERT.idx){ CERT.idx=CERT.want; certSheet.material.map=certTex[CERT.idx]; certSheet.material.needsUpdate=true; }
+  if(CERT.t===0 && CERT.want!==CERT.idx){ CERT.idx=CERT.want; certSheet.material.map=certTex[CERT.idx]; certSheet.material.needsUpdate=true; fitCertSheet(); setCertRead(); }
   certSheet.visible=CERT.t>0.001;
-  const f=orgFront[Math.min(CERT.idx,orgFront.length-1)];
+  const f=orgAll[CERT_FOLDER[CERT.idx]]||orgFront[0];
   if(!f.userData.base) f.userData.base={p:f.position.clone(), r:f.rotation.clone()};
   const B=f.userData.base; f.position.copy(B.p); f.rotation.copy(B.r); f.updateMatrixWorld(true);
   if(!certSheet.visible){ bendCert(0); return; }
@@ -2375,13 +2406,13 @@ const OBJECTS={
                 exit:hideCap,
                 bar:()=>[{hint:coarse?'Tap a photo':'Hover over a photo'}]},
   certWall:    {obj:certOrg,  label:'Certifications', inspect:true, pose:()=>certPose(),
-                enter:()=>{ setCertRead(); insList.push(certSheet); CERT.want=CERT.idx; CERT.show=true; }, exit:()=>{ CERT.show=false; },
+                enter:()=>{ ACHIEVEMENTS.forEach((_,i)=>loadCert(i)); fitCertSheet(); setCertRead(); insList.push(certSheet); CERT.want=CERT.idx; CERT.show=true; }, exit:()=>{ CERT.show=false; },
                 reflow:setCertRead,
                 hover:h=>h?(h.object===certSheet?(coarse?'Tap for the next one':'Click for the next one'):(certFolderOf(h)>=0?(coarse?'Tap to take this one out':'Click to take this one out'):null)):null,
                 click:h=>{ if(h.object===certSheet) showCert(CERT.want+1); else { const k=certFolderOf(h); if(k>=0) showCert(k); } },
                 key:e=>{ if(e.key==='ArrowRight'){ e.preventDefault(); showCert(CERT.want+1); } else if(e.key==='ArrowLeft'){ e.preventDefault(); showCert(CERT.want-1); } },
                 bar:()=>{ const a=ACHIEVEMENTS[CERT.want], n=ACHIEVEMENTS.length;
-                  return [{label:'‹',aria:'Previous certificate',fn:()=>showCert(CERT.want-1)},{text:`${a.kind} · ${CERT.want+1}/${n}`},{label:'›',aria:'Next certificate',fn:()=>showCert(CERT.want+1)}]; }},
+                  return [{label:'‹',aria:'Previous certificate',fn:()=>showCert(CERT.want-1)},{text:`${a.short||a.title} · ${CERT.want+1}/${n}`},{label:'›',aria:'Next certificate',fn:()=>showCert(CERT.want+1)}]; }},
   window:      {obj:win,      label:'Look outside', camera:V(-0.2,1.56,0.64), target:V(WCX,1.62,WZ), panel:'personal'},
   career:      {obj:careerGrp, label:'Career path', inspect:true, pose:()=>careerPose(),
                 enter:()=>{ careerFocus=true; }, exit:()=>{ careerFocus=false; },
@@ -2631,7 +2662,7 @@ applyLight(); resize(); try{ renderer.compile(scene,camera); }catch(e){}
 loop();
 } // end build
 
-const fonts=document.fonts?Promise.all([document.fonts.load('700 70px "Bricolage Grotesque"'),document.fonts.load('600 22px "Instrument Sans"'),document.fonts.load('500 20px "JetBrains Mono"'),document.fonts.load('400 48px "Caveat"')]):Promise.resolve();
+const fonts=document.fonts?Promise.all([document.fonts.load('700 70px "Bricolage Grotesque"'),document.fonts.load('600 22px "Instrument Sans"'),document.fonts.load('500 20px "JetBrains Mono"'),document.fonts.load('400 48px "Caveat"'),document.fonts.load('400 96px "Noto Serif JP"','道創')]):Promise.resolve();
 const fontsReady=Promise.race([fonts.catch(()=>{}),new Promise(r=>setTimeout(r,1800))]);
 setTimeout(()=>{ build().catch(e=>{ console.error(e); hideLoader(); }); },0); // start at once; materials don't need the fonts
 })();
