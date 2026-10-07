@@ -2549,7 +2549,7 @@ function careerAtQ(h){ if(!h) return false; const p=careerArt.worldToLocal(h.poi
   return Math.hypot(cx-CAREER_Q[0],(cy-CAREER_Q[1])*1.1)<130; }
 const OBJECTS={
   monitor:     {obj:monitor,  label:'View my work', inspect:true, pose:()=>monitorPose(),
-                enter:()=>{ OS.s=osScale(); OS.hover=null; drawOS(); }, exit:()=>{ OS.s=1.25; OS.hover=null; drawOS(); },
+                enter:()=>{ OS.hover=null; drawOS(); }, exit:()=>{ OS.hover=null; drawOS(); }, // same layout in the room and up close: zooming only brings it nearer
                 reflow:()=>{ OS.s=osScale(); drawOS(); }, hover:osHover, click:osClick,
                 bar:()=>[{hint:coarse?'Tap the screen to use it':'Use the screen'}]},
   folder:      {obj:caseStack, label:'Case studies', inspect:true, pose:()=>stackPose(),
@@ -2806,7 +2806,7 @@ function updatePost(){
     u.soft.value+=((reading?0:0.1)-u.soft.value)*0.15; u.grain.value+=((reading?0.008:0.035)-u.grain.value)*0.15; }
 }
 
-function resize(){ const w=canvas.clientWidth||1, h=canvas.clientHeight||1; renderer.setSize(w,h,false);
+function resize(){ const w=canvas.clientWidth||1, h=canvas.clientHeight||1; renderer.setSize(w,h,false); { const ns=osScale(); if(Math.abs(ns-OS.s)>0.01){ OS.s=ns; drawOS(); } }
   if(post){ post.setSize(w,h); if(gradePass) gradePass.uniforms.px.value.set(1/(w*PR),1/(h*PR)); if(bokeh && bokeh.renderTargetDepth) bokeh.renderTargetDepth.setSize(w*PR,h*PR); post.passes.forEach(p=>{ if(p.userData&&p.userData.fxaa) p.uniforms.resolution.value.set(1/(w*PR),1/(h*PR)); }); } camera.aspect=w/h; camera.fov=Math.min(62,Math.max(40,2*THREE.MathUtils.radToDeg(Math.atan(Math.tan(THREE.MathUtils.degToRad(20))*1.6/(w/h))))); camera.updateProjectionMatrix(); if(active && OBJECTS[active].inspect){ const o=OBJECTS[active]; goal=inspectGoal(o); if(o.reflow) o.reflow(); } }
 window.addEventListener('resize',resize);
 const tmp=new THREE.Vector3(), tmpL=new THREE.Vector3(), clock=new THREE.Clock(); const npEl=document.getElementById('np'), np3=new THREE.Vector3();
@@ -2851,7 +2851,7 @@ function loop(){
   requestAnimationFrame(loop);
 }
 let revealed=false, shownFrames=0;
-drawOS(); screenMesh.material.map=osTex; screenMesh.material.needsUpdate=true;
+OS.s=osScale(); drawOS(); screenMesh.material.map=osTex; screenMesh.material.needsUpdate=true;
 perfMark('built'); await Promise.all(MAT_JOBS); if(POOL){ POOL.close(); POOL=null; } perfMark('materials');
 setLoad(0.92,'Lighting the room'); await tick();
 applyLight(); resize(); try{ renderer.compile(scene,camera); }catch(e){} perfMark('shaders');
