@@ -35,10 +35,10 @@ img{max-width:100%}
 
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+JP:wght@400&family=Caveat:wght@400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+JP:wght@400&family=Caveat:wght@400&family=Tinos:wght@400&display=swap">
 <style>
 /* Layout: the 3D room is always the page. Clicking an object focuses the camera on it and opens a floating
    contextual panel on the opposite side (a bottom sheet on phones). Only "View case study" opens a full page. */
@@ -304,7 +304,7 @@ body{background:#14120F;color:var(--ink);font-family:var(--body);overflow:hidden
   <div class="loader" id="loader" role="status" aria-live="polite">
     <div class="loader-in">
       <p class="loader-name">Melvin Lomboy</p>
-      <p class="loader-role">UI/UX Designer / Product Designer / Design Engineer</p>
+      <p class="loader-role">UI/UX Designer · Product Design · Design Engineering</p>
       <div class="loader-track" aria-hidden="true"><div class="loader-bar" id="loader-bar"></div></div>
       <p class="loader-stage" id="loader-stage">Loading · 0%</p>
     </div>
@@ -314,7 +314,7 @@ body{background:#14120F;color:var(--ink);font-family:var(--body);overflow:hidden
   <div class="chrome">
     <div class="name">
       <h1>Melvin Lomboy</h1>
-      <p>UI/UX Designer / Product Designer / Design Engineer</p>
+      <p>UI/UX Designer · Product Design · Design Engineering</p>
     </div>
     <div class="idx">
       <button type="button" id="idx-btn" aria-expanded="false" aria-controls="idx-list">Index</button>
@@ -448,6 +448,7 @@ const TRACKS = [
 ];
 let nowTrack=-1;
 const PANELS = {
+  pinboard:{ eyebrow:'Pinboard', title:'Pinned notes', render:()=>`<article class="item"><p>Notes and work in progress. More will be pinned here soon.</p></article>` },
   career:{ eyebrow:'Career path', title:'Where I started, where I\u2019m heading', render:()=>`<article class="item"><p class="sub">01</p><h3>UI/UX Design Intern</h3></article><article class="item"><p class="sub">02</p><h3>UI/UX Designer</h3></article><article class="item"><p class="sub">03</p><h3>UI/UX Design Team Lead</h3></article><article class="item"><p class="sub">04 \u00b7 Next target</p><h3>Product Designer / Design Engineer</h3></article>` },
   vinyl:{ eyebrow:'Record player', title:'Put a record on', render:()=>`<ul class="tracks">${TRACKS.map((t,i)=>`<li><button type="button" data-track="${i}" aria-current="${i===nowTrack}"><span class="no">${String(i+1).padStart(2,'0')}</span><span class="cv"><img src="${t.cover}" alt="" loading="lazy" onerror="this.remove()"></span><span>${t.title}<small>${t.artist}</small></span></button></li>`).join('')}</ul>${nowTrack>=0?'<button class="act" type="button" data-stop>Stop the record</button>':''}` },
   projects:{ eyebrow:'Work', title:'Projects', render:()=>PROJECTS.map(p=>`<article class="item"><p class="sub">${p.sub}</p><h3>${p.name}</h3><p>${p.summary}</p>${p.status?`<p class="sub">${p.status}</p>`:''}<div class="acts">${p.open?`<a class="act" href="${p.open[1]}" target="_blank" rel="noopener">${p.open[0]} ↗</a>`:''}${caseLink(p.id)}</div></article>`).join('') },
@@ -540,8 +541,8 @@ window.addEventListener('keydown',e=>{
 
 /* ---------- index: accessible list of everything in the room ---------- */
 let focusObject=(key)=>{ const o=FALLBACK_PANELS[key]; if(o) openContextPanel(o,'right'); }; // replaced by the room
-const FALLBACK_PANELS={career:'career',vinyl:'vinyl',monitor:'projects',folder:'caseStudies',notebook:'caseStudies',callingCard:'about',hobbyFrames:'hobbies',certWall:'achievements',window:'personal'};
-const INDEX=[['monitor','Work','Monitor'],['folder','Case studies','Folder'],['notebook','Sketchbook','Notebook'],['callingCard','About & contact','Calling card'],['hobbyFrames','Hobbies','Picture frames'],['certWall','Achievements','Certificates'],['career','Career path','Frame'],['window','Personal','Window'],['lamp','Switch the lamp','Lamp'],['moodLamp','Switch the orange lamp','Cabinet lamp'],['wallLamp','Switch the wall lamp','Wall lamp'],['vinyl','Music','Record player']];
+const FALLBACK_PANELS={pinboard:'pinboard',career:'career',vinyl:'vinyl',monitor:'projects',folder:'caseStudies',notebook:'caseStudies',callingCard:'about',hobbyFrames:'hobbies',certWall:'achievements',window:'personal'};
+const INDEX=[['monitor','Work','Monitor'],['folder','Case studies','Folder'],['notebook','Sketchbook','Notebook'],['callingCard','About & contact','Calling card'],['hobbyFrames','Hobbies','Picture frames'],['certWall','Achievements','Certificates'],['career','Career path','Frame'],['pinboard','Pinboard','Bulletin board'],['window','Personal','Window'],['lamp','Switch the lamp','Lamp'],['moodLamp','Switch the orange lamp','Cabinet lamp'],['wallLamp','Switch the wall lamp','Wall lamp'],['vinyl','Music','Record player']];
 const idxBtn=$('idx-btn'), idxList=$('idx-list');
 INDEX.forEach(([k,t,o])=>{ const li=document.createElement('li'); li.innerHTML=`<button type="button">${t}<span>${o}</span></button>`; li.firstChild.onclick=()=>{ closeIdx(); focusObject(k); }; idxList.appendChild(li); });
 
@@ -583,9 +584,14 @@ catch(e){ app.classList.add('no-webgl'); }
 
 if(!renderer){ hideLoader(); return; } // Index still opens every panel
 // if the browser drops the 3D context (sleep, GPU switch, memory pressure), textures come back corrupted: start fresh instead
+try{ renderer.debug.checkShaderErrors=false; }catch(e){} // don't stall on each shader's compile log while the room loads
+// no real graphics card (software rendering): lighter settings so the room still appears quickly
+const SOFT_GPU=(()=>{ try{ const gl=renderer.getContext(), ext=gl.getExtension('WEBGL_debug_renderer_info'), r=ext?String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)):''; return /swiftshader|llvmpipe|software|basic render/i.test(r); }catch(e){ return false; } })();
+const PERF={}; const perfMark=k=>{ PERF[k]=Math.round(performance.now()); };
+perfMark('scripts');
 renderer.domElement.addEventListener('webglcontextlost',e=>{ e.preventDefault(); },false);
 renderer.domElement.addEventListener('webglcontextrestored',()=>{ location.reload(); },false);
-const PR_BASE=Math.min(window.devicePixelRatio||1,window.matchMedia('(pointer: coarse)').matches?1.35:1.5), PR_READ=Math.min(window.devicePixelRatio||1,2.5); let PR=PR_BASE; renderer.setPixelRatio(PR);
+const PR_BASE=SOFT_GPU?1:Math.min(window.devicePixelRatio||1,window.matchMedia('(pointer: coarse)').matches?1.35:1.5), PR_READ=Math.min(window.devicePixelRatio||1,2.5); let PR=PR_BASE; renderer.setPixelRatio(PR);
 renderer.outputEncoding=THREE.sRGBEncoding;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure=1.06;
@@ -602,6 +608,15 @@ const aniso=renderer.capabilities.getMaxAnisotropy();
 let SEED=20261005;
 function R(){ SEED=(SEED+0x6D2B79F5)|0; let t=Math.imul(SEED^(SEED>>>15),1|SEED); t=(t+Math.imul(t^(t>>>7),61|t))^t; return ((t^(t>>>14))>>>0)/4294967296; }
 const rnd=(a,b)=>a+R()*(b-a);
+const skipR=k=>{ SEED=(SEED+Math.imul(k,0x6D2B79F5))|0; };
+let GR_S=0x2545F491; const gR=()=>{ GR_S=(GR_S+0x6D2B79F5)|0; let t=Math.imul(GR_S^(GR_S>>>15),1|GR_S); t=(t+Math.imul(t^(t>>>7),61|t))^t; return ((t^(t>>>14))>>>0)/4294967296; };
+const GTILE=512, gTiles={};
+function grainTile(kind){ if(gTiles[kind]) return gTiles[kind]; const c=mkCanvas(GTILE,GTILE), g=c.getContext('2d'), area=GTILE*GTILE;
+  if(kind==='paper'){ for(let i=0;i<area/70;i++){ g.fillStyle=`rgba(${gR()<.5?120:255},${gR()<.5?100:250},${gR()<.5?80:240},${gR()*.045})`; g.fillRect(gR()*GTILE,gR()*GTILE,.8+gR()*1.8,.8+gR()*1.0); } }
+  else { for(let i=0;i<area/60;i++){ const v=gR()<.5?0:255; g.fillStyle=`rgba(${v},${v},${v},${gR()})`; g.fillRect(gR()*GTILE,gR()*GTILE,.6+gR()*1.2,.6+gR()*1.2); } }
+  return gTiles[kind]=c; }
+function tileOver(g,w,h,kind,alpha){ const pat=g.createPattern(grainTile(kind),'repeat'), ox=gR()*GTILE, oy=gR()*GTILE;
+  g.save(); g.globalAlpha*=alpha; g.translate(-ox,-oy); g.fillStyle=pat; g.fillRect(ox,oy,w,h); g.restore(); }
 const clamp01=v=>v<0?0:v>1?1:v;
 const sstep=(a,b,x)=>{ const t=clamp01((x-a)/(b-a)); return t*t*(3-2*t); };
 const DY=0.74, WT=0.2, WZ=-1.06-0.03; // desk height 740 mm; exterior wall 200 mm thick
@@ -635,9 +650,9 @@ function toTex(c,rep,srgb){
 // The pixel work is split into row bands across worker threads; results are identical to a single-thread run.
 const tick=()=>new Promise(r=>setTimeout(r,0));
 // fast first view: materials are generated at half resolution first, then quietly regenerated at full resolution after the room appears
-const TEXQ=0.5, MAT_SPECS=[];
+const TEXQ=(navigator.hardwareConcurrency||4)<=4?0.35:0.5, MAT_SPECS=[]; // fewer cores: a lighter first pass
 let POOL=null, JOB=0, PX_DONE=0, texSilent=false; const PX_TOTAL=(2048*1024+1024*1024*3+512*512*6+256*256*3)*TEXQ*TEXQ;
-function texProgress(n){ if(texSilent) return; PX_DONE+=n; setLoad(0.06+0.68*Math.min(1,PX_DONE/PX_TOTAL),'Preparing materials'); }
+function texProgress(n){ if(texSilent) return; PX_DONE+=n; setLoad(0.06+0.8*Math.min(1,PX_DONE/PX_TOTAL),'Preparing the room'); }
 function makePool(){
   try{
     if(typeof Worker==='undefined' || typeof Blob==='undefined') return null;
@@ -666,9 +681,9 @@ onmessage=function(e){ const d=e.data; if(d.perm){ PERM=d.perm; return; }
       close(){ workers.forEach(wk=>wk.terminate()); URL.revokeObjectURL(url); } };
   }catch(e){ return null; }
 }
-async function renderMat(sp,q){
+async function renderMat(sp,q,into){
   const w=Math.max(1,Math.round(sp.w*q)), h=Math.max(1,Math.round(sp.h*q)), fn=sp.fn, scope=sp.scope;
-  const col=mkCanvas(w,h), rou=mkCanvas(w,h), nor=mkCanvas(w,h);
+  const col=into?into.col:mkCanvas(w,h), rou=into?into.rou:mkCanvas(w,h), nor=into?into.nor:mkCanvas(w,h);
   const cg=col.getContext('2d'), rg=rou.getContext('2d'), ng=nor.getContext('2d');
   const cd=cg.createImageData(w,h), rd=rg.createImageData(w,h), nd=ng.createImageData(w,h);
   const s=sp.strength*q;
@@ -700,10 +715,16 @@ async function renderMat(sp,q){
     else { const keep=SEED; SEED=sp.postSeed; sp.post(cg,rg,w,h); SEED=keep; } }
   return {col,rou,nor};
 }
-async function material(w,h,fn,rep,strength,post,scope){
-  const sp={w,h,fn,strength:strength||2,post,scope};
-  const out=await renderMat(sp,TEXQ);
+// materials are generated in the background workers while the rest of the room is built on the main thread;
+// textures start as empty canvases and are filled in before the room is shown
+const MAT_JOBS=[];
+const NULL_CTX=new Proxy({},{get:(t,k)=>k==='canvas'?null:(()=>NULL_CTX),set:()=>true});
+function material(w,h,fn,rep,strength,post,scope){
+  const sp={w,h,fn,strength:strength||2,post,scope}, cw=Math.max(1,Math.round(w*TEXQ)), ch=Math.max(1,Math.round(h*TEXQ));
+  const out={col:mkCanvas(cw,ch), rou:mkCanvas(cw,ch), nor:mkCanvas(cw,ch)};
   sp.out=out; sp.res={map:toTex(out.col,rep), normal:toTex(out.nor,rep,false), rough:toTex(out.rou,rep,false)};
+  if(post){ sp.postSeed=SEED; post(NULL_CTX,NULL_CTX,cw,ch); } // advance the shared random stream now; the real wear marks replay from postSeed
+  MAT_JOBS.push(renderMat(sp,TEXQ,out).then(()=>{ sp.res.map.needsUpdate=sp.res.normal.needsUpdate=sp.res.rough.needsUpdate=true; }));
   MAT_SPECS.push(sp); return sp.res;
 }
 // after the room is on screen: regenerate each material at full resolution in the background and swap it in
@@ -738,7 +759,7 @@ function wear(cg,rg,w,h,n,frontZone){
 }
 
 const TX={};
-POOL=makePool(); setLoad(0.06,'Preparing materials');
+POOL=makePool(); setLoad(0.06,'Preparing the room');
 TX.desk=await material(2048,1024,(x,y,o)=>wood(x/2048*3,y/1024*1.4,3.1,o,[176,124,82],[118,74,44]),null,2.6,(cg,rg,w,h)=>wear(cg,rg,w,h,160,true));
 TX.floor=await (async function(){
   const W=1024, rows=8, ph=W/rows, cuts=[];
@@ -791,8 +812,7 @@ TX.soil=await material(256,256,(x,y,o)=>{ const n=fbm(x*.4,y*.4,3), p=hsh(x*3,y*
 TX.stoneware=await material(512,512,(x,y,o)=>{ const n=fbm(x/512*16,y/512*16,4,16,16), sp=hsh(x*11,y*7)>.985?.72:1, m=(.93+n*.1)*sp; o[0]=214*m; o[1]=208*m; o[2]=194*m; o[3]=n*.6+(sp<1?.4:0); o[4]=.62+n*.15; },null,1.6);
 TX.brushed=await material(512,512,(x,y,o)=>{ const s=fbm(x/512*2,y/512*256,3,2,256), m=.88+s*.16; o[0]=o[1]=o[2]=178*m; o[3]=s; o[4]=.3+s*.22; },[1,1],1);
 TX.plastic=await material(256,256,(x,y,o)=>{ const n=fbm(x*.9,y*.9,2); o[0]=o[1]=o[2]=255; o[3]=n; o[4]=.6+n*.15; },[2,2],1.2);
-if(POOL){ POOL.close(); POOL=null; }
-setLoad(0.76,'Building the room'); await tick(); await fontsReady; // fonts download while the materials are generated
+await fontsReady; // fonts download while the materials are generated
 
 function canvasTex(w,h,draw,srgb){ const c=mkCanvas(w,h); draw(c.getContext('2d'),w,h); return toTex(c,null,srgb); }
 const pagesT=canvasTex(64,256,(g,w,h)=>{ g.fillStyle='#ECE4D3'; g.fillRect(0,0,w,h); for(let y=0;y<h;y+=2){ g.fillStyle=`rgba(120,100,70,${rnd(.06,.2)})`; g.fillRect(0,y,w,1);} const gr=g.createLinearGradient(0,0,w,0); gr.addColorStop(0,'rgba(140,110,70,.18)'); gr.addColorStop(.2,'rgba(140,110,70,0)'); g.fillStyle=gr; g.fillRect(0,0,w,h); });
@@ -1301,7 +1321,7 @@ for(let i=0;i<mp.count;i++){ let x=mp.getX(i), y=mp.getY(i), z=mp.getZ(i);
   x*=0.84+0.16*back; if(x>0) x*=1.04;
   mp.setXYZ(i,x*0.031,y*0.037,z*0.058); }
 mouseGeo.computeVertexNormals();
-const mouse=new THREE.Group(); mouse.position.set(0.66,DY+0.0085,-0.38); mouse.rotation.y=0.14; scene.add(mouse);
+const mouse=new THREE.Group(); mouse.position.set(0.56,DY+0.0085,-0.385); mouse.rotation.y=0.1; scene.add(mouse);
 add(new THREE.Mesh(mouseGeo,phys({color:0xE9E7E2,roughness:.45,clearcoat:.25,clearcoatRoughness:.4})),mouse);
 add(new THREE.Mesh(new THREE.BoxGeometry(0.0012,0.03,0.04),M.black),mouse).position.set(0,0.013,-0.036);
 const wheel=add(new THREE.Mesh(new THREE.CylinderGeometry(0.0055,0.0055,0.006,20),M.graphite),mouse); wheel.rotation.z=Math.PI/2; wheel.position.set(0,0.026,-0.03);
@@ -1310,11 +1330,11 @@ contact(0.085,0.135,0,0,0,.5,true,0,mouse);
 /* ============ notebook + pen ============ */
 /* ============ sketchbook: hinged leather cover, three sheets of sketches; opens like the folder ============ */
 const NB_W=0.148, NB_D=0.21, NSW=0.138, NSH=0.2, NB_STACK=0.0108, NB_PIV=NB_STACK+0.0024;
-const nb=new THREE.Group(); nb.position.set(-0.16,DY,-0.41); nb.rotation.y=0.18; scene.add(nb);
+const nb=new THREE.Group(); nb.position.set(0.70,DY,-0.37); nb.rotation.y=-0.2; scene.add(nb);
 rBox(NB_W,0.0028,NB_D,0.0012,M.leather,0,0.0014,0,nb);                                                      // back cover
 add(new THREE.Mesh(new THREE.BoxGeometry(0.142,0.008,0.204),[M.pages,M.pages,M.paper,M.paper,M.pages,M.pages]),nb).position.set(0.002,0.0068,0);
 const nbElastic=add(new THREE.Mesh(new THREE.BoxGeometry(0.004,0.0175,0.212),M.black),nb); nbElastic.position.set(0.055,0.0087,0);
-const nbShadow=contact(0.18,0.25,-0.16,DY,-0.41,.42,false,0.18);
+const nbShadow=contact(0.18,0.25,0.70,DY,-0.37,.42,false,-0.2);
 
 // pages: cream dot-grid paper, pencil sketches and handwritten notes
 const NPW=900, NPH=1304, INK='#34323A', BLUE='#2B4A8A', ORANGE='#E07A2F';
@@ -1437,7 +1457,7 @@ function buildNotebookPages(){
     nbPageMeshes.push(mf,mb); nbSheets.push(s); });
 }
 buildNotebookPages();
-const pen=new THREE.Group(); pen.position.set(-0.14,DY+0.0222,-0.395); pen.rotation.y=-0.67; scene.add(pen);
+const pen=new THREE.Group(); pen.position.set(0.715,DY+0.0222,-0.352); pen.rotation.y=-1.05; scene.add(pen);
 add(new THREE.Mesh(new THREE.CylinderGeometry(0.0045,0.0042,0.135,20),phys({color:0x18191C,roughness:.35,clearcoat:.6})),pen).rotation.z=Math.PI/2;
 const penNib=add(new THREE.Mesh(new THREE.ConeGeometry(0.0042,0.014,20),M.steel),pen); penNib.rotation.z=-Math.PI/2; penNib.position.x=0.0745;
 add(new THREE.Mesh(new THREE.BoxGeometry(0.04,0.0013,0.002),M.steel),pen).position.set(-0.04,0.005,0);
@@ -1462,7 +1482,7 @@ tube(bandPts.slice(3,18).map(p=>p.clone().multiplyScalar(.93).setY(0.012)),0.006
 contact(0.3,0.26,0,0,0.03,.42,true,0,hp);
 
 /* ============ mug on a cork coaster ============ */
-const MGX=-0.36, MGZ=-0.61;
+const MGX=-0.33, MGZ=-0.70;
 const coaster=add(new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,0.004,48),M.cork)); coaster.position.set(MGX,DY+0.002,MGZ);
 contact(0.13,0.13,MGX,DY,MGZ,.42,true);
 const mug=lathe([[0,0.004],[.033,.004],[.037,.007],[.039,.03],[.04,.093],[.0365,.094],[.0345,.088],[.0335,.016],[0,.014]],M.ceramic);
@@ -1507,14 +1527,15 @@ contact(0.29,0.22,-0.03,DY,-0.84,.48,false);
 const walnut=std({color:0x7A5236,map:TX.desk.map,normalMap:TX.desk.normal,normalScale:nsc(.3),roughness:.55});
 const oakFrame=std({color:0xC7A27A,map:TX.desk.map,normalMap:TX.desk.normal,normalScale:nsc(.25),roughness:.55});
 const blackFrame=std({color:0x1F1E1D,roughness:.5,normalMap:TX.plastic.normal,normalScale:nsc(.1)});
-function grainOver(g,w,h,n,a){ for(let i=0;i<n;i++){ const v=R()<.5?0:255; g.fillStyle=`rgba(${v},${v},${v},${rnd(0,a)})`; g.fillRect(rnd(0,w),rnd(0,h),rnd(.6,1.8),rnd(.6,1.8)); } }
+// speckle grain comes from small pre-drawn tiles (a private random stream), laid down as a pattern at a random offset;
+// the shared random stream is advanced exactly as the old per-speckle drawing did, so nothing else in the room moves
+function grainOver(g,w,h,n,a){ skipR(n*6); tileOver(g,w,h,'grain',Math.min(1,a*(n/(w*h))*60)); }
 function vignette(g,w,h,a){ const gr=g.createRadialGradient(w/2,h/2,Math.min(w,h)*.3,w/2,h/2,Math.max(w,h)*.75); gr.addColorStop(0,'rgba(0,0,0,0)'); gr.addColorStop(1,`rgba(0,0,0,${a})`); g.fillStyle=gr; g.fillRect(0,0,w,h); }
 function canvasOf(w,h,draw){ const c=mkCanvas(w,h); draw(c.getContext('2d'),w,h); return c; }
 const dataURL=c=>{ try{ return c.toDataURL('image/jpeg',.86); }catch(e){ return ''; } };
 
 /* calling card: 89 × 51 mm, warm uncoated stock, drawn at 2x so it stays sharp when held up close */
-function paperFill(g,w,h,base){ g.fillStyle=base; g.fillRect(0,0,w,h); const n=w*h/70|0;
-  for(let i=0;i<n;i++){ g.fillStyle=`rgba(${R()<.5?120:255},${R()<.5?100:250},${R()<.5?80:240},${rnd(0,.045)})`; g.fillRect(rnd(0,w),rnd(0,h),rnd(.8,2.6),rnd(.8,1.8)); } }
+function paperFill(g,w,h,base){ g.fillStyle=base; g.fillRect(0,0,w,h); skipR((w*h/70|0)*8); tileOver(g,w,h,'paper',1); }
 const cardC=canvasOf(1780,1020,(g,w,h)=>{ paperFill(g,w,h,'#F3EDE2'); g.scale(2,2);
   g.fillStyle='#2A2622'; g.font='600 60px "Bricolage Grotesque", sans-serif'; g.fillText(ABOUT.name,64,156);
   g.fillStyle='#6B655D'; g.font='400 29px "Instrument Sans", sans-serif'; g.fillText(ABOUT.role,64,204);
@@ -1530,7 +1551,7 @@ const cardMat=std({map:cardFrontT,emissiveMap:cardFrontT,roughness:.86}), cardBa
 const cardMesh=()=>new THREE.Mesh(new THREE.BoxGeometry(0.089,0.051,0.0007),[cardEdge,cardEdge,cardEdge,cardEdge,cardMat,cardBack]);
 
 // walnut holder with a few cards leaning in its slot, turned toward the room; the front one can be picked up
-const cardGrp=new THREE.Group(); cardGrp.position.set(-0.035,DY,-0.285); cardGrp.rotation.y=0.46; scene.add(cardGrp);
+const cardGrp=new THREE.Group(); cardGrp.position.set(0.555,DY,-0.665); cardGrp.rotation.y=0.25; scene.add(cardGrp);
 rBox(0.074,0.016,0.034,0.004,walnut,0,0.008,0,cardGrp);
 add(new THREE.Mesh(new THREE.BoxGeometry(0.068,0.0006,0.005),M.black),cardGrp,false).position.set(0,0.0161,-0.004);
 const lean=-0.3, cards=[];
@@ -1541,12 +1562,12 @@ contact(0.095,0.055,0,0,0,.45,false,0,cardGrp);
 
 /* case-study folder: pressboard covers on a hinge, four printed sheets inside */
 const FOLD_W=0.235, FOLD_D=0.315, SW=0.219, SH=0.299, STACK=0.0076, PIV_Y=STACK+0.003;
-const folder=new THREE.Group(); folder.position.set(-0.37,DY,-0.39); folder.rotation.y=0.03; scene.add(folder);
+const folder=new THREE.Group(); folder.position.set(-0.115,DY+0.01075,-0.372); folder.rotation.set(0,0.045,-0.066); scene.add(folder);
 const board=std({color:0x40474A,roughness:.82,normalMap:TX.felt.normal,normalScale:nsc(.22)});
-rBox(FOLD_W,0.0016,FOLD_D,0.0007,board,0,0.0008,0,folder);                                                            // back board
+const folderBack=rBox(FOLD_W,0.0016,FOLD_D,0.0007,board,0,0.0008,0,folder);                                                            // back board
 add(new THREE.Mesh(new THREE.BoxGeometry(SW+0.003,0.006,SH+0.002),[M.pages,M.pages,M.paper,M.paper,M.pages,M.pages]),folder).position.set(0.004,0.0046,0);
 const elastic=add(new THREE.Mesh(new THREE.BoxGeometry(0.004,0.0175,0.318),M.black),folder); elastic.position.set(0.098,0.0082,0.001);
-const folderShadow=contact(0.27,0.35,-0.37,DY,-0.39,.4,false,0.03);
+const folderShadow=contact(0.27,0.35,-0.115,DY,-0.372,.4,false,0.045);
 
 // printed pages
 const PW=1000, PHT=1365, PMG=84;
@@ -1612,14 +1633,15 @@ function folderPages(){
     g.font='500 18px "JetBrains Mono", monospace'; g.fillText(ABOUT.place.toUpperCase()+'  ·  '+ABOUT.site,PMG+40,PMG+236);
     g.drawImage(cardC,PW-PMG-380,PHT*.62-150,380,218); // a card tucked into the pocket
     return c; })();
-  P.contents=page([{t:'kicker',text:'Contents'},{t:'title',text:'Case studies'},{t:'lede',text:'Selected work, from the problem to what shipped.'},{t:'gap',h:20},
+  if(0) P.contents=page([{t:'kicker',text:'Contents'},{t:'title',text:'Case studies'},{t:'lede',text:'Selected work, from the problem to what shipped.'},{t:'gap',h:20},
     ...PROJECTS.map((p,i)=>({t:'entry',n:'0'+(i+1),title:p.name,sub:p.sub,text:p.summary})),{t:'gap',h:10},
     {t:'p',text:coarse?'Tap the right page to turn forward, the left page to go back.':'Use ← → or click a page to turn it.'}],String(n++));
-  CASE_IDS.forEach(id=>{ const c=CASES[id];
-    P[id+'1']=page([{t:'kicker',text:c.kicker},{t:'title',text:c.title},{t:'lede',text:c.lede},{t:'img',c:PREVIEW[id]},{t:'facts',rows:c.facts}],String(n++));
+  // each folder holds only its own case study: overview, details, then a closing page
+  CASE_IDS.forEach(id=>{ const c=CASES[id], nm=BOOKS.find(b=>b.key===id).name;
+    P[id+'1']=page([{t:'kicker',text:c.kicker},{t:'title',text:c.title},{t:'lede',text:c.lede},{t:'img',c:PREVIEW[id]},{t:'facts',rows:c.facts}],nm+' · 1');
     const b=[]; c.sections.forEach(([hd,html])=>{ b.push({t:'h',text:hd}); htmlBlocks(html).forEach(x=>b.push(x)); });
-    P[id+'2']=page(b,String(n++)); });
-  P.end=page([{t:'gap',h:300},{t:'kicker',text:'End'},{t:'title',text:'Thanks for reading.'},{t:'lede',text:'More of my work lives on the monitor, and at '+ABOUT.site+'.'},{t:'p',text:ABOUT.name+' · '+ABOUT.role+' · '+ABOUT.place}],String(n++));
+    P[id+'2']=page(b,nm+' · 2');
+    P[id+'end']=page([{t:'gap',h:300},{t:'kicker',text:'End of '+nm},{t:'title',text:'Thanks for reading.'},{t:'lede',text:'More of my work lives on the monitor, and at '+ABOUT.site+'.'},{t:'p',text:ABOUT.name+' · '+ABOUT.role+' · '+ABOUT.place}],nm+' · 3'); });
   return P;
 }
 // page faces: the front reads from the spine outward; the back is mirrored so it reads once the sheet is turned
@@ -1629,22 +1651,57 @@ const insideGeo=new THREE.PlaneGeometry(FOLD_W-0.006,FOLD_D-0.006); insideGeo.ro
 const pageMeshes=[];
 function pageMat(c){ const tx=toTex(c); return std({map:tx,emissiveMap:tx,roughness:.9}); }
 const cover=new THREE.Group(); cover.position.set(-FOLD_W/2,PIV_Y,0); cover.userData.ang=0; folder.add(cover);
-rBox(FOLD_W,0.0016,FOLD_D,0.0007,board,FOLD_W/2,0.0012,0,cover);
+const folderCover=rBox(FOLD_W,0.0016,FOLD_D,0.0007,board,FOLD_W/2,0.0012,0,cover);
 const labelC=canvasOf(512,170,(g,w,h)=>{ g.fillStyle='#EFE9DD'; g.fillRect(0,0,w,h); grainOver(g,w,h,2500,.05);
   g.fillStyle='#2A2622'; g.font='500 36px "JetBrains Mono", monospace'; g.fillText('VIN / CASE STUDIES',34,76);
   g.fillStyle='#C98E62'; g.fillRect(34,96,44,3); g.fillStyle='#8A8278'; g.font='400 22px "JetBrains Mono", monospace'; g.fillText('Dō · Sō · Enterprise HRIS',34,138); });
 const label=add(new THREE.Mesh(new THREE.PlaneGeometry(0.15,0.05),std({map:toTex(labelC),roughness:.8})),cover,false);
 label.rotation.set(-Math.PI/2,0,-0.012); label.position.set(FOLD_W/2-0.03,0.00205,-0.07);
-const sheets=[];
+// three case-study folders fanned out on the desk, each with its own cover label; the live folder stands in for whichever one you pick
+const BOOKS_SEED=SEED;
+const BOOKS=[
+  {key:'hris', no:'03', title:'HRIS', name:'Enterprise HRIS', over:'Enterprise', sub:'Enterprise product design', cover:'#263342', accent:'#263342', spread:3, x:-0.365, y:DY,         z:-0.385, yaw:0.05,  tilt:0},
+  {key:'so',   no:'02', title:'Sō',   name:'Sō',   over:'',           sub:'Product design builder',    cover:'#425A91', accent:'#425A91', spread:2, x:-0.24,  y:DY+0.0073,  z:-0.372, yaw:-0.11, tilt:0.0536},
+  {key:'do',   no:'01', title:'Dō',   name:'Dō',   over:'',           sub:'Job management system',     cover:'#6F82B8', accent:'#6F82B8', spread:1, x:-0.112, y:DY+0.01275, z:-0.384, yaw:0.13, tilt:0.066}];
+// each folder has its own cover colour (given as sRGB hex, converted so it shows true under the room's colour pipeline)
+const bookBoard=BOOKS.map(b=>{ const m=board.clone(); m.color.set(b.cover).convertSRGBToLinear(); return m; });
+function bookLabel(b){ return canvasOf(352,456,(g,w,h)=>{ g.fillStyle='#EFE9DD'; g.fillRect(0,0,w,h); grainOver(g,w,h,2200,.05);
+  g.fillStyle='#2A2622'; g.font='500 25px "JetBrains Mono", monospace'; g.fillText('CASE STUDY',26,52); g.fillStyle='#8A8278'; g.fillText(b.no,272,52);
+  g.fillStyle=b.accent; g.fillRect(26,70,48,4);
+  if(b.over){ g.fillStyle='#4A453F'; g.font='600 34px "Instrument Sans", sans-serif'; g.fillText(b.over,26,190); }
+  g.fillStyle='#1E1C19'; g.font=`700 ${b.title.length>3?104:150}px "Bricolage Grotesque", sans-serif`; g.fillText(b.title,22,b.over?300:290);
+  g.fillStyle='#6E675E'; g.font='400 26px "Instrument Sans", sans-serif'; const words=b.sub.split(' '); let line='', y=372;
+  words.forEach(wd=>{ const tst=line?line+' '+wd:wd; if(g.measureText(tst).width>300){ g.fillText(line,26,y); line=wd; y+=34; } else line=tst; }); g.fillText(line,26,y); }); }
+const bookLabelTex=BOOKS.map(b=>toTex(bookLabel(b)));
+const caseStack=new THREE.Group(); scene.add(caseStack); caseStack.add(folder);
+const BOOK_STATIC=BOOKS.map((b,i)=>{ const g=new THREE.Group(); g.position.set(b.x,b.y,b.z); g.rotation.set(0,b.yaw,-b.tilt); caseStack.add(g);
+  rBox(FOLD_W,0.0016,FOLD_D,0.0007,bookBoard[i],0,0.0008,0,g);
+  add(new THREE.Mesh(new THREE.BoxGeometry(SW+0.003,0.006,SH+0.002),[M.pages,M.pages,M.paper,M.paper,M.pages,M.pages]),g).position.set(0.004,0.0046,0);
+  rBox(FOLD_W,0.0016,FOLD_D,0.0007,bookBoard[i],0,PIV_Y+0.0012,0,g);
+  const lb=add(new THREE.Mesh(new THREE.PlaneGeometry(0.085,0.11),std({map:bookLabelTex[i],roughness:.8})),g,false); lb.rotation.set(-Math.PI/2,0,-0.01); lb.position.set(-0.064,PIV_Y+0.00205,-0.06);
+  add(new THREE.Mesh(new THREE.BoxGeometry(0.004,0.0175,0.318),M.black),g).position.set(0.098,0.0082,0.001);
+  contact(0.27,0.35,b.x,DY,b.z,.33,false,b.yaw);
+  return g; });
+// the live folder wears the label of the folder it stands in for
+label.geometry=new THREE.PlaneGeometry(0.085,0.11); label.position.set(FOLD_W/2-0.064,0.00205,-0.06); label.rotation.set(-Math.PI/2,0,-0.01);
+label.material.map=bookLabelTex[2]; label.material.needsUpdate=true;
+folder.visible=false;
+SEED=BOOKS_SEED;
+const sheets=[], sheetFaces=[], BOOK_PAGES=[];
 function buildPages(){ // called once the case previews exist
   const P=folderPages();
   const inside=add(new THREE.Mesh(insideGeo,pageMat(P.inside)),cover,false); inside.position.y=0.0003; pageMeshes.push(inside);
-  [[P.contents,P.do1],[P.do2,P.so1],[P.so2,P.hris1],[P.hris2,P.end]].forEach(([f,b],i)=>{
+  // per folder: sheet 1 = overview / details, sheet 2 = closing page / blank back
+  const blank=pageMat(page([],''));
+  BOOKS.forEach((bk,k)=>{ BOOK_PAGES[k]=[pageMat(P[bk.key+'1']),pageMat(P[bk.key+'2']),pageMat(P[bk.key+'end']),blank]; });
+  [0,1].forEach(i=>{
     const s=new THREE.Group(); s.position.set(-FOLD_W/2+0.004,PIV_Y,0); s.userData.ang=0; folder.add(s);
     const y=-(i+1)*0.0006;
-    const [mf,mb]=curlMeshes(s,curlSheet(SW,SH,1.25),pageMat(f),pageMat(b),y);
-    pageMeshes.push(mf,mb); sheets.push(s); });
+    const [mf,mb]=curlMeshes(s,curlSheet(SW,SH,1.25),BOOK_PAGES[2][i*2],BOOK_PAGES[2][i*2+1],y);
+    pageMeshes.push(mf,mb); sheetFaces.push(mf,mb); sheets.push(s); });
 }
+function applyBookPages(k){ if(!BOOK_PAGES[k]) return; sheetFaces.forEach((m,i)=>{ const old=m.material, nw=BOOK_PAGES[k][i]; if(old===nw) return;
+  nw.emissive.copy(old.emissive); nw.emissiveIntensity=old.emissiveIntensity; m.material=nw; }); }
 
 /* hobby photographs: Melvin's own photos, in a small 2×2 cluster beside the pinboard */
 const loader=new THREE.TextureLoader(), PH=window.VIN_PHOTOS||{};
@@ -1999,21 +2056,61 @@ function careerCanvas(){ return canvasOf(1400,960,(g,w,h)=>{
   const P=[[215,700],[525,600],[835,490],[1150,345]];
   g.lineCap='round'; g.lineJoin='round';
   g.strokeStyle='rgba(42,38,34,.85)'; g.lineWidth=3.5; g.beginPath(); g.moveTo(P[0][0],P[0][1]); g.lineTo(P[1][0],P[1][1]); g.lineTo(P[2][0],P[2][1]); g.stroke();
-  g.setLineDash([12,12]); g.strokeStyle='rgba(42,38,34,.55)'; g.beginPath(); g.moveTo(P[2][0],P[2][1]); g.lineTo(P[3][0],P[3][1]); g.stroke(); g.setLineDash([]);
+  g.setLineDash([12,12]); g.strokeStyle='rgba(42,38,34,.55)'; g.beginPath(); g.moveTo(P[2][0],P[2][1]); g.lineTo(P[2][0]+(P[3][0]-P[2][0])*0.78,P[2][1]+(P[3][1]-P[2][1])*0.78); g.stroke(); g.setLineDash([]);
   const RED='#A8352B';
-  P.forEach(([x,y],i)=>{
+  P.forEach(([x,y],i)=>{ if(i===3) return; // the destination is an open question, drawn below
     g.fillStyle='rgba(40,25,15,.22)'; g.beginPath(); g.ellipse(x+5,y+7,17,15,0,0,Math.PI*2); g.fill();
     if(i<3){ const gr=g.createRadialGradient(x-5,y-6,2,x,y,17); gr.addColorStop(0,'#D2584A'); gr.addColorStop(1,RED); g.fillStyle=gr; g.beginPath(); g.arc(x,y,16,0,Math.PI*2); g.fill();
       g.fillStyle='rgba(255,235,225,.55)'; g.beginPath(); g.arc(x-5,y-6,4,0,Math.PI*2); g.fill(); }
     else { g.fillStyle='#E8E2D5'; g.beginPath(); g.arc(x,y,16,0,Math.PI*2); g.fill(); g.strokeStyle=RED; g.lineWidth=4.5; g.beginPath(); g.arc(x,y,14,0,Math.PI*2); g.stroke(); } });
   const L=[['UI/UX DESIGN','INTERN'],['UI/UX','DESIGNER'],['UI/UX DESIGN','TEAM LEAD'],['PRODUCT DESIGNER /','DESIGN ENGINEER']];
   g.textAlign='center';
-  P.forEach(([x,y],i)=>{ g.fillStyle='rgba(42,38,34,.5)'; g.font='400 19px "JetBrains Mono", monospace'; g.fillText('0'+(i+1),x,y+58);
+  P.forEach(([x,y],i)=>{ if(i===3) return; g.fillStyle='rgba(42,38,34,.5)'; g.font='400 19px "JetBrains Mono", monospace'; g.fillText('0'+(i+1),x,y+58);
     g.fillStyle=i<3?'#2A2622':'rgba(42,38,34,.78)'; g.font='600 25px "Instrument Sans", sans-serif'; L[i].forEach((t,k)=>g.fillText(t,x,y+94+k*31)); });
-  g.fillStyle=RED; g.font='500 19px "JetBrains Mono", monospace'; const nt='NEXT TARGET', ntw=g.measureText(nt).width+(nt.length-1)*5;
-  g.textAlign='left'; spaced('NEXT TARGET',P[3][0]-ntw/2,P[3][1]+170,5);
+  // where next: a large question mark, no pin and no title of its own
+  const [qx,qy]=CAREER_Q; g.textAlign='center';
+
   g.textAlign='right'; g.fillStyle='rgba(42,38,34,.4)'; g.font='400 18px "JetBrains Mono", monospace'; g.fillText('M. LOMBOY',w-110,h-80);
   grainOver(g,w,h,9000,.035); }); }
+// three possible next directions, pencilled in lightly around the ? (not nodes, not branches)
+const CAREER_Q=[1150,345];
+// notes pencilled close around the ?, each marked a little differently, the way you'd jot ideas down
+const CAREER_IDEAS=[
+  {lines:['MID-LEVEL','UI/UX DESIGNER'],x:968,y:290,r:-0.06,w:230,mark:'tick'},
+  {lines:['PRODUCT DESIGNER'],x:1192,y:212,r:0.035,w:280,mark:'under'},
+  {lines:['DESIGN ENGINEER'],x:1196,y:490,r:-0.03,w:262,mark:'loop'}];
+function pencilGrain(g,w,h){ const id=g.getImageData(0,0,w,h), a=id.data; for(let i=3;i<a.length;i+=4){ if(a[i]) a[i]*=0.5+0.5*R(); } g.putImageData(id,0,0); }
+function pencilPath(g,pts,wob){ g.beginPath(); pts.forEach(([x,y],k)=>{ const jx=x+(R()-0.5)*wob, jy=y+(R()-0.5)*wob; k?g.lineTo(jx,jy):g.moveTo(jx,jy); }); g.stroke(); }
+function careerPencil(){ return canvasOf(1400,960,(g,w,h)=>{
+  const lead='#3E3C39'; g.lineCap='round'; g.lineJoin='round';
+  CAREER_IDEAS.forEach(d=>{ g.save(); g.translate(d.x,d.y); g.rotate(d.r);
+    const F=sz=>`400 ${sz}px "Tinos", "Times New Roman", "Liberation Serif", Times, serif`, wOf=t=>g.measureText(t).width+t.length*1.2;
+    let sz=46; g.font=F(sz); while(Math.max(...d.lines.map(wOf))>d.w && sz>20){ sz-=2; g.font=F(sz); }
+    const lh=sz*0.92, top=-(d.lines.length-1)*lh/2; let maxW=0; g.fillStyle=lead; g.textAlign='left';
+    d.lines.forEach((t,li)=>{ const tw=wOf(t); maxW=Math.max(maxW,tw); let x=-tw/2; const y0=top+li*lh;
+      for(const ch of t){ const dy=Math.sin((x+li*40)*0.06)*1.3, rr=(R()-0.5)*0.05; g.save(); g.translate(x,y0+dy); g.rotate(rr);
+        g.globalAlpha=.85; g.fillText(ch,0,0); g.globalAlpha=.4; g.fillText(ch,0.7,0.6); g.restore(); x+=g.measureText(ch).width+1.2; } });
+    g.strokeStyle=lead; g.globalAlpha=.55; g.lineWidth=1.8; const hw=maxW/2, bot=top+(d.lines.length-1)*lh;
+    if(d.mark==='under'){ const pts=[]; for(let u=-hw-6;u<=hw+10;u+=22) pts.push([u,bot+14+Math.sin(u*0.04)*2.2]); pencilPath(g,pts,1.4);
+      g.globalAlpha=.3; pencilPath(g,pts.map(([x,y])=>[x+3,y+2.5]),1.6); }
+    else if(d.mark==='tick'){ g.beginPath(); g.ellipse(-wOf(d.lines[0])/2-14,top-sz*0.28,5,4.5,0.3,0,Math.PI*1.85); g.stroke(); }
+    else { const pts=[], rx=hw+26, ry=(bot-top)/2+sz*0.5+12, cy=(top+bot)/2-sz*0.28; // a loose, unclosed oval
+      for(let a=-2.6;a<=3.75;a+=0.18) pts.push([Math.cos(a)*rx,cy+Math.sin(a)*ry]); pencilPath(g,pts,2.2); }
+    g.restore(); });
+  pencilGrain(g,w,h); }); }
+// the ? itself, shaded in with pencil: dense hatching inside the glyph, then a sketchy double outline
+function careerQPencil(){ return canvasOf(1400,960,(g,w,h)=>{ const [qx,qy]=CAREER_Q, lead='#34322F', FQ='700 210px "Bricolage Grotesque", sans-serif';
+  g.lineCap='round'; g.strokeStyle=lead;
+  for(let pass=0;pass<2;pass++){ const ang=pass?1.15:0.72, gap=pass?3.4:2.4; g.lineWidth=pass?1.4:1.9; // two directions of hatching, the second lighter
+    for(let t=-300;t<300;t+=gap){ g.globalAlpha=(pass?.6:.9)*(0.65+0.35*R()); const cx=qx+t*Math.cos(ang+Math.PI/2), cy=qy-10+t*Math.sin(ang+Math.PI/2);
+      g.beginPath(); g.moveTo(cx-Math.cos(ang)*160+(R()-.5)*6,cy-Math.sin(ang)*160); g.lineTo(cx+Math.cos(ang)*160,cy+Math.sin(ang)*160+(R()-.5)*6); g.stroke(); } }
+  g.globalAlpha=1; g.globalCompositeOperation='destination-in'; g.textAlign='center'; g.font=FQ; g.fillStyle='#000'; g.fillText('?',qx,qy+72);
+  g.globalCompositeOperation='source-over'; g.lineJoin='round';
+  [[0,0,.9,2.2],[1.6,-1.2,.45,1.4]].forEach(([dx,dy,a,lw])=>{ g.globalAlpha=a; g.lineWidth=lw; g.strokeText('?',qx+dx,qy+72+dy); });
+  pencilGrain(g,w,h); }); }
+// on hover, a light pencil ring drawn around the ? (nothing else appears)
+function careerQRing(){ return canvasOf(1400,960,(g,w,h)=>{ const [qx,qy]=CAREER_Q; g.strokeStyle='#3E3C39'; g.lineWidth=2; g.lineCap='round'; g.globalAlpha=.7;
+  const pts=[]; for(let a=-1.9;a<=4.55;a+=0.14) pts.push([qx+4+Math.cos(a)*(78+a*1.5),qy+10+Math.sin(a)*(86+a)]); pencilPath(g,pts,2.4); pencilGrain(g,w,h); }); }
 const CAREER={W:0.68, H:0.48, AW:0.58, AH:0.58*960/1400, y:1.52, z:-0.35, lit:0.12, read:0.5};
 const careerGrp=new THREE.Group(); careerGrp.position.set(SWX,CAREER.y,CAREER.z); careerGrp.rotation.set(0,Math.PI/2,-0.003); scene.add(careerGrp);
 rBox(CAREER.W,CAREER.H,0.026,0.003,walnutDark,0,0,0.013,careerGrp);
@@ -2021,6 +2118,15 @@ add(new THREE.Mesh(new THREE.PlaneGeometry(CAREER.W-0.03,CAREER.H-0.03),M.paper)
 const careerTex=toTex(careerCanvas());
 const careerArtMat=std({map:careerTex,roughness:.75,emissive:0xFFF2E2,emissiveMap:careerTex,emissiveIntensity:CAREER.lit}); careerArtMat.userData.keepEmissive=true;
 const careerArt=add(new THREE.Mesh(new THREE.PlaneGeometry(CAREER.AW,CAREER.AH),careerArtMat),careerGrp,false); careerArt.position.z=0.0266; careerArt.receiveShadow=true;
+const careerPencilTex=toTex(careerPencil());
+const careerIdeasMat=std({map:careerPencilTex,transparent:true,opacity:0.62,depthWrite:false,roughness:.85,emissive:0xFFF2E2,emissiveMap:careerPencilTex,emissiveIntensity:CAREER.lit}); careerIdeasMat.userData.keepEmissive=true;
+const careerIdeas=add(new THREE.Mesh(new THREE.PlaneGeometry(CAREER.AW,CAREER.AH),careerIdeasMat),careerGrp,false); careerIdeas.position.z=0.0268; careerIdeas.renderOrder=2;
+const careerQTex=toTex(careerQPencil());
+const careerQMat=std({map:careerQTex,transparent:true,opacity:0.92,depthWrite:false,roughness:.85,emissive:0xFFF2E2,emissiveMap:careerQTex,emissiveIntensity:CAREER.lit}); careerQMat.userData.keepEmissive=true;
+const careerQ=add(new THREE.Mesh(new THREE.PlaneGeometry(CAREER.AW,CAREER.AH),careerQMat),careerGrp,false); careerQ.position.z=0.02675; careerQ.renderOrder=2;
+const careerRingTex=toTex(careerQRing());
+const careerRingMat=std({map:careerRingTex,transparent:true,opacity:0,depthWrite:false,roughness:.85,emissive:0xFFF2E2,emissiveMap:careerRingTex,emissiveIntensity:CAREER.lit}); careerRingMat.userData.keepEmissive=true;
+const careerRing=add(new THREE.Mesh(new THREE.PlaneGeometry(CAREER.AW,CAREER.AH),careerRingMat),careerGrp,false); careerRing.position.z=0.0269; careerRing.renderOrder=3;
 const careerGlass=new THREE.Mesh(new THREE.PlaneGeometry(CAREER.W-0.026,CAREER.H-0.026),glassMat); careerGlass.position.z=0.0272; careerGrp.add(careerGlass);
 aoStrip(CAREER.W+0.03,0.05,new THREE.Vector3(SWX+0.001,CAREER.y-CAREER.H/2-0.024,CAREER.z-0.005),[0,Math.PI/2,Math.PI],.24);
 SEED=CAREER_SEED;
@@ -2239,7 +2345,7 @@ function updateCard(dt){
 
 /* ---- folder: double-click to lift it up and open it, then turn pages ---- */
 const FOLDER={open:false,spread:0,lift:0,lit:false};
-const SPREADS=['Contents','Dō','Sō','Enterprise HRIS','End'], SPREAD_CASE=[null,'do','so','hris',null];
+const SPREADS=['Overview','Details'];
 const folderRest={pos:folder.position.clone(), q:folder.quaternion.clone()}, folderRead={pos:V(0,0,0), q:new THREE.Quaternion()};
 const qOpen=new THREE.Quaternion().setFromAxisAngle(V(1,0,0),Math.PI/2);
 // opened, the folder is held up at a fixed spot above the front of the desk; the camera steps back to read it
@@ -2253,6 +2359,24 @@ function setFolderRead(){
   folderRead.pos.copy(READ_C).addScaledVector(right,FOLD_W/2).addScaledVector(READ_F,PIV_Y);
 }
 function openFolder(){ if(FOLDER.open) return; setFolderRead(); FOLDER.open=true; FOLDER.spread=0; renderBar(); }
+let curBook=-1, pendingBook=-1, glowedBook=-1, lastPickPt=null, lastPickAt=0;
+function chooseBook(){ return lastPickPt?bookAt(lastPickPt):2; }
+function bookAt(pt){ let i=-1, best=1e9; if(!pt) return -1; BOOKS.forEach((b,k)=>{ const d=(b.x-pt.x)**2+(b.z-pt.z)**2; if(d<best){ best=d; i=k; } }); return best<0.04?i:-1; }
+// zoomed in on the whole stack first; one folder at a time is then picked and opened
+function stackPose(){ const cx=-0.24, cz=-0.378, tf=tfov(), d=Math.max(0.2/(0.8*tf),0.33/(0.9*tf*camera.aspect));
+  const dir=V(0,0.7,0.714).normalize(); return {pos:V(cx,DY,cz).addScaledVector(dir,d), look:V(cx,DY+0.006,cz+0.01)}; }
+function glowBook(b){ if(b===glowedBook) return; const set=(k,hex)=>{ if(k<0) return; [BOOK_STATIC[k]].concat(folder.visible && curBook===k?[folder]:[]).forEach(r=>r.traverse(o=>{ if(!o.isMesh) return; (Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{ if(m && m.emissive && !m.userData.keepEmissive) m.emissive.setHex(hex); }); })); };
+  set(glowedBook,0); glowedBook=b; set(b,0x1a150e); }
+function takeBook(k){ curBook=k; const b=BOOKS[k];
+  folder.position.set(b.x,b.y,b.z); folder.rotation.set(0,b.yaw,-b.tilt); folder.updateMatrixWorld(true);
+  folderRest.pos.copy(folder.position); folderRest.q.copy(folder.quaternion);
+  label.material.map=bookLabelTex[k]; label.material.needsUpdate=true; applyBookPages(k);
+  [folderBack,folderCover].forEach(m=>m.material.color.set(b.cover).convertSRGBToLinear());
+  folderShadow.position.set(b.x,DY+0.0008,b.z); folderShadow.rotation.z=b.yaw;
+  BOOK_STATIC.forEach((g,i)=>{ g.visible=i!==k; }); folder.visible=true; }
+function openBook(k){ glowBook(-1); if(folder.visible && curBook!==k){ pendingBook=k; FOLDER.open=false; return; } // the other folder goes back first
+  if(!folder.visible) takeBook(k); openFolder(); }
+function putBackBook(){ FOLDER.open=false; FOLDER.spread=0; goal=inspectGoal(OBJECTS.folder); renderBar(); }
 function turnFolder(d){ if(!FOLDER.open) return; const s=Math.max(0,Math.min(SPREADS.length-1,FOLDER.spread+d)); if(s!==FOLDER.spread){ FOLDER.spread=s; renderBar(); } }
 function folderClick(hit){ if(!FOLDER.open){ return; } const lx=folder.worldToLocal(hit.point.clone()).x; turnFolder(lx< -FOLD_W/2 ? -1 : 1); }
 function updateFolder(dt){
@@ -2267,13 +2391,16 @@ function updateFolder(dt){
   elastic.visible=!F.open && F.lift<0.02; folderShadow.material.opacity=0.4*Math.max(0,1-e*2); folderShadow.userData.core.material.opacity=0.24*Math.max(0,1-e*2);
   if(F.lift>0.002){ F.lit=true; pageMeshes.forEach(m=>{ m.material.emissive.setHex(0xffffff); m.material.emissiveIntensity=0.3*e; }); }
   else if(F.lit){ F.lit=false; pageMeshes.forEach(m=>{ m.material.emissive.setHex(0); m.material.emissiveIntensity=1; }); }
+  if(!F.open && folder.visible && F.lift===0 && cover.userData.ang<0.02 && sheets.every(s=>s.userData.ang<0.02)){ folder.visible=false; BOOK_STATIC.forEach(g=>{ g.visible=true; }); curBook=-1; warmFrames=0;
+    if(pendingBook>=0 && active==='folder'){ const k=pendingBook; pendingBook=-1; takeBook(k); openFolder(); } }
+  folderShadow.visible=folder.visible;
 }
 
 /* ---- sketchbook: same behaviour as the folder (double-click to lift and open, then turn pages) ---- */
 const NOTE={open:false,spread:0,lift:0,lit:false};
 const NOTE_SPREADS=['First page','Dō — the name','Sō — the name','Design process','Last page'], NOTE_CASE=[null,'do','so',null,null];
 const noteRest={pos:nb.position.clone(), q:nb.quaternion.clone()}, noteRead={pos:V(0,0,0), q:new THREE.Quaternion()};
-const NREAD_C=V(-0.2,DY+0.3,-0.36);
+const NREAD_C=V(0.48,DY+0.3,-0.36);
 const PEN_Y0=DY+0.0209, PEN_Y1=DY+0.0045;
 pen.position.y=PEN_Y0;
 function setNoteRead(){
@@ -2318,29 +2445,43 @@ function certFolderOf(hit){ let o=hit&&hit.object; while(o && o!==certOrg){ cons
 const CERT_QZ=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1),Math.PI/2), certRest=certSheet.geometry.attributes.position.array.slice();
 const certPath=new THREE.CatmullRomCurve3([new THREE.Vector3(),new THREE.Vector3(),new THREE.Vector3(),new THREE.Vector3()],false,'centripetal'); certPath.arcLengthDivisions=60;
 const cq0=new THREE.Quaternion();
-function bendCert(b){ const p=certSheet.geometry.attributes.position, h=CERT_W/2;
+function bendCert(mesh,b){ const p=mesh.geometry.attributes.position, h=CERT_W/2;
   for(let i=0;i<p.count;i++){ const x=certRest[i*3]; p.setZ(i,-b*(x/h)*(x/h)); } p.needsUpdate=true; }
-function updateCert(dt){
-  const tgt=(CERT.show && CERT.want===CERT.idx)?1:0;
-  CERT.t=approach(CERT.t,tgt,dt*(tgt?0.95:1.5));
-  if(CERT.t===0 && CERT.want!==CERT.idx){ CERT.idx=CERT.want; certSheet.material.map=certTex[CERT.idx]; certSheet.material.needsUpdate=true; fitCertSheet(); setCertRead(); }
-  certSheet.visible=CERT.t>0.001;
-  const f=orgAll[CERT_FOLDER[CERT.idx]]||orgFront[0];
-  if(!f.userData.base) f.userData.base={p:f.position.clone(), r:f.rotation.clone()};
-  const B=f.userData.base; f.position.copy(B.p); f.rotation.copy(B.r); f.updateMatrixWorld(true);
-  if(!certSheet.visible){ bendCert(0); return; }
-  // the path: straight up out of the folder, then an easy arc to where it can be read
+// a second sheet carries the outgoing certificate back into its folder while the next one comes out of another
+const certSheetOut=new THREE.Mesh(new THREE.PlaneGeometry(CERT_W,CERT_H,20,1),new THREE.MeshBasicMaterial({map:certTex[0],color:0xF4F1EC,side:THREE.DoubleSide}));
+certSheetOut.visible=false; scene.add(certSheetOut);
+const CERT_OUT={idx:-1,t:0};
+function folderFor(i){ const f=orgAll[CERT_FOLDER[i]]||orgFront[0]; if(!f.userData.base) f.userData.base={p:f.position.clone(), r:f.rotation.clone()}; return f; }
+// place one sheet along its path: straight up out of its folder, then an easy arc to the reading spot (t: 0 in the folder, 1 in front of you)
+function placeSheet(mesh,i,t,twist){
+  const f=folderFor(i), B=f.userData.base; f.position.copy(B.p); f.rotation.copy(B.r); f.updateMatrixWorld(true);
   const P=certPath.points; P[0].copy(f.localToWorld(new THREE.Vector3(0,0.14,0))); P[1].copy(f.localToWorld(new THREE.Vector3(0,0.46,0)));
   P[3].copy(certRead.pos); P[2].copy(P[1]).lerp(P[3],0.45).add(new THREE.Vector3(0,0.05,0)); certPath.updateArcLengths();
-  const u=ease(CERT.t), L=certPath.getLength(), fx=Math.min(0.6,P[0].distanceTo(P[1])/L);
-  certSheet.position.copy(certPath.getPointAt(u));
+  const u=ease(t), L=certPath.getLength(), fx=Math.min(0.6,P[0].distanceTo(P[1])/L);
+  mesh.position.copy(certPath.getPointAt(u));
   f.getWorldQuaternion(cq0).multiply(CERT_QZ);
   const w=THREE.MathUtils.smoothstep(u,fx*0.92,0.9);
-  certSheet.quaternion.copy(cq0).slerp(certRead.q,w);
-  bendCert(u<fx?0:Math.sin(Math.PI*Math.min(1,(u-fx)/(1-fx)))*0.03);
-  // the folder is gripped: it lifts and tips forward a little while the paper slides out, then settles back
+  mesh.quaternion.copy(cq0).slerp(certRead.q,w);
+  if(twist){ mesh.rotateZ(twist); mesh.position.addScaledVector(V(0,-1,0),Math.abs(twist)*0.05); }
+  bendCert(mesh,u<fx?0:Math.sin(Math.PI*Math.min(1,(u-fx)/(1-fx)))*0.035);
+  // the folder is gripped: it lifts and tips forward a little while the paper slides in or out, then settles back
   const g=Math.sin(Math.PI*Math.min(1,u/(fx*1.25)));
   if(u<fx*1.25){ f.position.y=B.p.y+0.012*g; f.position.z=B.p.z+0.005*g; f.rotation.x=B.r.x+0.05*g; }
+}
+function updateCert(dt){
+  // switching: hand the current paper to the outgoing sheet, and start the next one from its own folder
+  if(CERT.want!==CERT.idx){
+    if(CERT.t>0.02 && CERT_OUT.t<=0){ CERT_OUT.idx=CERT.idx; CERT_OUT.t=CERT.t; certSheetOut.material.map=certTex[CERT.idx]; certSheetOut.material.needsUpdate=true; certSheetOut.scale.copy(certSheet.scale); }
+    CERT.idx=CERT.want; CERT.t=0; certSheet.material.map=certTex[CERT.idx]; certSheet.material.needsUpdate=true; fitCertSheet(); setCertRead(); }
+  if(CERT_OUT.t>0){ CERT_OUT.t=Math.max(0,CERT_OUT.t-dt*1.7); certSheetOut.visible=CERT_OUT.t>0.001;
+    if(certSheetOut.visible) placeSheet(certSheetOut,CERT_OUT.idx,CERT_OUT.t,(1-CERT_OUT.t)*0.25); }
+  else certSheetOut.visible=false;
+  const hold=CERT_OUT.t>0.55; // the next paper waits until the last one is on its way
+  const tgt=(CERT.show && !hold)?1:0;
+  CERT.t=approach(CERT.t,tgt,dt*(tgt?1.0:1.6));
+  certSheet.visible=CERT.t>0.001;
+  if(!certSheet.visible){ const f=folderFor(CERT.idx), B=f.userData.base; if(CERT_OUT.t<=0 || CERT_OUT.idx!==CERT.idx){ f.position.copy(B.p); f.rotation.copy(B.r); } bendCert(certSheet,0); return; }
+  placeSheet(certSheet,CERT.idx,CERT.t,0);
 }
 
 /* ---- photo wall: hover a photo for a short caption ---- */
@@ -2367,24 +2508,31 @@ let careerFocus=false;
 function careerPose(){ const tf=tfov(), c=V(SWX,CAREER.y,CAREER.z), d=Math.max((CAREER.H/2)/(0.74*tf),(CAREER.W/2)/(0.86*tf*camera.aspect));
   return {pos:V(SWX+d+0.02,CAREER.y+0.01,CAREER.z), look:c.clone().add(V(0,0.01,0))}; }
 function updateCareer(dt){ const m=careerArt.material, base=(careerFocus?CAREER.read:CAREER.lit)+(m.userData.hoverBoost?HOVER_EI:0);
-  m.emissiveIntensity+=(base-m.emissiveIntensity)*Math.min(1,dt*3); }
+  m.emissiveIntensity+=(base-m.emissiveIntensity)*Math.min(1,dt*3);
+  const k=Math.min(1,dt*5); careerIdeasMat.emissiveIntensity=careerRingMat.emissiveIntensity=careerQMat.emissiveIntensity=m.emissiveIntensity;
+  careerIdeasMat.opacity+=((careerQHot?0.8:0.62)-careerIdeasMat.opacity)*k; careerQMat.opacity+=((careerQHot?1:0.92)-careerQMat.opacity)*k; careerRingMat.opacity+=((careerQHot?0.55:0)-careerRingMat.opacity)*k; careerRing.visible=careerRingMat.opacity>0.005; }
+let careerQHot=false;
+function careerAtQ(h){ if(!h) return false; const p=careerArt.worldToLocal(h.point.clone()), cx=(p.x/CAREER.AW+0.5)*1400, cy=(0.5-p.y/CAREER.AH)*960;
+  return Math.hypot(cx-CAREER_Q[0],(cy-CAREER_Q[1])*1.1)<130; }
 const OBJECTS={
   monitor:     {obj:monitor,  label:'View my work', inspect:true, pose:()=>monitorPose(),
                 enter:()=>{ OS.s=osScale(); OS.hover=null; drawOS(); }, exit:()=>{ OS.s=1.25; OS.hover=null; drawOS(); },
                 reflow:()=>{ OS.s=osScale(); drawOS(); }, hover:osHover, click:osClick,
                 bar:()=>[{hint:coarse?'Tap the screen to use it':'Use the screen'}]},
-  folder:      {obj:folder,   label:'Case studies', inspect:true,
-                camera:V(-0.37,DY+0.42,0.03), target:V(-0.4,DY+0.004,-0.345),
-                exit:()=>{ FOLDER.open=false; FOLDER.spread=0; },
-                hover:h=>h?(FOLDER.open?(coarse?'Tap a page to turn it':'Click a page or use ← →'):(coarse?'Double-tap to open':'Double-click to open')):null,
-                click:folderClick, dbl:h=>{ if(!FOLDER.open) openFolder(); else folderClick(h); },
-                key:e=>{ if(e.key==='ArrowRight'){ e.preventDefault(); turnFolder(1); } else if(e.key==='ArrowLeft'){ e.preventDefault(); turnFolder(-1); } else if((e.key==='Enter'||e.key===' ') && !FOLDER.open){ e.preventDefault(); openFolder(); } },
+  folder:      {obj:caseStack, label:'Case studies', inspect:true, pose:()=>stackPose(),
+                enter:()=>{ curBook=-1; pendingBook=-1; glowBook(-1); },
+                exit:()=>{ FOLDER.open=false; FOLDER.spread=0; pendingBook=-1; glowBook(-1); },
+                hover:h=>{ if(FOLDER.open){ glowBook(-1); return h?(coarse?'Tap a page to turn it':'Click a page or use ← →'):null; }
+                  const b=h?bookAt(h.point):-1; glowBook(b); return b>=0?`${BOOKS[b].name} · ${coarse?'double-tap':'double-click'} to open`:null; },
+                click:h=>{ if(FOLDER.open) folderClick(h); },
+                dbl:h=>{ if(FOLDER.open){ folderClick(h); return; } const b=bookAt(h.point); if(b>=0) openBook(b); },
+                key:e=>{ if(e.key==='ArrowRight'){ e.preventDefault(); turnFolder(1); } else if(e.key==='ArrowLeft'){ e.preventDefault(); turnFolder(-1); } else if((e.key==='Enter'||e.key===' ') && !FOLDER.open){ e.preventDefault(); openBook(2); } },
                 reflow:()=>{ if(FOLDER.open) setFolderRead(); },
-                bar:()=>{ if(!FOLDER.open) return [{hint:coarse?'Double-tap the folder to open it':'Double-click the folder to open it'},{label:'Open',fn:openFolder}];
-                  const s=FOLDER.spread; return [{label:'‹',aria:'Previous page',fn:()=>turnFolder(-1),off:s===0},{text:`${SPREADS[s]} · ${s+1}/${SPREADS.length}`},{label:'›',aria:'Next page',fn:()=>turnFolder(1),off:s===SPREADS.length-1},
-                    SPREAD_CASE[s]?{label:'View case study',fn:()=>openCasePage(SPREAD_CASE[s])}:null]; }},
+                bar:()=>{ if(!FOLDER.open) return [{hint:coarse?'Double-tap a case study to open it':'Double-click a case study to open it'}].concat([2,1,0].map(k=>({label:BOOKS[k].name,fn:()=>openBook(k)})));
+                  const s=FOLDER.spread; return [{label:'‹',aria:'Previous page',fn:()=>turnFolder(-1),off:s===0},{text:`${BOOKS[Math.max(0,curBook)].name} · ${SPREADS[s]} · ${s+1}/${SPREADS.length}`},{label:'›',aria:'Next page',fn:()=>turnFolder(1),off:s===SPREADS.length-1},
+                    curBook>=0?{label:'View case study',fn:()=>openCasePage(BOOKS[curBook].key)}:null,{label:'Put back',fn:putBackBook}]; }},
   notebook:    {obj:nb,       label:'Sketchbook', inspect:true,
-                camera:V(-0.15,DY+0.34,-0.07), target:V(-0.185,DY+0.012,-0.385),
+                camera:V(0.71,DY+0.34,-0.07), target:V(0.675,DY+0.012,-0.37),
                 exit:()=>{ NOTE.open=false; NOTE.spread=0; },
                 hover:h=>h?(NOTE.open?(coarse?'Tap a page to turn it':'Click a page or use ← →'):(coarse?'Double-tap to open':'Double-click to open')):null,
                 click:noteClick, dbl:h=>{ if(!NOTE.open) openNote(); else noteClick(h); },
@@ -2394,7 +2542,7 @@ const OBJECTS={
                   const s=NOTE.spread; return [{label:'‹',aria:'Previous page',fn:()=>turnNote(-1),off:s===0},{text:`${NOTE_SPREADS[s]} · ${s+1}/${NOTE_SPREADS.length}`},{label:'›',aria:'Next page',fn:()=>turnNote(1),off:s===NOTE_SPREADS.length-1},
                     NOTE_CASE[s]?{label:'View case study',fn:()=>openCasePage(NOTE_CASE[s])}:null]; }},
   callingCard: {obj:cardGrp,  label:'About & contact', inspect:true,
-                camera:V(0.05,DY+0.3,0.03), target:V(-0.035,DY+0.045,-0.285),
+                camera:V(0.64,DY+0.3,-0.35), target:V(0.555,DY+0.045,-0.665),
                 enter:()=>{ setCardHeld(); CARD.held=true; CARD.flip=false; }, exit:()=>{ CARD.held=false; CARD.flip=false; },
                 reflow:setCardHeld,
                 hover:h=>h&&h.object===heldCard?(coarse?'Tap to flip':'Click to flip'):null,
@@ -2415,8 +2563,12 @@ const OBJECTS={
                   return [{label:'‹',aria:'Previous certificate',fn:()=>showCert(CERT.want-1)},{text:`${a.short||a.title} · ${CERT.want+1}/${n}`},{label:'›',aria:'Next certificate',fn:()=>showCert(CERT.want+1)}]; }},
   window:      {obj:win,      label:'Look outside', camera:V(-0.2,1.56,0.64), target:V(WCX,1.62,WZ), panel:'personal'},
   career:      {obj:careerGrp, label:'Career path', inspect:true, pose:()=>careerPose(),
-                enter:()=>{ careerFocus=true; }, exit:()=>{ careerFocus=false; },
+                enter:()=>{ careerFocus=true; }, exit:()=>{ careerFocus=false; careerQHot=false; },
+                hover:h=>{ careerQHot=careerAtQ(h); return null; }, // no tooltip: the frame speaks for itself
+                click:h=>{ if(coarse) careerQHot=careerAtQ(h)?!careerQHot:false; },
                 bar:()=>[{hint:'Where I started → where I\'m heading'}]},
+  pinboard:    {obj:PB,       label:'Pinboard', inspect:true, pose:()=>wallPose(PB,0.72),
+                bar:()=>[{hint:'Notes and work in progress, more pinned here soon'}]},
   lamp:        {obj:lamp,     label:'Switch the lamp', action:cycleLight},
   vinyl:       {obj:RP,       label:'Play a record', camera:V(1.16,1.36,-0.28), target:V(1.43,0.99,-0.83), panel:'vinyl'},
   moodLamp:    {obj:shroom,   label:'Switch the orange lamp', action:()=>toggleAccent(MOOD,'Orange lamp')},
@@ -2493,7 +2645,7 @@ KEYS.forEach((k,i)=>OBJECTS[k].obj.traverse(o=>{ if(o.isMesh){ o.userData.t=i; o
 sky.userData.t=KEYS.indexOf('window');
 scene.updateMatrixWorld(true);
 const proxies=[];
-['folder','notebook','callingCard','hobbyFrames','certWall','lamp','moodLamp','wallLamp','vinyl','career'].forEach(k=>{
+['folder','notebook','callingCard','hobbyFrames','certWall','lamp','moodLamp','wallLamp','vinyl','career','pinboard'].forEach(k=>{
   const i=KEYS.indexOf(k), box=new THREE.Box3().setFromObject(OBJECTS[k].obj), size=box.getSize(new THREE.Vector3()), c=box.getCenter(new THREE.Vector3());
   const pad=coarse?1.7:1.15, m=new THREE.Mesh(new THREE.BoxGeometry(Math.max(size.x,.02)*pad,Math.max(size.y,.02)*pad,Math.max(size.z,.02)*pad),new THREE.MeshBasicMaterial());
   m.position.copy(c); m.visible=false; m.userData.t=i; scene.add(m); proxies.push(m); });
@@ -2501,13 +2653,15 @@ const ray=new THREE.Raycaster(), v2=new THREE.Vector2(), pickList=[];
 scene.traverse(o=>{ if(o.isMesh && o.visible && !(o.material&&o.material.transparent&&o!==glass)) pickList.push(o); });
 proxies.forEach(p=>pickList.push(p));
 function aim(e){ const r=canvas.getBoundingClientRect(); v2.set(((e.clientX-r.left)/r.width)*2-1, -((e.clientY-r.top)/r.height)*2+1); ray.setFromCamera(v2,camera); }
-function pick(e){ aim(e); const hit=ray.intersectObjects(pickList,false)[0]; return hit && hit.object.userData.t!==undefined ? hit.object.userData.t : -1; }
+function pick(e){ aim(e); const hit=ray.intersectObjects(pickList,false)[0]; if(hit){ lastPickPt=hit.point.clone(); lastPickAt=performance.now(); } return hit && hit.object.userData.t!==undefined ? hit.object.userData.t : -1; }
 function pickInspect(e){ aim(e); return ray.intersectObjects(insList.filter(m=>m.visible),false)[0]||null; }
 let hover=-1, drag=null, lastTap=0, lastXY=[0,0];
+let hoverBook=-1;
 function setHover(i){
-  if(i===hover) return;
-  const glow=(idx,hex)=>OBJECTS[KEYS[idx]].obj.traverse(o=>{ if(!o.isMesh) return; (Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{ if(!m||!m.emissive||m===M.linen) return; if(m.userData.keepEmissive){ const on=hex!==0; if(on!==!!m.userData.hoverBoost){ m.userData.hoverBoost=on; m.emissiveIntensity=Math.max(0,m.emissiveIntensity+(on?HOVER_EI:-HOVER_EI)); } } else m.emissive.setHex(hex); }); });
-  if(hover>=0) glow(hover,0); hover=i; if(hover>=0) glow(hover,0x16120c);
+  const hb=-1;
+  if(i===hover && hb===hoverBook) return;
+  const glow=(idx,hex,book)=>(KEYS[idx]==='folder' && book>=0 ? [BOOK_STATIC[book]].concat(folder.visible && curBook===book?[folder]:[]) : [OBJECTS[KEYS[idx]].obj]).forEach(root=>root.traverse(o=>{ if(!o.isMesh) return; (Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{ if(!m||!m.emissive||m===M.linen) return; if(m.userData.keepEmissive){ const on=hex!==0; if(on!==!!m.userData.hoverBoost){ m.userData.hoverBoost=on; m.emissiveIntensity=Math.max(0,m.emissiveIntensity+(on?HOVER_EI:-HOVER_EI)); } } else m.emissive.setHex(hex); }); }));
+  if(hover>=0) glow(hover,0,hoverBook); hover=i; hoverBook=hb; if(hover>=0) glow(hover,0x16120c,hoverBook);
   canvas.classList.toggle('hot',hover>=0 && !active);
 }
 const inspecting=()=>active && OBJECTS[active].inspect;
@@ -2573,7 +2727,7 @@ const GRADE={ // photographic night grade: localized warmth, gentle filmic contr
       gl_FragColor=vec4(clamp(c,0.0,1.0),1.0); }`
 };
 try{
-  if(!THREE.EffectComposer || !THREE.RenderPass || !THREE.ShaderPass) throw 0;
+  if(SOFT_GPU || !THREE.EffectComposer || !THREE.RenderPass || !THREE.ShaderPass) throw 0;
   const W0=canvas.clientWidth||1, H0=canvas.clientHeight||1;
   // a stencil-backed target gets a 24-bit depth buffer (a plain one is only 16-bit), so wall decals and the screen don't z-fight into stripes
   const postRT=new THREE.WebGLRenderTarget(W0*PR,H0*PR,{minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,format:THREE.RGBAFormat,stencilBuffer:true});
@@ -2652,17 +2806,19 @@ function loop(){
   if(postCheck===2){ post.render(dt); postSum=probe(); postCheck=1; }
   else if(postCheck===1){ renderer.setRenderTarget(null); renderer.render(scene,camera); const direct=probe(); if(postSum<10 && direct>postSum+30){ post=null; app.classList.add('nopost'); } postCheck=0; } // effects came out black: render without them
   else if(post) post.render(dt); else renderer.render(scene,camera);
-  if(!revealed && ++shownFrames>=3){ revealed=true; setLoad(1,'Ready'); hideLoader(); setTimeout(()=>{ upgradeMaterials().catch(()=>{}); },900); }
+  if(!revealed && ++shownFrames>=3){ revealed=true; setLoad(1,'Ready'); hideLoader(); perfMark('shown');
+    try{ console.info('[room] load timings (ms since page start)',JSON.stringify(PERF),SOFT_GPU?'software graphics':''); if(/[?&]perf\b/.test(location.search)){ const d=document.createElement('div'); d.style.cssText='position:fixed;right:12px;bottom:56px;z-index:99;font:12px/1.5 monospace;background:rgba(0,0,0,.7);color:#fff;padding:8px 10px;border-radius:8px;white-space:pre'; d.textContent=Object.entries(PERF).map(([k,v])=>k.padEnd(10)+v+' ms').join('\n')+(SOFT_GPU?'\nsoftware graphics':''); document.body.appendChild(d); } }catch(e){} setTimeout(()=>{ upgradeMaterials().catch(()=>{}); },900); }
   requestAnimationFrame(loop);
 }
 let revealed=false, shownFrames=0;
 drawOS(); screenMesh.material.map=osTex; screenMesh.material.needsUpdate=true;
+perfMark('built'); await Promise.all(MAT_JOBS); if(POOL){ POOL.close(); POOL=null; } perfMark('materials');
 setLoad(0.92,'Lighting the room'); await tick();
-applyLight(); resize(); try{ renderer.compile(scene,camera); }catch(e){}
+applyLight(); resize(); try{ renderer.compile(scene,camera); }catch(e){} perfMark('shaders');
 loop();
 } // end build
 
-const fonts=document.fonts?Promise.all([document.fonts.load('700 70px "Bricolage Grotesque"'),document.fonts.load('600 22px "Instrument Sans"'),document.fonts.load('500 20px "JetBrains Mono"'),document.fonts.load('400 48px "Caveat"'),document.fonts.load('400 96px "Noto Serif JP"','道創')]):Promise.resolve();
+const fonts=document.fonts?Promise.all([document.fonts.load('700 70px "Bricolage Grotesque"'),document.fonts.load('600 22px "Instrument Sans"'),document.fonts.load('500 20px "JetBrains Mono"'),document.fonts.load('400 48px "Caveat"'),document.fonts.load('400 40px "Tinos"'),document.fonts.load('400 96px "Noto Serif JP"','道創')]):Promise.resolve();
 const fontsReady=Promise.race([fonts.catch(()=>{}),new Promise(r=>setTimeout(r,1800))]);
 setTimeout(()=>{ build().catch(e=>{ console.error(e); hideLoader(); }); },0); // start at once; materials don't need the fonts
 })();
