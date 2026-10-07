@@ -65,14 +65,18 @@ body{background:#14120F;color:var(--ink);font-family:var(--body);overflow:hidden
 .chrome > *{pointer-events:auto}
 .focused .chrome,.focused .hint{opacity:0;pointer-events:none}
 .focused .chrome > *{pointer-events:none}
-.name{background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:12px;padding:12px 16px;max-width:380px}
-.name h1{margin:0;font:700 22px/1.1 var(--display);letter-spacing:-.01em}
+.name{background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:12px;padding:12px 16px;max-width:470px}
+.name h1{margin:0;font:700 22px/1.1 var(--display);letter-spacing:.02em;text-transform:uppercase}
 .name p{margin:4px 0 0;font-size:13px;color:var(--muted)}
+.name .tag{margin-top:7px;font-size:14px;line-height:1.35;color:var(--ink);text-wrap:pretty}
+.name .role{margin-top:5px;font-size:11.5px}
 .idx{position:relative}
 .idx > button{font:500 12px/1 var(--mono);letter-spacing:.04em;color:var(--ink);background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:999px;padding:10px 14px;cursor:pointer}
 .idx > button:hover{border-color:rgba(255,255,255,.4)}
 .idx-list{position:absolute;right:0;top:calc(100% + 8px);min-width:230px;background:rgba(24,22,20,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:12px;padding:6px;display:grid;gap:2px;margin:0;list-style:none}
-.idx-list button{width:100%;display:flex;justify-content:space-between;gap:16px;text-align:left;font:500 14px/1.2 var(--body);color:var(--ink);background:transparent;border:0;border-radius:8px;padding:10px 12px;cursor:pointer}
+/* navigation: one tidy column; each row is a title with the object it opens, on one line */
+.idx-list{min-width:260px}
+.idx-list button{width:100%;display:flex;justify-content:space-between;align-items:baseline;gap:24px;white-space:nowrap;text-align:left;font:500 14px/1.2 var(--body);color:var(--ink);background:transparent;border:0;border-radius:8px;padding:10px 12px;cursor:pointer}
 .idx-list button span{font:400 11px/1.3 var(--mono);color:var(--muted);letter-spacing:.03em}
 .idx-list button:hover{background:rgba(255,255,255,.08)}
 .hint{position:absolute;left:20px;bottom:18px;margin:0;font:400 11px/1.5 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;z-index:2;pointer-events:none;transition:opacity .4s ease}
@@ -121,6 +125,7 @@ body{background:#14120F;color:var(--ink);font-family:var(--body);overflow:hidden
 .item.thumb{grid-template-columns:96px minmax(0,1fr);column-gap:16px;align-items:start}
 .item.thumb img{grid-row:1/span 4;width:96px;height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:8px;background:var(--paper-2)}
 .item h3{margin:0;font:600 21px/1.15 var(--display);letter-spacing:-.01em}
+.item ul{margin:8px 0 0;padding-left:18px;line-height:1.6}
 .item .sub{margin:0;font:500 11px/1.4 var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--page-muted)}
 .item p{margin:0;font-size:15px;line-height:1.55;color:var(--page-fg)}
 .acts{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:4px}
@@ -276,8 +281,10 @@ body{background:#14120F;color:var(--ink);font-family:var(--body);overflow:hidden
   .name{padding:7px 11px;max-width:250px;border-radius:10px}
   .name h1{font-size:15px}
   .name p{font-size:11px;margin-top:2px}
+  .name .tag{font-size:11.5px;margin-top:4px}
+  .name .role{font-size:10px}
   .idx > button{padding:7px 11px;font-size:11px}
-  .idx-list{max-height:calc(100vh - 64px);overflow:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:4px;width:min(500px,calc(100vw - 24px))}
+  .idx-list{max-height:calc(100vh - 64px);overflow:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:4px;width:min(440px,calc(100vw - 24px))}
   .idx-list button{padding:7px 10px;font-size:13px}
   .idx-list button span{font-size:10px}
   .ctx{right:calc(12px + env(safe-area-inset-right,0px));width:clamp(270px,36vw,360px);max-height:calc(100% - 20px)}
@@ -299,7 +306,7 @@ body{background:#14120F;color:var(--ink);font-family:var(--body);overflow:hidden
 
 
 <div class="app" id="app">
-  <canvas id="scene" aria-label="Melvin's workspace. The monitor, folder, calling card, picture frames, certificates and window each open a panel. Use Index for a list."></canvas>
+  <canvas id="scene" aria-label="Melvin's workspace. The monitor, folder, calling card, picture frames, certificates and pinboard each open. Use Navigation for a list."></canvas>
   <div class="lens"></div>
   <div class="loader" id="loader" role="status" aria-live="polite">
     <div class="loader-in">
@@ -309,15 +316,16 @@ body{background:#14120F;color:var(--ink);font-family:var(--body);overflow:hidden
       <p class="loader-stage" id="loader-stage">Loading · 0%</p>
     </div>
   </div>
-  <p class="fallback">This browser can't show the 3D room. Use Index to browse.</p>
+  <p class="fallback">This browser can't show the 3D room. Use Navigation to browse.</p>
 
   <div class="chrome">
     <div class="name">
       <h1>Melvin Lomboy</h1>
-      <p>UI/UX Designer · Product Design · Design Engineering</p>
+      <p class="tag">I design production-ready digital products—not just interfaces.</p>
+      <p class="role">UI/UX Designer · Product Design · Design Engineering</p>
     </div>
     <div class="idx">
-      <button type="button" id="idx-btn" aria-expanded="false" aria-controls="idx-list">Index</button>
+      <button type="button" id="idx-btn" aria-expanded="false" aria-controls="idx-list">Navigation</button>
       <ul class="idx-list" id="idx-list" hidden></ul>
     </div>
   </div>
@@ -381,6 +389,12 @@ body{background:#14120F;color:var(--ink);font-family:var(--body);overflow:hidden
    ===================================================================== */
 const todo = t => `<p class="todo"><b>To add</b>${t}</p>`;
 
+const SKILLS = [
+  ['Product Design',['UX architecture','User flows','Information architecture','Interaction design','Design systems']],
+  ['Product Development',['React','HTML/CSS','Git/GitHub','AI-assisted development']],
+  ['Product Thinking',['Requirements','Problem definition','Workflow design','Usability','Systems thinking']]
+];
+const TOOLS_USED = ['Figma','VS Code','GitHub','Claude','Azure DevOps','ChatGPT'];
 const PROJECTS = [
   { id:'do', name:'Dō', sub:'Job management system',
     summary:'A job management system that helps people organise the jobs they have applied to and keep track of what happens next.',
@@ -448,7 +462,8 @@ const TRACKS = [
 ];
 let nowTrack=-1;
 const PANELS = {
-  pinboard:{ eyebrow:'Pinboard', title:'Pinned notes', render:()=>`<article class="item"><p>Notes and work in progress. More will be pinned here soon.</p></article>` },
+  tools:{ eyebrow:'Pinboard', title:'Tools I use', render:()=>`<article class="item"><ul>${TOOLS_USED.map(x=>`<li>${x}</li>`).join('')}</ul></article>` },
+  pinboard:{ eyebrow:'Pinboard', title:'Skills', render:()=>SKILLS.map(([t,l])=>`<article class="item"><h3>${t}</h3><ul>${l.map(x=>`<li>${x}</li>`).join('')}</ul></article>`).join('') },
   career:{ eyebrow:'Career path', title:'Where I started, where I\u2019m heading', render:()=>`<article class="item"><p class="sub">01</p><h3>UI/UX Design Intern</h3></article><article class="item"><p class="sub">02</p><h3>UI/UX Designer</h3></article><article class="item"><p class="sub">03</p><h3>UI/UX Design Team Lead</h3></article><article class="item"><p class="sub">04 \u00b7 Next target</p><h3>Product Designer / Design Engineer</h3></article>` },
   vinyl:{ eyebrow:'Record player', title:'Put a record on', render:()=>`<ul class="tracks">${TRACKS.map((t,i)=>`<li><button type="button" data-track="${i}" aria-current="${i===nowTrack}"><span class="no">${String(i+1).padStart(2,'0')}</span><span class="cv"><img src="${t.cover}" alt="" loading="lazy" onerror="this.remove()"></span><span>${t.title}<small>${t.artist}</small></span></button></li>`).join('')}</ul>${nowTrack>=0?'<button class="act" type="button" data-stop>Stop the record</button>':''}` },
   projects:{ eyebrow:'Work', title:'Projects', render:()=>PROJECTS.map(p=>`<article class="item"><p class="sub">${p.sub}</p><h3>${p.name}</h3><p>${p.summary}</p>${p.status?`<p class="sub">${p.status}</p>`:''}<div class="acts">${p.open?`<a class="act" href="${p.open[1]}" target="_blank" rel="noopener">${p.open[0]} ↗</a>`:''}${caseLink(p.id)}</div></article>`).join('') },
@@ -541,8 +556,8 @@ window.addEventListener('keydown',e=>{
 
 /* ---------- index: accessible list of everything in the room ---------- */
 let focusObject=(key)=>{ const o=FALLBACK_PANELS[key]; if(o) openContextPanel(o,'right'); }; // replaced by the room
-const FALLBACK_PANELS={pinboard:'pinboard',career:'career',vinyl:'vinyl',monitor:'projects',folder:'caseStudies',notebook:'caseStudies',callingCard:'about',hobbyFrames:'hobbies',certWall:'achievements',window:'personal'};
-const INDEX=[['monitor','Work','Monitor'],['folder','Case studies','Folder'],['notebook','Sketchbook','Notebook'],['callingCard','About & contact','Calling card'],['hobbyFrames','Hobbies','Picture frames'],['certWall','Achievements','Certificates'],['career','Career path','Frame'],['pinboard','Pinboard','Bulletin board'],['window','Personal','Window'],['lamp','Switch the lamp','Lamp'],['moodLamp','Switch the orange lamp','Cabinet lamp'],['wallLamp','Switch the wall lamp','Wall lamp'],['vinyl','Music','Record player']];
+const FALLBACK_PANELS={pinboard:'pinboard',tools:'tools',career:'career',vinyl:'vinyl',monitor:'projects',folder:'caseStudies',notebook:'caseStudies',callingCard:'about',hobbyFrames:'hobbies',certWall:'achievements',window:'personal'};
+const INDEX=[['monitor','Work','Monitor'],['folder','Case studies','Folder'],['notebook','Sketchbook','Notebook'],['callingCard','About & contact','Card'],['hobbyFrames','Hobbies','Photos'],['certWall','Achievements','Certificates'],['career','Career path','Frame'],['pinboard','Skills','Pinboard'],['tools','Tools','Small pinboard'],['vinyl','Music','Record player']];
 const idxBtn=$('idx-btn'), idxList=$('idx-list');
 INDEX.forEach(([k,t,o])=>{ const li=document.createElement('li'); li.innerHTML=`<button type="button">${t}<span>${o}</span></button>`; li.firstChild.onclick=()=>{ closeIdx(); focusObject(k); }; idxList.appendChild(li); });
 
@@ -1190,9 +1205,52 @@ const sketchT=canvasTex(200,140,(g,w,h)=>{ g.fillStyle='#F3EFE6'; g.fillRect(0,0
   g.strokeRect(100,84,40,12); g.strokeRect(146,84,40,12); g.beginPath(); g.moveTo(84,60); g.bezierCurveTo(92,50,94,40,100,40); g.stroke(); });
 const swT=canvasTex(60,180,(g,w,h)=>{ ['#2B59C3','#E9C46A','#3D4639','#C98E62','#ECE6DA'].forEach((c,i)=>{ g.fillStyle=c; g.fillRect(0,i*30,w,30); }); g.fillStyle='#F4F0E8'; g.fillRect(0,150,w,30); });
 const pinMat=std({color:0xC0503C,roughness:.35});
-[[sketchT,0.15,0.105,-0.08,0.03,-0.03],[noteT,0.065,0.065,0.1,0.07,0.06],[noteT,0.065,0.065,0.13,-0.06,-0.05],[swT,0.035,0.105,0.04,-0.04,0.02]].forEach(([tx,w,h,x,y,r])=>{
-  const p=add(new THREE.Mesh(new THREE.PlaneGeometry(w,h),std({map:tx,roughness:.9,side:THREE.DoubleSide})),PB); p.position.set(x,y,0.0105); p.rotation.z=r; p.castShadow=false;
-  const pin=add(new THREE.Mesh(new THREE.SphereGeometry(0.0045,12,8),pinMat),PB); pin.position.set(x+rnd(-.01,.01),y+h/2-0.012,0.014); });
+// skills, written in pen on three sheets pinned to the cork (readable when you zoom in on the board)
+const PB_SEED=SEED;
+function skillSheet(title,items,seed){ return canvasTex(600,840,(g,w,h)=>{
+  g.fillStyle='#F6F2E8'; g.fillRect(0,0,w,h); g.strokeStyle='rgba(120,150,190,.28)'; g.lineWidth=2; for(let y=150;y<h-30;y+=56){ g.beginPath(); g.moveTo(0,y); g.lineTo(w,y); g.stroke(); } // ruled paper
+  g.strokeStyle='rgba(200,90,90,.3)'; g.beginPath(); g.moveTo(64,0); g.lineTo(64,h); g.stroke();
+  const ink='#1F2C5C'; let k=seed; const j=()=>{ k=(k*9301+49297)%233280; return k/233280-0.5; };
+  g.fillStyle=ink; g.font='700 52px "Caveat", "Segoe Print", cursive'; g.save(); g.translate(86,112); g.rotate(-0.02); g.fillText(title,0,0);
+  const tw=g.measureText(title).width; g.strokeStyle=ink; g.lineWidth=3; g.lineCap='round'; g.beginPath(); g.moveTo(0,16); g.quadraticCurveTo(tw*0.5,22,tw+6,12); g.stroke(); g.restore();
+  g.font='400 42px "Caveat", "Segoe Print", cursive';
+  items.forEach((t,i)=>{ const y=198+i*56; g.save(); g.translate(96+j()*6,y+j()*4); g.rotate(j()*0.03);
+    g.beginPath(); g.arc(6,-12,4.5,0,Math.PI*2); g.fill(); let fs=42; while(g.measureText(t).width>w-150 && fs>30){ fs-=2; g.font=`400 ${fs}px "Caveat", "Segoe Print", cursive`; } g.fillText(t,26,0); g.font='400 42px "Caveat", "Segoe Print", cursive'; g.restore(); }); }); }
+const SKILL_SHEETS=[['Product Design',['UX architecture','User flows','Information architecture','Interaction design','Design systems'],-0.135,-0.006,-0.035],
+  ['Product Development',['React','HTML/CSS','Git/GitHub','AI-assisted development'],0.001,-0.015,0.02],
+  ['Product Thinking',['Requirements','Problem definition','Workflow design','Usability','Systems thinking'],0.136,-0.007,-0.015]];
+SKILL_SHEETS.forEach(([t,list,x,y,r],i)=>{ const w=0.125, h=w*840/600, tx=skillSheet(t,list,17+i*31); tx.anisotropy=aniso;
+  const p=add(new THREE.Mesh(new THREE.PlaneGeometry(w,h),std({map:tx,roughness:.9,side:THREE.DoubleSide})),PB); p.position.set(x,y,0.0105+i*0.0002); p.rotation.z=r; p.castShadow=false;
+  const pin=add(new THREE.Mesh(new THREE.SphereGeometry(0.0045,12,8),pinMat),PB); pin.position.set(x+(i-1)*0.004,y+h/2-0.012,0.014); });
+// a strip of masking tape across the top, labelled by hand
+function tapeLabel(text,w,h){ return canvasTex(w,h,(g)=>{ g.fillStyle='rgba(232,221,190,.96)'; g.beginPath(); g.moveTo(10,6); for(let x=10;x<=w-10;x+=26) g.lineTo(x,4+((x*7)%5)); g.lineTo(w-4,h*0.5); g.lineTo(w-10,h-6);
+  for(let x=w-10;x>=10;x-=26) g.lineTo(x,h-4-((x*3)%5)); g.lineTo(4,h*0.5); g.closePath(); g.fill();
+  g.fillStyle='rgba(120,100,60,.08)'; for(let x=0;x<w;x+=6) g.fillRect(x,0,2,h);
+  g.fillStyle='#1E1E22'; g.font=`700 ${Math.round(h*0.56)}px "Caveat", "Segoe Print", cursive`; g.textAlign='center'; g.fillText(text,w/2,h*0.7); }); }
+function tapeOn(parent,text,x,y,w,r){ const h=w*0.28, tx=tapeLabel(text,560,Math.round(560*0.28)); tx.anisotropy=aniso;
+  const m=add(new THREE.Mesh(new THREE.PlaneGeometry(w,h),std({map:tx,roughness:.85,transparent:true})),parent,false); m.position.set(x,y,0.0112); m.rotation.z=r; return m; }
+tapeOn(PB,'My skills',0,0.11,0.11,0.012);
+
+/* a second, smaller pinboard above the cabinet: the tools I use, each on its own note */
+const TB=new THREE.Group(); TB.position.set(1.43,1.5,WF+0.012); TB.rotation.z=-0.006; scene.add(TB);
+rBox(0.29,0.22,0.018,0.003,M.deskEdge,0,0,0,TB);
+add(new THREE.Mesh(new THREE.PlaneGeometry(0.265,0.195),M.cork),TB).position.z=0.0095;
+tapeOn(TB,'Tools I use',0,0.072,0.1,-0.015);
+const TOOLS=['Figma','VS Code','GitHub','Claude','Azure DevOps','ChatGPT'];
+function toolNote(t,col,seed){ return canvasTex(300,260,(g,w,h)=>{ g.fillStyle=col; g.fillRect(0,0,w,h);
+  const gr=g.createLinearGradient(0,0,0,h); gr.addColorStop(0,'rgba(255,255,255,.12)'); gr.addColorStop(1,'rgba(0,0,0,.08)'); g.fillStyle=gr; g.fillRect(0,0,w,h);
+  g.fillStyle='#1F2C5C'; g.textAlign='center'; let fs=64; g.font=`700 ${fs}px "Caveat", "Segoe Print", cursive`;
+  const words=t.split(' '), two=words.length>1 && g.measureText(t).width>w-40;
+  if(two){ fs=56; g.font=`700 ${fs}px "Caveat", "Segoe Print", cursive`; g.fillText(words[0],w/2,h*0.46); g.fillText(words.slice(1).join(' '),w/2,h*0.46+fs*0.95); }
+  else { while(g.measureText(t).width>w-30 && fs>36){ fs-=2; g.font=`700 ${fs}px "Caveat", "Segoe Print", cursive`; } g.fillText(t,w/2,h*0.6); }
+  g.strokeStyle='rgba(31,44,92,.7)'; g.lineWidth=3; g.lineCap='round'; const uy=two?h*0.84:h*0.72, uw=Math.min(w-60,g.measureText(two?words[0]:t).width); g.beginPath(); g.moveTo(w/2-uw/2,uy); g.quadraticCurveTo(w/2,uy+6+seed%4,w/2+uw/2,uy-2); g.stroke(); }); }
+const NOTE_COLS=['#F1E3A2','#EFE9DC','#E8D9B6','#F1E3A2','#EFE9DC','#E8D9B6'];
+TOOLS.forEach((t,i)=>{ const c=i%3, r=(i/3)|0, w=0.074, h=w*260/300, x=-0.085+c*0.085, y=0.012-r*0.075, rot=[-0.05,0.03,-0.02,0.04,-0.03,0.05][i];
+  const tx=toolNote(t,NOTE_COLS[i],i*7); tx.anisotropy=aniso;
+  const p=add(new THREE.Mesh(new THREE.PlaneGeometry(w,h),std({map:tx,roughness:.9,side:THREE.DoubleSide})),TB); p.position.set(x,y,0.0105+i*0.0001); p.rotation.z=rot; p.castShadow=false;
+  const pin=add(new THREE.Mesh(new THREE.SphereGeometry(0.004,12,8),pinMat),TB); pin.position.set(x+[0.003,-0.002,0.001,-0.003,0.002,0][i],y+h/2-0.01,0.0135); });
+aoStrip(0.31,0.04,new THREE.Vector3(1.43,1.5-0.11-0.02,WF+0.001),[0,0,Math.PI],.24);
+SEED=PB_SEED; skipR(4); // keep the rest of the room exactly as it was
 aoStrip(0.46,0.05,new THREE.Vector3(0.47,1.35-0.025,WF+0.001),[0,0,Math.PI],.28);
 
 /* shelf on visible steel brackets */
@@ -2594,14 +2652,15 @@ const OBJECTS={
                 key:e=>{ if(e.key==='ArrowRight'){ e.preventDefault(); showCert(CERT.want+1); } else if(e.key==='ArrowLeft'){ e.preventDefault(); showCert(CERT.want-1); } },
                 bar:()=>{ const a=ACHIEVEMENTS[CERT.want], n=ACHIEVEMENTS.length;
                   return [{label:'‹',aria:'Previous certificate',fn:()=>showCert(CERT.want-1)},{text:`${a.short||a.title} · ${CERT.want+1}/${n}`},{label:'›',aria:'Next certificate',fn:()=>showCert(CERT.want+1)}]; }},
-  window:      {obj:win,      label:'Look outside', camera:V(-0.2,1.56,0.64), target:V(WCX,1.62,WZ), panel:'personal'},
   career:      {obj:careerGrp, label:'Career path', inspect:true, pose:()=>careerPose(),
                 enter:()=>{ careerFocus=true; }, exit:()=>{ careerFocus=false; careerQHot=false; },
                 hover:h=>{ careerQHot=careerAtQ(h); return null; }, // no tooltip: the frame speaks for itself
                 click:h=>{ if(coarse) careerQHot=careerAtQ(h)?!careerQHot:false; },
                 bar:()=>[{hint:'Where I started → where I\'m heading'}]},
-  pinboard:    {obj:PB,       label:'Pinboard', inspect:true, pose:()=>wallPose(PB,0.72),
-                bar:()=>[{hint:'Notes and work in progress, more pinned here soon'}]},
+  tools:       {obj:TB,       label:'Tools', inspect:true, pose:()=>wallPose(TB,0.62),
+                bar:()=>[{hint:'Tools I use every day'}]},
+  pinboard:    {obj:PB,       label:'Skills', inspect:true, pose:()=>wallPose(PB,0.72),
+                bar:()=>[{hint:'What I work with'}]},
   lamp:        {obj:lamp,     label:'Switch the lamp', action:cycleLight},
   vinyl:       {obj:RP,       label:'Play a record', camera:V(1.16,1.36,-0.28), target:V(1.43,0.99,-0.83), panel:'vinyl'},
   moodLamp:    {obj:shroom,   label:'Switch the orange lamp', action:()=>toggleAccent(MOOD,'Orange lamp')},
@@ -2675,10 +2734,10 @@ roomKey=e=>{ const o=active&&OBJECTS[active]; if(!o||!o.inspect) return false; i
 /* ---------- picking ---------- */
 const cloneMat=m=>{ if(m && m.isMeshStandardMaterial){ const c=m.clone(); MATS.push(c); return c; } return m; };
 KEYS.forEach((k,i)=>OBJECTS[k].obj.traverse(o=>{ if(o.isMesh){ o.userData.t=i; o.material=Array.isArray(o.material)?o.material.map(cloneMat):cloneMat(o.material); } }));
-sky.userData.t=KEYS.indexOf('window');
+
 scene.updateMatrixWorld(true);
 const proxies=[];
-['folder','notebook','callingCard','hobbyFrames','certWall','lamp','moodLamp','wallLamp','vinyl','career','pinboard'].forEach(k=>{
+['folder','notebook','callingCard','hobbyFrames','certWall','lamp','moodLamp','wallLamp','vinyl','career','pinboard','tools'].forEach(k=>{
   const i=KEYS.indexOf(k), box=new THREE.Box3().setFromObject(OBJECTS[k].obj), size=box.getSize(new THREE.Vector3()), c=box.getCenter(new THREE.Vector3());
   const pad=k==='lamp'?1.0:(coarse?1.7:1.15), m=new THREE.Mesh(new THREE.BoxGeometry(Math.max(size.x,.02)*pad,Math.max(size.y,.02)*pad,Math.max(size.z,.02)*pad),new THREE.MeshBasicMaterial());
   m.position.copy(c); m.visible=false; m.userData.t=i; m.userData.proxy=true; m.userData.r=size.length()*pad/2+0.01; scene.add(m); proxies.push(m); });
@@ -2784,7 +2843,7 @@ const fpTmp=new THREE.Vector3();
 let postCheck=post?2:0, postSum=0;
 function probe(){ try{ const gl=renderer.getContext(), w=gl.drawingBufferWidth, h=gl.drawingBufferHeight, px=new Uint8Array(4); let s=0;
   [[.5,.5],[.35,.6],[.65,.45],[.5,.3],[.25,.25],[.75,.7],[.6,.55],[.4,.4]].forEach(([x,y])=>{ gl.readPixels((x*w)|0,(y*h)|0,1,1,gl.RGBA,gl.UNSIGNED_BYTE,px); s+=px[0]+px[1]+px[2]; }); return s; }catch(e){ return 999; } }
-const READ_KEYS=new Set(['monitor','folder','notebook','callingCard','certWall','career','hobbyFrames']);
+const READ_KEYS=new Set(['monitor','folder','notebook','callingCard','certWall','career','hobbyFrames','pinboard','tools']);
 let readRes=false;
 function setReadRes(on){ if(on===readRes) return; readRes=on; const v=on?PR_READ:PR_BASE; if(v===PR) return; PR=v; renderer.setPixelRatio(PR); if(post) post.setPixelRatio(PR); resize(); }
 function updatePost(){
