@@ -2647,13 +2647,20 @@ scene.updateMatrixWorld(true);
 const proxies=[];
 ['folder','notebook','callingCard','hobbyFrames','certWall','lamp','moodLamp','wallLamp','vinyl','career','pinboard'].forEach(k=>{
   const i=KEYS.indexOf(k), box=new THREE.Box3().setFromObject(OBJECTS[k].obj), size=box.getSize(new THREE.Vector3()), c=box.getCenter(new THREE.Vector3());
-  const pad=coarse?1.7:1.15, m=new THREE.Mesh(new THREE.BoxGeometry(Math.max(size.x,.02)*pad,Math.max(size.y,.02)*pad,Math.max(size.z,.02)*pad),new THREE.MeshBasicMaterial());
-  m.position.copy(c); m.visible=false; m.userData.t=i; scene.add(m); proxies.push(m); });
+  const pad=k==='lamp'?1.0:(coarse?1.7:1.15), m=new THREE.Mesh(new THREE.BoxGeometry(Math.max(size.x,.02)*pad,Math.max(size.y,.02)*pad,Math.max(size.z,.02)*pad),new THREE.MeshBasicMaterial());
+  m.position.copy(c); m.visible=false; m.userData.t=i; m.userData.proxy=true; m.userData.r=size.length()*pad/2+0.01; scene.add(m); proxies.push(m); });
 const ray=new THREE.Raycaster(), v2=new THREE.Vector2(), pickList=[];
 scene.traverse(o=>{ if(o.isMesh && o.visible && !(o.material&&o.material.transparent&&o!==glass)) pickList.push(o); });
 proxies.forEach(p=>pickList.push(p));
 function aim(e){ const r=canvas.getBoundingClientRect(); v2.set(((e.clientX-r.left)/r.width)*2-1, -((e.clientY-r.top)/r.height)*2+1); ray.setFromCamera(v2,camera); }
-function pick(e){ aim(e); const hit=ray.intersectObjects(pickList,false)[0]; if(hit){ lastPickPt=hit.point.clone(); lastPickAt=performance.now(); } return hit && hit.object.userData.t!==undefined ? hit.object.userData.t : -1; }
+// what you actually touch wins; the enlarged touch boxes only help when you just miss something,
+// and then the object whose box is centred nearest the touched spot is chosen (not whichever box is in front)
+function pick(e){ aim(e); const hits=ray.intersectObjects(pickList,false); if(!hits.length) return -1;
+  const real=hits.find(h=>!h.object.userData.proxy); let t=-1, pt=real?real.point:null;
+  if(real && real.object.userData.t!==undefined) t=real.object.userData.t;
+  else { const near=hits.filter(h=>h.object.userData.proxy && (!real || h.distance<real.distance+0.02)); let best=1e9;
+    near.forEach(h=>{ const ref=real?real.point:h.point, d=h.object.position.distanceTo(ref)/h.object.userData.r; if(d<best){ best=d; t=h.object.userData.t; if(!pt) pt=h.point; } }); }
+  if(pt){ lastPickPt=pt.clone(); lastPickAt=performance.now(); } return t; }
 function pickInspect(e){ aim(e); return ray.intersectObjects(insList.filter(m=>m.visible),false)[0]||null; }
 let hover=-1, drag=null, lastTap=0, lastXY=[0,0];
 let hoverBook=-1;
