@@ -2319,8 +2319,8 @@ function osHover(h){ const r=(h && h.object===screenMesh && h.uv)?osHit(h.uv):nu
   if(id!==OS.hover){ OS.hover=id; drawOS(); } return r?true:null; }
 function osClick(h){ if(!h || h.object!==screenMesh || !h.uv) return; const r=osHit(h.uv); if(r){ r.act(); drawOS(); } }
 // interface scale: larger type when the display is small on the page (phones), so it stays readable
-function osScale(){ const W=canvas.clientWidth||1, H=canvas.clientHeight||1, css=Math.min(0.94*W, 0.84*H*SCR_W/SCR_H);
-  return Math.max(1,Math.min(3.7,OSW/Math.max(520,css/0.85))); }
+function osScale(){ if(!coarse) return 1.25; /* one fixed layout on laptops and desktops; touch screens enlarge it to stay readable */ const W=canvas.clientWidth||1, H=canvas.clientHeight||1, css=Math.min(0.94*W, 0.84*H*SCR_W/SCR_H);
+  return Math.max(1.25,Math.min(3.7,OSW/Math.max(520,css/0.85))); } // never smaller than the desktop design; only small screens enlarge it
 setInterval(()=>{ drawOS(); },30000); // keep the clock current
 
 buildPages(); // the folder's printed pages
