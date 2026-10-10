@@ -462,8 +462,7 @@ const TRACKS = [
 ];
 let nowTrack=-1;
 const PANELS = {
-  tools:{ eyebrow:'Pinboard', title:'Tools I use', render:()=>`<article class="item"><ul>${TOOLS_USED.map(x=>`<li>${x}</li>`).join('')}</ul></article>` },
-  pinboard:{ eyebrow:'Pinboard', title:'Skills', render:()=>SKILLS.map(([t,l])=>`<article class="item"><h3>${t}</h3><ul>${l.map(x=>`<li>${x}</li>`).join('')}</ul></article>`).join('') },
+  pinboard:{ eyebrow:'Pinboard', title:'Skills & tools', render:()=>SKILLS.concat([['Tools I use',TOOLS_USED]]).map(([t,l])=>`<article class="item"><h3>${t}</h3><ul>${l.map(x=>`<li>${x}</li>`).join('')}</ul></article>`).join('') },
   career:{ eyebrow:'Career path', title:'Where I started, where I\u2019m heading', render:()=>`<article class="item"><p class="sub">01</p><h3>UI/UX Design Intern</h3></article><article class="item"><p class="sub">02</p><h3>UI/UX Designer</h3></article><article class="item"><p class="sub">03</p><h3>UI/UX Design Team Lead</h3></article><article class="item"><p class="sub">04 \u00b7 Next target</p><h3>Product Designer / Design Engineer</h3></article>` },
   vinyl:{ eyebrow:'Record player', title:'Put a record on', render:()=>`<ul class="tracks">${TRACKS.map((t,i)=>`<li><button type="button" data-track="${i}" aria-current="${i===nowTrack}"><span class="no">${String(i+1).padStart(2,'0')}</span><span class="cv"><img src="${t.cover}" alt="" loading="lazy" onerror="this.remove()"></span><span>${t.title}<small>${t.artist}</small></span></button></li>`).join('')}</ul>${nowTrack>=0?'<button class="act" type="button" data-stop>Stop the record</button>':''}` },
   projects:{ eyebrow:'Work', title:'Projects', render:()=>PROJECTS.map(p=>`<article class="item"><p class="sub">${p.sub}</p><h3>${p.name}</h3><p>${p.summary}</p>${p.status?`<p class="sub">${p.status}</p>`:''}<div class="acts">${p.open?`<a class="act" href="${p.open[1]}" target="_blank" rel="noopener">${p.open[0]} ↗</a>`:''}${caseLink(p.id)}</div></article>`).join('') },
@@ -478,10 +477,13 @@ const PANELS = {
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 /* ---------- loading screen ---------- */
 let loadP=0;
-function setLoad(p,stage){ loadP=Math.max(loadP,p); const bar=document.getElementById('loader-bar'), st=document.getElementById('loader-stage');
+let loadStage='Loading';
+function setLoad(p,stage){ if(stage) loadStage=stage; else stage=loadStage; loadP=Math.max(loadP,p); const bar=document.getElementById('loader-bar'), st=document.getElementById('loader-stage');
   if(bar) bar.style.transform='scaleX('+loadP.toFixed(3)+')'; if(st) st.textContent=(stage||'Loading')+' · '+Math.round(loadP*100)+'%'; }
 function hideLoader(){ const l=document.getElementById('loader'); if(!l||l.classList.contains('done')) return; l.classList.add('done'); setTimeout(()=>{ l.hidden=true; },800); }
 setLoad(0.03,'Loading');
+// the bar fills evenly over the fixed 5-second loading screen
+const loadTick=setInterval(()=>{ const l=document.getElementById('loader'); if(!l || l.classList.contains('done')){ clearInterval(loadTick); return; } setLoad(Math.min(0.97,performance.now()/5000)); },100);
 const $ = id=>document.getElementById(id);
 const app=$('app'), canvas=$('scene'), tip=$('tip'), ctx=$('ctx'), ctxBody=$('ctx-body'), pageEl=$('page'), pBody=$('p-body');
 
@@ -556,8 +558,8 @@ window.addEventListener('keydown',e=>{
 
 /* ---------- index: accessible list of everything in the room ---------- */
 let focusObject=(key)=>{ const o=FALLBACK_PANELS[key]; if(o) openContextPanel(o,'right'); }; // replaced by the room
-const FALLBACK_PANELS={pinboard:'pinboard',tools:'tools',career:'career',vinyl:'vinyl',monitor:'projects',folder:'caseStudies',notebook:'caseStudies',callingCard:'about',hobbyFrames:'hobbies',certWall:'achievements',window:'personal'};
-const INDEX=[['monitor','Work','Monitor'],['folder','Case studies','Folder'],['notebook','Sketchbook','Notebook'],['callingCard','About & contact','Card'],['hobbyFrames','Hobbies','Photos'],['certWall','Achievements','Certificates'],['career','Career path','Frame'],['pinboard','Skills','Pinboard'],['tools','Tools','Small pinboard'],['vinyl','Music','Record player']];
+const FALLBACK_PANELS={pinboard:'pinboard',career:'career',vinyl:'vinyl',monitor:'projects',folder:'caseStudies',notebook:'caseStudies',callingCard:'about',hobbyFrames:'hobbies',certWall:'achievements',window:'personal'};
+const INDEX=[['monitor','Work','Monitor'],['folder','Case studies','Folder'],['notebook','Sketchbook','Notebook'],['callingCard','About & contact','Card'],['hobbyFrames','Hobbies','Photos'],['certWall','Achievements','Certificates'],['career','Career path','Frame'],['pinboard','Skills & tools','Pinboard'],['vinyl','Music','Record player']];
 const idxBtn=$('idx-btn'), idxList=$('idx-list');
 INDEX.forEach(([k,t,o])=>{ const li=document.createElement('li'); li.innerHTML=`<button type="button">${t}<span>${o}</span></button>`; li.firstChild.onclick=()=>{ closeIdx(); focusObject(k); }; idxList.appendChild(li); });
 
@@ -594,7 +596,7 @@ idxBtn.onclick=()=>{ const open=idxList.hidden; idxList.hidden=!open; idxBtn.set
 
 /* ---------- 3D ---------- */
 let renderer;
-try{ if(!window.THREE) throw 0; renderer=new THREE.WebGLRenderer({canvas,antialias:true}); }
+try{ if(!window.THREE) throw 0; renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'}); /* laptops with two GPUs use the stronger one */ }
 catch(e){ app.classList.add('no-webgl'); }
 
 if(!renderer){ hideLoader(); return; } // Index still opens every panel
@@ -732,7 +734,7 @@ async function renderMat(sp,q,into){
 }
 // materials are generated in the background workers while the rest of the room is built on the main thread;
 // textures start as empty canvases and are filled in before the room is shown
-const MAT_JOBS=[];
+const MAT_JOBS=[]; let MATS_DONE=Promise.resolve();
 const NULL_CTX=new Proxy({},{get:(t,k)=>k==='canvas'?null:(()=>NULL_CTX),set:()=>true});
 function material(w,h,fn,rep,strength,post,scope){
   const sp={w,h,fn,strength:strength||2,post,scope}, cw=Math.max(1,Math.round(w*TEXQ)), ch=Math.max(1,Math.round(h*TEXQ));
@@ -745,7 +747,7 @@ function material(w,h,fn,rep,strength,post,scope){
 // after the room is on screen: regenerate each material at full resolution in the background and swap it in
 async function upgradeMaterials(){
   if(TEXQ>=1 || !MAT_SPECS.length) return;
-  texSilent=true; POOL=makePool();
+  await MATS_DONE; texSilent=true; POOL=makePool();
   const users=new Map(); scene.traverse(o=>{ if(!o.material) return; (Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{ for(const k in m){ const v=m[k]; if(v && v.isTexture && v.image){ if(!users.has(v.image)) users.set(v.image,new Set()); users.get(v.image).add(v); } } }); });
   for(const sp of MAT_SPECS){
     const out=await renderMat(sp,1);
@@ -1197,8 +1199,8 @@ const art=new THREE.Group(); art.rotation.z=-0.006;
 
 /* pinboard above the desk: notes, a wireframe sketch, a swatch strip */
 const PB=new THREE.Group(); PB.position.set(0.47,1.5,WF+0.012); PB.rotation.z=0.008; scene.add(PB);
-rBox(0.44,0.3,0.018,0.003,M.deskEdge,0,0,0,PB);
-const corkB=add(new THREE.Mesh(new THREE.PlaneGeometry(0.41,0.27),M.cork),PB); corkB.position.z=0.0095; M.cork.map.wrapS=M.cork.map.wrapT=THREE.RepeatWrapping;
+rBox(0.56,0.3,0.018,0.003,M.deskEdge,0,0,0,PB); // wide enough for four sheets: three of skills, one of tools
+const corkB=add(new THREE.Mesh(new THREE.PlaneGeometry(0.53,0.27),M.cork),PB); corkB.position.z=0.0095; M.cork.map.wrapS=M.cork.map.wrapT=THREE.RepeatWrapping;
 const sketchT=canvasTex(200,140,(g,w,h)=>{ g.fillStyle='#F3EFE6'; g.fillRect(0,0,w,h); g.strokeStyle='rgba(40,44,56,.75)'; g.lineWidth=1.6;
   g.strokeRect(14,14,70,112); g.strokeRect(20,24,58,10); for(let i=0;i<4;i++) g.strokeRect(20,42+i*20,58,14);
   g.strokeRect(100,14,86,60); g.beginPath(); g.moveTo(100,14); g.lineTo(186,74); g.moveTo(186,14); g.lineTo(100,74); g.stroke();
@@ -1216,12 +1218,13 @@ function skillSheet(title,items,seed){ return canvasTex(600,840,(g,w,h)=>{
   g.font='400 42px "Caveat", "Segoe Print", cursive';
   items.forEach((t,i)=>{ const y=198+i*56; g.save(); g.translate(96+j()*6,y+j()*4); g.rotate(j()*0.03);
     g.beginPath(); g.arc(6,-12,4.5,0,Math.PI*2); g.fill(); let fs=42; while(g.measureText(t).width>w-150 && fs>30){ fs-=2; g.font=`400 ${fs}px "Caveat", "Segoe Print", cursive`; } g.fillText(t,26,0); g.font='400 42px "Caveat", "Segoe Print", cursive'; g.restore(); }); }); }
-const SKILL_SHEETS=[['Product Design',['UX architecture','User flows','Information architecture','Interaction design','Design systems'],-0.135,-0.006,-0.035],
-  ['Product Development',['React','HTML/CSS','Git/GitHub','AI-assisted development'],0.001,-0.015,0.02],
-  ['Product Thinking',['Requirements','Problem definition','Workflow design','Usability','Systems thinking'],0.136,-0.007,-0.015]];
-SKILL_SHEETS.forEach(([t,list,x,y,r],i)=>{ const w=0.125, h=w*840/600, tx=skillSheet(t,list,17+i*31); tx.anisotropy=aniso;
+const SKILL_SHEETS=[['Product Design',['UX architecture','User flows','Information architecture','Interaction design','Design systems'],-0.189,-0.006,-0.035],
+  ['Product Development',['React','HTML/CSS','Git/GitHub','AI-assisted development'],-0.063,-0.015,0.02],
+  ['Product Thinking',['Requirements','Problem definition','Workflow design','Usability','Systems thinking'],0.063,-0.007,-0.015],
+  ['Tools I use',['Figma','VS Code','GitHub','Claude','Azure DevOps','ChatGPT'],0.189,-0.012,0.025]];
+SKILL_SHEETS.forEach(([t,list,x,y,r],i)=>{ const w=0.115, h=w*840/600, tx=skillSheet(t,list,17+i*31); tx.anisotropy=aniso;
   const p=add(new THREE.Mesh(new THREE.PlaneGeometry(w,h),std({map:tx,roughness:.9,side:THREE.DoubleSide})),PB); p.position.set(x,y,0.0105+i*0.0002); p.rotation.z=r; p.castShadow=false;
-  const pin=add(new THREE.Mesh(new THREE.SphereGeometry(0.0045,12,8),pinMat),PB); pin.position.set(x+(i-1)*0.004,y+h/2-0.012,0.014); });
+  const pin=add(new THREE.Mesh(new THREE.SphereGeometry(0.0045,12,8),pinMat),PB); pin.position.set(x+[0.004,-0.003,0.002,-0.004][i],y+h/2-0.012,0.014); });
 // a strip of masking tape across the top, labelled by hand
 function tapeLabel(text,w,h){ return canvasTex(w,h,(g)=>{ g.fillStyle='rgba(232,221,190,.96)'; g.beginPath(); g.moveTo(10,6); for(let x=10;x<=w-10;x+=26) g.lineTo(x,4+((x*7)%5)); g.lineTo(w-4,h*0.5); g.lineTo(w-10,h-6);
   for(let x=w-10;x>=10;x-=26) g.lineTo(x,h-4-((x*3)%5)); g.lineTo(4,h*0.5); g.closePath(); g.fill();
@@ -1231,27 +1234,8 @@ function tapeOn(parent,text,x,y,w,r){ const h=w*0.28, tx=tapeLabel(text,560,Math
   const m=add(new THREE.Mesh(new THREE.PlaneGeometry(w,h),std({map:tx,roughness:.85,transparent:true})),parent,false); m.position.set(x,y,0.0112); m.rotation.z=r; return m; }
 tapeOn(PB,'My skills',0,0.11,0.11,0.012);
 
-/* a second, smaller pinboard above the cabinet: the tools I use, each on its own note */
-const TB=new THREE.Group(); TB.position.set(1.43,1.5,WF+0.012); TB.rotation.z=-0.006; scene.add(TB);
-rBox(0.29,0.22,0.018,0.003,M.deskEdge,0,0,0,TB);
-add(new THREE.Mesh(new THREE.PlaneGeometry(0.265,0.195),M.cork),TB).position.z=0.0095;
-tapeOn(TB,'Tools I use',0,0.072,0.1,-0.015);
-const TOOLS=['Figma','VS Code','GitHub','Claude','Azure DevOps','ChatGPT'];
-function toolNote(t,col,seed){ return canvasTex(300,260,(g,w,h)=>{ g.fillStyle=col; g.fillRect(0,0,w,h);
-  const gr=g.createLinearGradient(0,0,0,h); gr.addColorStop(0,'rgba(255,255,255,.12)'); gr.addColorStop(1,'rgba(0,0,0,.08)'); g.fillStyle=gr; g.fillRect(0,0,w,h);
-  g.fillStyle='#1F2C5C'; g.textAlign='center'; let fs=64; g.font=`700 ${fs}px "Caveat", "Segoe Print", cursive`;
-  const words=t.split(' '), two=words.length>1 && g.measureText(t).width>w-40;
-  if(two){ fs=56; g.font=`700 ${fs}px "Caveat", "Segoe Print", cursive`; g.fillText(words[0],w/2,h*0.46); g.fillText(words.slice(1).join(' '),w/2,h*0.46+fs*0.95); }
-  else { while(g.measureText(t).width>w-30 && fs>36){ fs-=2; g.font=`700 ${fs}px "Caveat", "Segoe Print", cursive`; } g.fillText(t,w/2,h*0.6); }
-  g.strokeStyle='rgba(31,44,92,.7)'; g.lineWidth=3; g.lineCap='round'; const uy=two?h*0.84:h*0.72, uw=Math.min(w-60,g.measureText(two?words[0]:t).width); g.beginPath(); g.moveTo(w/2-uw/2,uy); g.quadraticCurveTo(w/2,uy+6+seed%4,w/2+uw/2,uy-2); g.stroke(); }); }
-const NOTE_COLS=['#F1E3A2','#EFE9DC','#E8D9B6','#F1E3A2','#EFE9DC','#E8D9B6'];
-TOOLS.forEach((t,i)=>{ const c=i%3, r=(i/3)|0, w=0.074, h=w*260/300, x=-0.085+c*0.085, y=0.012-r*0.075, rot=[-0.05,0.03,-0.02,0.04,-0.03,0.05][i];
-  const tx=toolNote(t,NOTE_COLS[i],i*7); tx.anisotropy=aniso;
-  const p=add(new THREE.Mesh(new THREE.PlaneGeometry(w,h),std({map:tx,roughness:.9,side:THREE.DoubleSide})),TB); p.position.set(x,y,0.0105+i*0.0001); p.rotation.z=rot; p.castShadow=false;
-  const pin=add(new THREE.Mesh(new THREE.SphereGeometry(0.004,12,8),pinMat),TB); pin.position.set(x+[0.003,-0.002,0.001,-0.003,0.002,0][i],y+h/2-0.01,0.0135); });
-aoStrip(0.31,0.04,new THREE.Vector3(1.43,1.5-0.11-0.02,WF+0.001),[0,0,Math.PI],.24);
 SEED=PB_SEED; skipR(4); // keep the rest of the room exactly as it was
-aoStrip(0.46,0.05,new THREE.Vector3(0.47,1.35-0.025,WF+0.001),[0,0,Math.PI],.28);
+aoStrip(0.58,0.05,new THREE.Vector3(0.47,1.35-0.025,WF+0.001),[0,0,Math.PI],.28);
 
 /* shelf on visible steel brackets */
 const SY=1.86, SX=0.45;
@@ -1877,6 +1861,7 @@ const recordT=canvasTex(1024,1024,(g,w,h)=>{
   g.font='500 15px "JetBrains Mono", monospace'; g.fillText('SIDE A  ·  33⅓',cx,cy+72);
   g.fillStyle='#1A1A1C'; g.beginPath(); g.arc(cx,cy,9,0,Math.PI*2); g.fill(); });
 const recordMat=std({map:recordT,roughness:.36,metalness:0});
+let spinV=0; // platter speed: eases up to 33⅓ rpm when a record plays and coasts down when it stops
 const spinGrp=new THREE.Group(); spinGrp.position.set(-0.035,0.0775,0.005); RP.add(spinGrp);
 add(new THREE.Mesh(new THREE.CylinderGeometry(0.152,0.152,0.012,72),M.alu),spinGrp).position.y=0.006;     // platter
 const recDisc=add(new THREE.Mesh(new THREE.CylinderGeometry(0.1505,0.1505,0.0018,96),[M.black,recordMat,M.black]),spinGrp); recDisc.position.y=0.0129;
@@ -2296,6 +2281,10 @@ const APP_ICON_SRC={"so": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOAAAAD
 const APP_ICON={}; ['do','so','hris'].forEach(k=>{ const im=new Image(); im.onload=()=>{ APP_ICON[k]=im; if(typeof drawOS==='function') drawOS(); }; im.src=APP_ICON_SRC[k]; });
 const APP_LABEL={do:'Dō', so:'Sō', hris:'HRIS'};
 const WELCOME_NOTE=['Welcome to my workspace.','Feel free to roam around my room and click on anything that catches your eye.','You might want to put a record on the vinyl player while you browse my case studies — it sets the vibe.','— Vin'];
+OS.typed=0; OS.typing=true; // starts blank with a caret; typeWelcome fills it in
+function typeWelcome(){ // the note types itself out once, while the rest of the room loads behind it
+  const total=WELCOME_NOTE.join(' ').length+WELCOME_NOTE.length; OS.typed=0; OS.typing=true; drawOS(); if(reduce){ OS.typed=1e9; OS.typing=false; drawOS(); return; }
+  const iv=setInterval(()=>{ OS.typed+=3; if(OS.typed>=total){ OS.typed=1e9; OS.typing=false; clearInterval(iv); } drawOS(); },75); }
 OS.win='notes'; // the window open on the desktop: 'notes', a project id, or null
 function osWindow(g,R,x,y,w,h,title,k){ // a light app window with a title bar; returns the content top
   const tb=k?46:30;
@@ -2344,8 +2333,14 @@ function drawOS(){
     g.font=`400 ${fs}px "Instrument Sans", sans-serif`; let hh=0; WELCOME_NOTE.forEach((t,i)=>{ hh+=lines(g,t,w-pad*2).length*fs*1.5+(i===0?fs*.4:fs*.9); });
     const h=Math.min(H-y-(k?60:12),(k?46:30)+pad*2+hh+fs*.6);
     let ty=osWindow(g,R,x,y,w,h,'welcome.txt — Notes',k)+pad;
-    WELCOME_NOTE.forEach((t,i)=>{ const first=i===0, last=i===WELCOME_NOTE.length-1;
-      ty=para(g,t,x+pad,ty,w-pad*2,first?fs*1.25:fs,1.45,`${first?'700':'400'} ${first?fs*1.25:fs}px ${first?'"Bricolage Grotesque", sans-serif':'"Instrument Sans", sans-serif'}`,last?'#6B6F78':'#2A2B2F')+(first?fs*.5:fs*.8); });
+    // typed out on first view: lines are wrapped on the full text so words never jump while typing
+    let budget=OS.typed, caret=null;
+    WELCOME_NOTE.forEach((t,i)=>{ const first=i===0, last=i===WELCOME_NOTE.length-1, sz=first?fs*1.25:fs;
+      g.font=`${first?'700':'400'} ${sz}px ${first?'"Bricolage Grotesque", sans-serif':'"Instrument Sans", sans-serif'}`; g.fillStyle=last?'#6B6F78':'#2A2B2F';
+      lines(g,t,w-pad*2).forEach((ln,li)=>{ const by=ty+sz+li*sz*1.45; if(budget<=0) return; const part=budget>=ln.length?ln:ln.slice(0,budget); budget-=ln.length+1;
+        g.fillText(part,x+pad,by); caret={x:x+pad+g.measureText(part).width+2, y:by, sz}; });
+      ty+=lines(g,t,w-pad*2).length*sz*1.45+(first?fs*.5:fs*.8); });
+    if(OS.typing && caret && (performance.now()%900<520)){ g.fillStyle='#2D4FD8'; g.fillRect(caret.x,caret.y-caret.sz*0.82,k?2.5:1.6,caret.sz*0.98); }
   } else if(OS.win){
     const p=PROJECTS.find(q=>q.id===OS.win); OS.sel=PROJECTS.indexOf(p);
     const x=left, y=top, w=W-x-(k?60:12), h=H-y-(k?50:12);
@@ -2657,10 +2652,8 @@ const OBJECTS={
                 hover:h=>{ careerQHot=careerAtQ(h); return null; }, // no tooltip: the frame speaks for itself
                 click:h=>{ if(coarse) careerQHot=careerAtQ(h)?!careerQHot:false; },
                 bar:()=>[{hint:'Where I started → where I\'m heading'}]},
-  tools:       {obj:TB,       label:'Tools', inspect:true, pose:()=>wallPose(TB,0.62),
-                bar:()=>[{hint:'Tools I use every day'}]},
-  pinboard:    {obj:PB,       label:'Skills', inspect:true, pose:()=>wallPose(PB,0.72),
-                bar:()=>[{hint:'What I work with'}]},
+  pinboard:    {obj:PB,       label:'Skills & tools', inspect:true, pose:()=>wallPose(PB,0.8),
+                bar:()=>[{hint:'What I work with, and the tools I use'}]},
   lamp:        {obj:lamp,     label:'Switch the lamp', action:cycleLight},
   vinyl:       {obj:RP,       label:'Play a record', camera:V(1.16,1.36,-0.28), target:V(1.43,0.99,-0.83), panel:'vinyl'},
   moodLamp:    {obj:shroom,   label:'Switch the orange lamp', action:()=>toggleAccent(MOOD,'Orange lamp')},
@@ -2737,7 +2730,7 @@ KEYS.forEach((k,i)=>OBJECTS[k].obj.traverse(o=>{ if(o.isMesh){ o.userData.t=i; o
 
 scene.updateMatrixWorld(true);
 const proxies=[];
-['folder','notebook','callingCard','hobbyFrames','certWall','lamp','moodLamp','wallLamp','vinyl','career','pinboard','tools'].forEach(k=>{
+['folder','notebook','callingCard','hobbyFrames','certWall','lamp','moodLamp','wallLamp','vinyl','career','pinboard'].forEach(k=>{
   const i=KEYS.indexOf(k), box=new THREE.Box3().setFromObject(OBJECTS[k].obj), size=box.getSize(new THREE.Vector3()), c=box.getCenter(new THREE.Vector3());
   const pad=k==='lamp'?1.0:(coarse?1.7:1.15), m=new THREE.Mesh(new THREE.BoxGeometry(Math.max(size.x,.02)*pad,Math.max(size.y,.02)*pad,Math.max(size.z,.02)*pad),new THREE.MeshBasicMaterial());
   m.position.copy(c); m.visible=false; m.userData.t=i; m.userData.proxy=true; m.userData.r=size.length()*pad/2+0.01; scene.add(m); proxies.push(m); });
@@ -2843,7 +2836,7 @@ const fpTmp=new THREE.Vector3();
 let postCheck=post?2:0, postSum=0;
 function probe(){ try{ const gl=renderer.getContext(), w=gl.drawingBufferWidth, h=gl.drawingBufferHeight, px=new Uint8Array(4); let s=0;
   [[.5,.5],[.35,.6],[.65,.45],[.5,.3],[.25,.25],[.75,.7],[.6,.55],[.4,.4]].forEach(([x,y])=>{ gl.readPixels((x*w)|0,(y*h)|0,1,1,gl.RGBA,gl.UNSIGNED_BYTE,px); s+=px[0]+px[1]+px[2]; }); return s; }catch(e){ return 999; } }
-const READ_KEYS=new Set(['monitor','folder','notebook','callingCard','certWall','career','hobbyFrames','pinboard','tools']);
+const READ_KEYS=new Set(['monitor','folder','notebook','callingCard','certWall','career','hobbyFrames','pinboard']);
 let readRes=false;
 function setReadRes(on){ if(on===readRes) return; readRes=on; const v=on?PR_READ:PR_BASE; if(v===PR) return; PR=v; renderer.setPixelRatio(PR); if(post) post.setPixelRatio(PR); resize(); }
 function updatePost(){
@@ -2895,25 +2888,40 @@ function loop(){
     for(let i=0;i<DN;i++){ const b=dBase[i], s=dSeed[i]; dPos[i*3]=b.x+Math.sin(t*0.12+s)*0.05; dPos[i*3+1]=b.y+Math.sin(t*0.09+s*1.7)*0.06; dPos[i*3+2]=b.z+Math.cos(t*0.1+s)*0.05; }
     dustGeo.attributes.position.needsUpdate=true;
     updateRain(dt); updateGlass(dt); updateLightning();
-    spinGrp.rotation.y-=3.49*dt; // 33⅓ rpm
+    { const playing=typeof recAudio!=='undefined' && typeof nowTrack!=='undefined' && nowTrack>=0 && !recAudio.paused; // the record turns only while a track plays
+      spinV+=((playing?3.49:0)-spinV)*Math.min(1,dt*(playing?1.6:1.1)); if(spinV>0.002) spinGrp.rotation.y-=spinV*dt; }
     redLights.forEach((l,i)=>{ l.material.opacity=night?(Math.sin(t*2.2+i*1.7)>.4?.85:.08):0; });
     for(let i=0;i<SN;i++){ sLife[i]+=dt*0.22; if(sLife[i]>1) sLife[i]-=1; const l=sLife[i];
       sPos[i*3]=MGX+Math.sin(l*6+i)*0.012*l; sPos[i*3+1]=DY+0.085+l*0.15; sPos[i*3+2]=MGZ+Math.cos(l*5+i*2)*0.01*l; }
     steamGeo.attributes.position.needsUpdate=true;
   }
+  if(revealed && DEFER.length) restoreDeferred(active==='monitor'?4:DEFER.length);
   updatePost();
   if(postCheck===2){ post.render(dt); postSum=probe(); postCheck=1; }
   else if(postCheck===1){ renderer.setRenderTarget(null); renderer.render(scene,camera); const direct=probe(); if(postSum<10 && direct>postSum+30){ post=null; app.classList.add('nopost'); } postCheck=0; } // effects came out black: render without them
   else if(post) post.render(dt); else renderer.render(scene,camera);
-  if(!revealed && ++shownFrames>=3){ revealed=true; setLoad(1,'Ready'); hideLoader(); perfMark('shown');
-    try{ console.info('[room] load timings (ms since page start)',JSON.stringify(PERF),SOFT_GPU?'software graphics':''); if(/[?&]perf\b/.test(location.search)){ const d=document.createElement('div'); d.style.cssText='position:fixed;right:12px;bottom:56px;z-index:99;font:12px/1.5 monospace;background:rgba(0,0,0,.7);color:#fff;padding:8px 10px;border-radius:8px;white-space:pre'; d.textContent=Object.entries(PERF).map(([k,v])=>k.padEnd(10)+v+' ms').join('\n')+(SOFT_GPU?'\nsoftware graphics':''); document.body.appendChild(d); } }catch(e){} setTimeout(()=>{ upgradeMaterials().catch(()=>{}); },900); }
+  if(!revealed && ++shownFrames>=2){ revealed=true; { const wait=Math.max(0,5000-performance.now()); /* the loading screen always stays up for 5 s; the room keeps loading behind it */ setTimeout(()=>{ setLoad(1,'Ready'); hideLoader(); setTimeout(typeWelcome,650); },wait); } perfMark('shown');
+    try{ console.info('[room] load timings (ms since page start)',JSON.stringify(PERF),SOFT_GPU?'software graphics':''); if(/[?&]perf\b/.test(location.search)){ const d=document.createElement('div'); d.style.cssText='position:fixed;right:12px;bottom:56px;z-index:99;font:12px/1.5 monospace;background:rgba(0,0,0,.7);color:#fff;padding:8px 10px;border-radius:8px;white-space:pre'; d.textContent=Object.entries(PERF).map(([k,v])=>k.padEnd(10)+v+' ms').join('\n')+(SOFT_GPU?'\nsoftware graphics':''); document.body.appendChild(d); } }catch(e){} if(!DEFER.length) setTimeout(()=>{ upgradeMaterials().catch(()=>{}); },900); }
   requestAnimationFrame(loop);
 }
 let revealed=false, shownFrames=0;
+const DEFER=[]; // parts of the room held back until the first view is on screen
+function restoreDeferred(n){ for(let i=0;i<n && DEFER.length;i++){ DEFER.shift().traverse(m=>{ if(m.userData.lm!==undefined){ m.layers.mask=m.userData.lm; delete m.userData.lm; } }); } warmFrames=0;
+  if(!DEFER.length) setTimeout(()=>{ upgradeMaterials().catch(()=>{}); },900); }
 OS.s=osScale(); drawOS(); screenMesh.material.map=osTex; screenMesh.material.needsUpdate=true;
-perfMark('built'); await Promise.all(MAT_JOBS); if(POOL){ POOL.close(); POOL=null; } perfMark('materials');
+perfMark('built'); const matsDone=MATS_DONE=Promise.all(MAT_JOBS).then(()=>{ if(POOL){ POOL.close(); POOL=null; } });
+await Promise.race([matsDone,new Promise(r=>setTimeout(r,Math.max(0,4300-performance.now())))]); perfMark('materials');
 setLoad(0.92,'Lighting the room'); await tick();
-applyLight(); resize(); try{ renderer.compile(scene,camera); }catch(e){} perfMark('shaders');
+applyLight(); resize();
+// open on the monitor: the camera starts there, and only what that view can see is drawn at first.
+// Each new kind of surface costs a shader compile (slow on Windows), so the first frame compiles a handful
+// instead of the whole room; everything else is brought in a few pieces per frame behind the screen.
+focusOn('monitor'); prevCam={pos:ROOM_VIEW.pos.clone(), target:ROOM_VIEW.look.clone(), yaw:0, tilt:0};
+camPos.copy(goal.pos); camLook.copy(goal.look); camera.position.copy(camPos); camera.lookAt(camLook); camera.updateMatrixWorld(true);
+{ const fr=new THREE.Frustum().setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse)), bx=new THREE.Box3();
+  scene.children.slice().forEach(o=>{ if(o.isLight || o.isCamera) return; bx.setFromObject(o); if(bx.isEmpty()) return; bx.expandByScalar(0.05);
+    if(fr.intersectsBox(bx)) return; DEFER.push(o); o.traverse(m=>{ if(m.isLight) return; m.userData.lm=m.layers.mask; m.layers.set(31); }); }); }
+perfMark('shaders');
 loop();
 } // end build
 
